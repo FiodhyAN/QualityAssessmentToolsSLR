@@ -19,6 +19,10 @@ Route::get('/', function () {
     return view('login.login');
 });
 
+Route::get('/login', [LoginController::class, 'index']);
+Route::post('/login', [LoginController::class, 'login']);
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
+
 
 // sebelumnya bisa ikuti command dibawah
 // cd ./python
