@@ -59,7 +59,3 @@ Route::get('/data/graph', function () {
     ]);
     return view('graph', ['src' => "data:image/png;base64, $response"]);
 });
-Route::get('/login', [LoginController::class, 'index']);
-Route::post('/login', [LoginController::class, 'login']);
-
-Route::get('/dashboard', [DashboardController::class, 'index']);
