@@ -18,6 +18,10 @@ Route::get('/', function () {
 });
 
 
+// sebelumnya bisa ikuti command dibawah
+// cd ./python
+// python run_app_flask.py
+
 // pengolahan data
 Route::get('/data/rank', function () {
     // transporse table
