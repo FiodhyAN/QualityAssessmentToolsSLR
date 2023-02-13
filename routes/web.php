@@ -18,11 +18,17 @@ Route::get('/', function () {
 });
 
 
+//////////////////////////////////////
+// PENGOLAHAN DATA
+/////////////////////////////////////
 // sebelumnya bisa ikuti command dibawah
 // cd ./python
 // python run_app_flask.py
 
-// pengolahan data
+Route::get('/pengolahan-data', function () {
+    return view('pengolahan_data_slr.home');
+});
+
 Route::get('/data/rank', function () {
     // transporse table
     // https://stackoverflow.com/questions/6297591/how-to-invert-transpose-the-rows-and-columns-of-an-html-table
@@ -37,7 +43,7 @@ Route::get('/data/rank', function () {
             ]
     ]);
     // return json_decode($response);
-    return view('rank', ['rank' => json_decode($response)]);
+    return view('pengolahan_data_slr.rank', ['rank' => json_decode($response)]);
 
 });
 Route::get('/data/graph', function () {
@@ -51,5 +57,5 @@ Route::get('/data/graph', function () {
             , [ "a6", ['d','ac','ad'], ['d','ac','ad','s','t']  ,'1994',['p8','p9']      ,['a1','a3']                            ]
             ]
     ]);
-    return view('graph', ['src' => "data:image/png;base64, $response"]);
+    return view('pengolahan_data_slr.graph', ['src' => "data:image/png;base64, $response"]);
 });
