@@ -2,6 +2,7 @@
 <html lang="en" class="semi-dark">
 
 <head>
+  <link rel="icon" href="assets/images/assesment.png" type="image/x-icon" />
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">

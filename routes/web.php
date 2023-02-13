@@ -20,10 +20,11 @@ Route::get('/', function () {
     return view('login.login');
 });
 
-Route::get('/login', [LoginController::class, 'index']);
+Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
+Route::get('/logout', [LoginController::class, 'logout'])->middleware('auth');
 
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
 
 //////////////////////////////////////
 // PENGOLAHAN DATA
