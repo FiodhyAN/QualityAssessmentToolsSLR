@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,6 +18,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('login.login');
 });
+
+Route::get('/login', [LoginController::class, 'index']);
+Route::post('/login', [LoginController::class, 'login']);
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
 
 
 //////////////////////////////////////
@@ -59,3 +65,7 @@ Route::get('/data/graph', function () {
     ]);
     return view('pengolahan_data_slr.graph', ['src' => "data:image/png;base64, $response"]);
 });
+Route::get('/login', [LoginController::class, 'index']);
+Route::post('/login', [LoginController::class, 'login']);
+
+Route::get('/dashboard', [DashboardController::class, 'index']);

@@ -39,20 +39,43 @@
     <div class="container">
         <div class="row mt-5">
           <div class="col-xl-4 col-lg-5 col-md-7 mx-auto mt-5">
-            <div class="card radius-10">
+              <div class="card radius-10">
+                @if (session()->has('error'))
+                    <div class="alert alert-dismissible fade show py-2 border-0 border-start border-4 border-danger">
+                        <div class="d-flex align-items-center">
+                        <div class="fs-3 text-danger"><ion-icon name="close-circle-sharp"></ion-icon>
+                        </div>
+                        <div class="ms-3">
+                            <div class="text-danger">{{ session('error') }}</div>
+                        </div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div> 
+                @endif
               <div class="card-body p-4">
                 <div class="text-center">
                   <h4>Sign In</h4>
                   <p>Sign In to your account</p>
                 </div>
-                <form class="form-body row g-3">
+                <form class="form-body row g-3" action="/login" method="POST">
+                    @csrf
                   <div class="col-12">
                     <label for="inputUsername" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="inputUsername" name="username">
+                    <input type="text" class="form-control @error('username') is-invalid @enderror" id="inputUsername" name="username">
+                    @error('username')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
                   </div>
                   <div class="col-12">
                     <label for="inputPassword" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="inputPassword" name="password">
+                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="inputPassword" name="password">
+                    @error('password')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
                   </div>
                   <div class="col-12 col-lg-12 mt-3">
                     <div class="d-grid">
@@ -65,31 +88,14 @@
           </div>
         </div>
     </div>
-    <footer class="my-5">
-      <div class="container">
-        <div class="d-flex align-items-center gap-4 fs-5 justify-content-center social-login-footer">
-          <a href="javascript:;">
-            <ion-icon name="logo-twitter"></ion-icon>
-          </a>
-          <a href="javascript:;">
-            <ion-icon name="logo-linkedin"></ion-icon>
-          </a>
-          <a href="javascript:;">
-            <ion-icon name="logo-github"></ion-icon>
-          </a>
-          <a href="javascript:;">
-            <ion-icon name="logo-facebook"></ion-icon>
-          </a>
-          <a href="javascript:;">
-            <ion-icon name="logo-pinterest"></ion-icon>
-          </a>
-        </div>
-      </div>
-    </footer>
   </div>
   <!--end wrapper-->
-
-
+  <script src="/assets/js/jquery.min.js"></script>
+  <script src="/assets/plugins/simplebar/js/simplebar.min.js"></script>
+  <script src="/assets/plugins/metismenu/js/metisMenu.min.js"></script>
+  <script src="/assets/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script src="/assets/js/main.js"></script>
 </body>
 
 </html>
