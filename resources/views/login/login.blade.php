@@ -4,6 +4,7 @@
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">
+  <link rel="icon" href="/assets/images/favicon.png" type="image/png" sizes="16x16">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- loader-->
@@ -61,7 +62,7 @@
                     @csrf
                   <div class="col-12">
                     <label for="inputUsername" class="form-label">Username</label>
-                    <input type="text" class="form-control @error('username') is-invalid @enderror" id="inputUsername" name="username">
+                    <input type="text" class="form-control @error('username') is-invalid @enderror" id="inputUsername" name="username" autocomplete="off">
                     @error('username')
                         <div class="invalid-feedback">
                             {{ $message }}
