@@ -6,10 +6,11 @@
       <div class="top-navbar-right ms-auto">
 
         <ul class="navbar-nav align-items-center">
+          <li><i class="fadeIn animated bx bx-fullscreen" id="fullscreen-btn"></i></li>
           <li class="nav-item dropdown dropdown-user-setting">
             <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
               <div class="user-setting">
-                <img src="assets/images/avatar.png" class="user-img" alt="">
+                <img src="/assets/images/avatar.png" class="user-img" alt="">
               </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
@@ -21,11 +22,11 @@
                       <h6 class="mb-0 dropdown-user-name">{{ auth()->user()->name }}</h6>
                       <small class="mb-0 dropdown-user-designation text-secondary">
                         @if (auth()->user()->is_superAdmin == true)
-                          Super Admin
+                          Administrator
                         @elseif (auth()->user()->is_admin == true)
-                          Admin
+                          Admin Proyek
                         @else
-                          Reviewer
+                          Assessor
                         @endif
                       </small>
                     </div>
@@ -51,3 +52,30 @@
       </div>
     </nav>
 </header>
+
+@section('script')
+  <script type="text/javascript">
+    var btnfs = document.getElementById("fullscreen-btn");
+    btnfs.style.cursor = "pointer";
+    btnfs.addEventListener("click", function() {
+      if ((document.fullScreenElement && document.fullScreenElement !== null) ||
+        (!document.mozFullScreen && !document.webkitIsFullScreen)) {
+        if (document.documentElement.requestFullScreen) {
+          document.documentElement.requestFullScreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+          document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullScreen) {
+          document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+      } else {
+        if (document.cancelFullScreen) {
+          document.cancelFullScreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitCancelFullScreen) {
+          document.webkitCancelFullScreen();
+        }
+      }
+    });
+  </script>
+@endsection
