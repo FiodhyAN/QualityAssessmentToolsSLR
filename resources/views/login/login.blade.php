@@ -33,7 +33,7 @@
     <header>
       <nav class="navbar navbar-expand-lg navbar-light bg-white p-3">
         <div class="container-fluid">
-          <a href="javascript:;"><img src="/assets/images/assessment-logo-black.png" width="140" alt="" /></a>
+          <a href="javascript:;"><img src="/assets/images/logo/assessment-logo-black.png" width="140" alt="" /></a>
         </div>
       </nav>
     </header>

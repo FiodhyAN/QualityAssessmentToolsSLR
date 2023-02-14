@@ -123,7 +123,7 @@
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $user->username }}</td>
                                     <td>
-                                        <a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalEdit" data-id="{{ $user->id }}" data-name="{{ $user->name }}" data-username="{{ $user->username }}">
+                                        <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEdit" data-id="{{ $user->id }}" data-name="{{ $user->name }}" data-username="{{ $user->username }}">
                                             <ion-icon name="create-outline"></ion-icon> Edit
                                         </a>
                                     </td>

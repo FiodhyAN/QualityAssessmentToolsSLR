@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="en" class="semi-dark">
+<html lang="en" class="light-theme">
 
 <head>
-  <link rel="icon" href="/assets/images/icons/tab-icon.png" type="image/x-icon" />
+  <link rel="icon" href="/assets/images/logo/logo-no-text-removebg-preview.png" type="image/x-icon" />
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -82,6 +82,42 @@
   <script src="/assets/js/table-datatable.js"></script>
   <!-- Main JS-->
   <script src="/assets/js/main.js"></script>
+  <script type="text/javascript">
+    var btnfs = document.getElementById("fullscreen-btn");
+    btnfs.style.cursor = "pointer";
+    btnfs.addEventListener("click", function() {
+      if ((document.fullScreenElement && document.fullScreenElement !== null) ||
+        (!document.mozFullScreen && !document.webkitIsFullScreen)) {
+        if (document.documentElement.requestFullScreen) {
+          btnfs.classList.remove('bx-fullscreen');
+          btnfs.classList.add('bx-exit-fullscreen');
+          document.documentElement.requestFullScreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+          btnfs.classList.remove('bx-fullscreen');
+          btnfs.classList.add('bx-exit-fullscreen');
+          document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullScreen) {
+          btnfs.classList.remove('bx-fullscreen');
+          btnfs.classList.add('bx-exit-fullscreen');
+          document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+      } else {
+        if (document.cancelFullScreen) {
+          btnfs.classList.remove('bx-exit-fullscreen');
+          btnfs.classList.add('bx-fullscreen');
+          document.cancelFullScreen();
+        } else if (document.mozCancelFullScreen) {
+          btnfs.classList.remove('bx-exit-fullscreen');
+          btnfs.classList.add('bx-fullscreen');
+          document.mozCancelFullScreen();
+        } else if (document.webkitCancelFullScreen) {
+          btnfs.classList.remove('bx-exit-fullscreen');
+          btnfs.classList.add('bx-fullscreen');
+          document.webkitCancelFullScreen();
+        }
+      }
+    });
+  </script>
   @yield('script')
 
 
