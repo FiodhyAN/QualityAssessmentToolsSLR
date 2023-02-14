@@ -32,6 +32,8 @@ Route::get('/dashboard/user', [UserController::class, 'index'])->middleware('aut
 Route::post('/addUser', [UserController::class, 'create'])->middleware('auth');
 Route::post('/updateUser', [UserController::class, 'update'])->middleware('auth');
 Route::get('/dashboard/project', [ProjectController::class, 'index'])->middleware('auth');
+Route::post('/addProject', [ProjectController::class, 'store'])->middleware('auth');
+Route::post('/updateProject', [ProjectController::class, 'update'])->middleware('auth');
 
 //////////////////////////////////////
 // PENGOLAHAN DATA

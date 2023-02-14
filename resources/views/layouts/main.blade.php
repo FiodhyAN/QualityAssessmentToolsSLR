@@ -15,6 +15,8 @@
   <link href="/assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
   <link href="/assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" />
   <link href="/assets/plugins/datatable/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+  <link href="/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
+    <link href="/assets/plugins/select2/css/select2-bootstrap4.css" rel="stylesheet" />
 
   <!-- CSS Files -->
   <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
@@ -80,6 +82,8 @@
   <script src="/assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
   <script src="/assets/plugins/datatable/js/dataTables.bootstrap5.min.js"></script>
   <script src="/assets/js/table-datatable.js"></script>
+  <script src="/assets/plugins/select2/js/select2.min.js"></script>
+  <script src="/assets/js/form-select2.js"></script>
   <!-- Main JS-->
   <script src="/assets/js/main.js"></script>
   <script type="text/javascript">
