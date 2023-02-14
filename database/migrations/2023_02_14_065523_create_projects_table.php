@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->string('project_name');
             $table->integer('limit_reviewer');
-            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
