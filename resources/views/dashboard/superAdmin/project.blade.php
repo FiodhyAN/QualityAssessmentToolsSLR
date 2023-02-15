@@ -83,11 +83,7 @@
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Project Admin</label>
-                        <select class="select_edit_user" name="admin_project" disabled>
-                            <option disabled selected>-- Select User --</option>
-                            @foreach ($users as $user)
-                                <option value="{{ $user->id }}" {{ old('admin_project') == $user->id ? 'selected' : ''}}>{{ $user->name }}</option>
-                            @endforeach
+                        <select class="select_edit_user" name="admin_project" id="admin">
                         </select>
                         @error('admin_project')
                             <div class="invalid-feedback d-block">
@@ -96,6 +92,7 @@
                         @enderror
                     </div>  
                     <input type="hidden" name="project_id">    
+                    <input type="hidden" name="old_admin">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -141,9 +138,9 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $project->project_name }}</td>
-                            <td>{{ $project->user->name }}</td>
+                            <td>{{ $project->project_user[0]->user->name }}</td>
                             <td>
-                                <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEdit" data-id="{{ $project->id }}" data-name="{{ $project->project_name }}" data-limit="{{ $project->limit_reviewer }}" data-user="{{ $project->user_id }}">
+                                <a class="btn btn-primary" id="modal_show_btn" data-bs-toggle="modal" data-bs-target="#modalEdit" data-id="{{ $project->id }}" data-name="{{ $project->project_name }}" data-limit="{{ $project->limit_reviewer }}" data-user="{{ $project->project_user[0]->user_id }}">
                                     <ion-icon name="create-outline"></ion-icon> Edit
                                 </a>
                             </td>
@@ -176,8 +173,29 @@
             modal.find('.modal-body input[name="project_id"]').val(id)
             modal.find('.modal-body input[name="project_name"]').val(name)
             modal.find('.modal-body input[name="limit"]').val(limit)
-            modal.find('.modal-body select[name="admin_project"]').val(user)
-            $('.select_edit_user').trigger('change');
+            modal.find('.modal-body input[name="old_admin"]').val(user)
+
+            $.ajax({
+                type: 'get',
+                url: '{!! URL::to('findProjectUser') !!}',
+                data: {'id': id},
+                success: function(data){
+                    console.log(data);
+                    var html = '';
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].user_role == 'admin') {
+                            data[i].user_role = 'Admin Project'
+                        }
+                        else {
+                            data[i].user_role = 'Reviewer'
+                        }
+                        html += '<option value="' + data[i].user_id + '">' + data[i].user.name + ' (' + data[i].user_role + ')' + '</option>';
+                    }
+                    $('.select_edit_user').html(html);
+                    $('.select_edit_user').val(user);
+                    $('.select_edit_user').trigger('change');
+                },
+            })
         })
     </script>
     <script>

@@ -34,6 +34,8 @@ Route::post('/updateUser', [UserController::class, 'update'])->middleware('auth'
 Route::get('/dashboard/project', [ProjectController::class, 'index'])->middleware('auth');
 Route::post('/addProject', [ProjectController::class, 'store'])->middleware('auth');
 Route::post('/updateProject', [ProjectController::class, 'update'])->middleware('auth');
+//ajax
+Route::get('/findProjectUser', [ProjectController::class, 'findProjectUser'])->middleware('auth');
 
 //////////////////////////////////////
 // PENGOLAHAN DATA

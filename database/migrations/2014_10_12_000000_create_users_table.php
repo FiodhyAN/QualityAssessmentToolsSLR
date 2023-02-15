@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->boolean('is_superAdmin')->default(false);
             $table->boolean('is_admin')->default(false);
-            $table->boolean('is_reviewer')->default(false);
+            $table->boolean('is_reviewer')->default(true);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
