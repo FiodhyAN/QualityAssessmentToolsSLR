@@ -26,12 +26,16 @@ Route::get('/logout', [LoginController::class, 'logout'])->middleware('auth');
 
 //Super Admin
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
+//User Management
 Route::get('/dashboard/user', [UserController::class, 'index'])->middleware('auth');
 Route::post('/addUser', [UserController::class, 'create'])->middleware('auth');
 Route::put('/updateUser', [UserController::class, 'update'])->middleware('auth');
+Route::delete('/deleteUser', [UserController::class, 'delete'])->middleware('auth');
+//Project Management
 Route::get('/dashboard/project', [ProjectController::class, 'index'])->middleware('auth');
 Route::post('/addProject', [ProjectController::class, 'store'])->middleware('auth');
 Route::put('/updateProject', [ProjectController::class, 'update'])->middleware('auth');
+Route::delete('/deleteProject', [ProjectController::class, 'delete'])->middleware('auth');
 //ajax
 Route::get('/findProjectUser', [ProjectController::class, 'findProjectUser'])->middleware('auth');
 

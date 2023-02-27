@@ -121,7 +121,7 @@
                                             <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEdit" data-id="{{ $user->id }}" data-name="{{ $user->name }}" data-username="{{ $user->username }}">
                                                 <ion-icon name="create-outline"></ion-icon> Edit
                                             </a>
-                                            <button class="btn btn-danger" id="deleteUser"><ion-icon name="trash-outline"></ion-icon> Delete</button>
+                                            <button class="btn btn-danger deleteUser" data-id="{{ $user->id }}"><ion-icon name="trash-outline"></ion-icon> Delete</button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -142,7 +142,9 @@
         </script>
     @endif
     <script>
-        $('#deleteUser').on('click', function(){
+        $('.deleteUser').on('click', function(){
+            var id = $(this).data('id');
+            console.log(id);
             Swal.fire({
             title: 'Delete this user?',
             text: "You won't be able to revert this!",
@@ -153,11 +155,25 @@
             confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire(
-                    'Deleted!',
-                    'Your file has been deleted.',
-                    'success'
-                    )
+                    $.ajax({
+                        url: '/deleteUser',
+                        type: 'DELETE',
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "id": id
+                        },
+                        success: function(response){
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: 'User has been deleted.',
+                                icon: 'success',
+                                confirmButtonText: 'Ok',
+                                timer: 2000
+                            }).then(isConfirmed => {
+                                location.reload();
+                            });
+                        }
+                    })
                 }
             })
         })
@@ -186,14 +202,14 @@
                 processData: false,
                 success: (data) => {
                     console.log(data);
+                    $('#exampleVerticallycenteredModal').modal('hide');
                     Swal.fire({
                         icon: 'success',
                         title: 'Success',
                         text: 'User has been added',
                         showConfirmButton: true,
-                        timer: 2000,
+                        timer: 5000,
                     }).then(isConfirmed => {
-                        $('#exampleVerticallycenteredModal').modal('hide');
                         location.reload();
                     });
                 },
@@ -231,14 +247,14 @@
                 processData: false,
                 success: (data) => {
                     console.log(data);
+                    $('#modalEdit').modal('hide');
                     Swal.fire({
                         icon: 'success',
                         title: 'Success',
                         text: 'User has been updated',
                         showConfirmButton: true,
-                        timer: 2000
+                        timer: 5000
                     }).then(isConfirmed => {
-                        $('#modalEdit').modal('hide');
                         location.reload();
                     });
                 },

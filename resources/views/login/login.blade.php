@@ -41,7 +41,7 @@
         <div class="row mt-5">
           <div class="col-xl-4 col-lg-5 col-md-7 mx-auto mt-5">
               <div class="card radius-10">
-                @if (session()->has('error'))
+                {{-- @if (session()->has('error'))
                     <div class="alert alert-dismissible fade show py-2 border-0 border-start border-4 border-danger">
                         <div class="d-flex align-items-center">
                         <div class="fs-3 text-danger"><ion-icon name="close-circle-sharp"></ion-icon>
@@ -52,7 +52,7 @@
                         </div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div> 
-                @endif
+                @endif --}}
               <div class="card-body p-4">
                 <div class="text-center">
                   <h4>Sign In</h4>
@@ -97,6 +97,17 @@
   <script src="/assets/js/bootstrap.bundle.min.js"></script>
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script src="/assets/js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  @if (session()->has('error'))
+    <script>
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Username or Password is incorrect!',
+        confirmButtonText: 'OK'
+      });
+    </script>
+  @endif
 </body>
 
 </html>

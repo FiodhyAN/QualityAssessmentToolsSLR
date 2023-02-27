@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\UserDataTable;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(UserDataTable $dataTable)
     {
         $this->authorize('superadmin');
         return view('dashboard.superadmin.user', [
@@ -64,5 +65,12 @@ class UserController extends Controller
         User::where('id', $request->user_id)->update($validatedData);
 
         return redirect()->back()->with('success', 'User Successfully Updated');
+    }
+
+    public function delete(Request $request)
+    {
+        $this->authorize('superadmin');
+        User::where('id', $request->id)->delete();
+        // return redirect()->back()->with('success', 'User Successfully Deleted');
     }
 }

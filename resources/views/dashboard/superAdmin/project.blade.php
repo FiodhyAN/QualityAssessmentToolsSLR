@@ -135,6 +135,7 @@
                                 <a class="btn btn-primary" id="modal_show_btn" data-bs-toggle="modal" data-bs-target="#modalEdit" data-id="{{ $project->id }}" data-name="{{ $project->project_name }}" data-limit="{{ $project->limit_reviewer }}" data-user="{{ $project->project_user[0]->user_id }}">
                                     <ion-icon name="create-outline"></ion-icon> Edit
                                 </a>
+                                <button class="btn btn-danger deleteProject" data-id="{{ $project->id }}"><ion-icon name="trash-outline"></ion-icon> Delete</button>
                             </td>
                         </tr>
                         @endforeach
@@ -154,6 +155,42 @@
         </script>
     @endif
     <script>
+        //Delete Project
+        $('.deleteProject').on('click', function(){
+            var id = $(this).data('id');
+            console.log(id);
+            Swal.fire({
+            title: 'Delete this project?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/deleteProject',
+                        type: 'DELETE',
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "id": id
+                        },
+                        success: function(response){
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: 'Project has been deleted.',
+                                icon: 'success',
+                                confirmButtonText: 'Ok',
+                                timer: 5000
+                            }).then(isConfirmed => {
+                                location.reload();
+                            });
+                        }
+                    })
+                }
+            })
+        })
         // Edit Modal
         $('#modalEdit').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget) // Button that triggered the modal
@@ -198,7 +235,8 @@
             $('.select_edit_user').select2({
                 dropdownParent: $('#modalEdit .modal-content')
             });
-        } );
+        });
+        // Add Project
         $('#addProject').on('submit', function(e){
             e.preventDefault();
             var form = new FormData(this);
@@ -211,13 +249,13 @@
                 processData: false,
                 success: function(data){
                     console.log(data);
+                    $('#exampleVerticallycenteredModal').modal('hide');
                     Swal.fire({
                         icon: 'success',
                         title: 'Project has been added',
                         showConfirmButton: true,
-                        timer: 2000,
+                        timer: 5000,
                     }).then(isConfirmed => {
-                        $('#exampleVerticallycenteredModal').modal('hide');
                         location.reload();
                     });
                 },
@@ -247,7 +285,7 @@
                 }
             })
         })
-
+        // Update Project
         $('#updateProject').on('submit', function(e){
             e.preventDefault();
             var form = new FormData(this);
@@ -260,14 +298,14 @@
                 processData: false,
                 success: function(data){
                     console.log(data);
+                    $('#modalEdit').modal('hide');
                     Swal.fire({
                         icon: 'success',
                         title: 'Success',
                         text: 'Project has been updated',
                         showConfirmButton: true,
-                        timer: 2000
+                        timer: 5000
                     }).then(isConfirmed => {
-                        $('#modalEdit').modal('hide');
                         location.reload();
                     });
                 },

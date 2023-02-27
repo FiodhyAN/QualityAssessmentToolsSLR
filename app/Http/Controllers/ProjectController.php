@@ -85,6 +85,24 @@ class ProjectController extends Controller
         return redirect()->back()->with('success', 'Project Updated Successfully');
     }
 
+    public function delete(Request $request)
+    {
+        $this->authorize('superadmin');
+        
+        Project::where('id', $request->id)->delete();
+        ProjectUser::where('project_id', $request->id)->delete();
+
+        $users = User::with('project_user')->get();
+        
+        foreach ($users as $user) {
+            if ($user->project_user->count() == 0) {
+                $user->update([
+                    'is_admin' => false,
+                ]);
+            }
+        }
+    }
+
     public function findProjectUser(Request $request)
     {
         $this->authorize('superadmin');
