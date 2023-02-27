@@ -8,26 +8,20 @@
             <h5 class="modal-title">Add New User</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="/addUser" method="POST">
+            <form id="addUser">
                 <div class="modal-body">
                     @csrf
                     <div class="col mb-3">
                         <label class="form-label">Name</label>
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" placeholder="Enter Name..." value="{{ old('name') }}" autocomplete="off" required>
-                        @error('name')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
+                        <input id="addName-input" type="text" class="form-control" name="name" placeholder="Enter Name..." value="{{ old('name') }}" autocomplete="off" required>
+                        <div class="invalid-feedback" id="addName-feedback">
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Username</label>
-                        <input type="text" class="form-control @error('username') is-invalid @enderror" name="username" placeholder="Enter Username..." autocomplete="off" value="{{ old('username') }}" required>
-                        @error('username')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
+                        <input id="addUsername-input" type="text" class="form-control" name="username" placeholder="Enter Username..." autocomplete="off" value="{{ old('username') }}" required>
+                        <div class="invalid-feedback" id="addUsername-feedback">
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Password (Default: Password = Username)</label>
@@ -50,14 +44,15 @@
             <h5 class="modal-title">Edit User</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="/updateUser" method="POST">
+            <form id="editUser">
                 <div class="modal-body">
                     @csrf
+                    @method('put')
                     <div class="col mb-3">
                         <label class="form-label">Name</label>
                         <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" placeholder="Enter Name..." value="{{ old('name') }}" autocomplete="off" required>
                         @error('name')
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback" id="name-feedback">
                                 {{ $message }}
                             </div>
                         @enderror
@@ -107,7 +102,7 @@
               </div>
               <div class="card-body">
                   <div class="table-responsive">
-                      <table id="example" class="table table-striped table-bordered" style="width:100%">
+                      <table id="user_table" class="table table-striped table-bordered" style="width:100%">
                           <thead>
                               <tr>
                                   <th>No</th>
@@ -118,16 +113,17 @@
                           </thead>
                           <tbody>
                                 @foreach ($users as $user)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $user->name }}</td>
-                                    <td>{{ $user->username }}</td>
-                                    <td>
-                                        <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEdit" data-id="{{ $user->id }}" data-name="{{ $user->name }}" data-username="{{ $user->username }}">
-                                            <ion-icon name="create-outline"></ion-icon> Edit
-                                        </a>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $user->name }}</td>
+                                        <td>{{ $user->username }}</td>
+                                        <td>
+                                            <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEdit" data-id="{{ $user->id }}" data-name="{{ $user->name }}" data-username="{{ $user->username }}">
+                                                <ion-icon name="create-outline"></ion-icon> Edit
+                                            </a>
+                                            <button class="btn btn-danger" id="deleteUser"><ion-icon name="trash-outline"></ion-icon> Delete</button>
+                                        </td>
+                                    </tr>
                                 @endforeach
                           </tbody>
                       </table>
@@ -146,6 +142,26 @@
         </script>
     @endif
     <script>
+        $('#deleteUser').on('click', function(){
+            Swal.fire({
+            title: 'Delete this user?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                    )
+                }
+            })
+        })
+        var table = $('#user_table').DataTable();
         $('#modalEdit').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget) // Button that triggered the modal
             var name = button.data('name') // Extract info from data-* attributes
@@ -156,5 +172,94 @@
             modal.find('.modal-body input[name="username"]').val(username)
             modal.find('.modal-body input[name="user_id"]').val(id)
         });
+        //ajax post with sweet alert
+        $('#addUser').on('submit', function(e){
+            e.preventDefault();
+            //get data from form
+            var formData = new FormData(this);
+            $.ajax({
+                url: '{!! URL::to('addUser') !!}',
+                type:"POST",
+                data:formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: (data) => {
+                    console.log(data);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'User has been added',
+                        showConfirmButton: true,
+                        timer: 2000,
+                    }).then(isConfirmed => {
+                        $('#exampleVerticallycenteredModal').modal('hide');
+                        location.reload();
+                    });
+                },
+                error: function(data) {
+                    //return error message
+                    console.log(data.responseJSON.errors.username[0]);
+                    console.log(data.responseJSON.errors.name);
+                    if (data.responseJSON.errors.name) {
+                        $('#addName-input').addClass('is-invalid')
+                        $('#addName-feedback').text(data.responseJSON.errors.name[0]);
+                    }
+                    else {
+                        $('#addName-input').removeClass('is-invalid')
+                    }
+                    if (data.responseJSON.errors.username) {
+                        $('#addUsername-input').addClass('is-invalid')
+                        $('#addUsername-feedback').text(data.responseJSON.errors.username[0]);
+                    }
+                    else {
+                        $('#addUsername-input').removeClass('is-invalid')
+                    }
+                }
+            });
+        });
+
+        $('#editUser').on('submit', function(e){
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: '{!! URL::to('updateUser') !!}',
+                type:"POST",
+                data:formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: (data) => {
+                    console.log(data);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'User has been updated',
+                        showConfirmButton: true,
+                        timer: 2000
+                    }).then(isConfirmed => {
+                        $('#modalEdit').modal('hide');
+                        location.reload();
+                    });
+                },
+                error: function(data) {
+                    //return error message
+                    console.log(data.responseJSON.errors.username[0]);
+                    console.log(data.responseJSON.errors.name);
+                    if (data.responseJSON.errors.name) {
+                        $('#editName-input').addClass('is-invalid')
+                        $('#editName-feedback').text(data.responseJSON.errors.name[0]);
+                    } else {
+                        $('#editName-input').removeClass('is-invalid')
+                    }
+                    if (data.responseJSON.errors.username) {
+                        $('#editUsername-input').addClass('is-invalid')
+                        $('#editUsername-feedback').text(data.responseJSON.errors.username[0]);
+                    } else {
+                        $('#editUsername-input').removeClass('is-invalid')
+                    }
+                }
+            })
+        })
     </script>
 @endsection

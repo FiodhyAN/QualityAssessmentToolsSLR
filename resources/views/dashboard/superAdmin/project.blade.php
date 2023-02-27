@@ -8,40 +8,31 @@
             <h5 class="modal-title">Add New Project</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="/addProject" method="POST">
+            <form id="addProject">
                 <div class="modal-body">
                     @csrf
                     <div class="col mb-3">
                         <label class="form-label">Project Name</label>
-                        <input type="text" class="form-control @error('project_name') is-invalid @enderror" name="project_name" placeholder="Enter Project Name..." value="{{ old('project_name') }}" autocomplete="off" required>
-                        @error('project_name')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
+                        <input id="projectName-input" type="text" class="form-control" name="project_name" placeholder="Enter Project Name..." value="{{ old('project_name') }}" autocomplete="off" required>
+                        <div class="invalid-feedback" id="projectName-feedback">
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Limit Max Reviewer</label>
-                        <input type="number" class="form-control @error('limit') is-invalid @enderror" name="limit" placeholder="Enter Max Reviewer..." autocomplete="off" value="{{ old('limit') }}" required>
-                        @error('limit')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
+                        <input id="limitReviewer-input" type="number" class="form-control @error('limit') is-invalid @enderror" name="limit" placeholder="Enter Max Reviewer..." autocomplete="off" value="{{ old('limit') }}" required>
+                        <div class="invalid-feedback" id="limitReviewer-feedback">
+                        </div>
                     </div>
                     <div class="col mb-3">
                         <label class="form-label">Project Admin</label>
-                        <select class="select_user" name="admin_project">
+                        <select id="adminProject-input" class="select_user" name="admin_project">
                             <option disabled selected>-- Select User --</option>
                             @foreach ($users as $user)
                                 <option value="{{ $user->id }}" {{ old('admin_project') == $user->id ? 'selected' : ''}}>{{ $user->name }}</option>
                             @endforeach
                         </select>
-                        @error('admin_project')
-                            <div class="invalid-feedback d-block">
-                                {{ $message }}
-                            </div>
-                        @enderror
+                        <div class="invalid-feedback d-block" id="adminProject-feedback">
+                        </div>
                     </div>      
                 </div>
                 <div class="modal-footer">
@@ -60,9 +51,10 @@
             <h5 class="modal-title">Edit Project</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="/updateProject" method="POST">
+            <form id="updateProject">
+                @csrf
+                @method('put')
                 <div class="modal-body">
-                    @csrf
                     <div class="col mb-3">
                         <label class="form-label">Project Name</label>
                         <input type="text" class="form-control @error('project_name') is-invalid @enderror" name="project_name" placeholder="Enter Project Name..." value="{{ old('project_name') }}" autocomplete="off" required>
@@ -207,5 +199,103 @@
                 dropdownParent: $('#modalEdit .modal-content')
             });
         } );
+        $('#addProject').on('submit', function(e){
+            e.preventDefault();
+            var form = new FormData(this);
+            $.ajax({
+                url: '{!! URL::to('addProject') !!}',
+                type: "POST",
+                data: form,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(data){
+                    console.log(data);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Project has been added',
+                        showConfirmButton: true,
+                        timer: 2000,
+                    }).then(isConfirmed => {
+                        $('#exampleVerticallycenteredModal').modal('hide');
+                        location.reload();
+                    });
+                },
+                error: function(data){
+                    console.log(data);
+                    if(data.responseJSON.errors.admin_project)
+                    {
+                        $('#adminProject-input').addClass('is-invalid')
+                        $('#adminProject-feedback').text(data.responseJSON.errors.admin_project[0])
+                    } else {
+                        $('#adminProject-input').removeClass('is-invalid')
+                    }
+
+                    if (data.responseJSON.errors.project_name) {
+                        $('#projectName-input').addClass('is-invalid')
+                        $('#projectName-feedback').text(data.responseJSON.errors.project_name[0])
+                    } else {
+                        $('#projectName-input').removeClass('is-invalid')
+                    }
+
+                    if (data.responseJSON.errors.limit) {
+                        $('#limitReviewer-input').addClass('is-invalid')
+                        $('#limitReviewer-feedback').text(data.responseJSON.errors.limit[0])
+                    } else {
+                        $('#limitReviewer-input').removeClass('is-invalid')
+                    }
+                }
+            })
+        })
+
+        $('#updateProject').on('submit', function(e){
+            e.preventDefault();
+            var form = new FormData(this);
+            $.ajax({
+                url: '{!! URL::to('updateProject') !!}',
+                type: "POST",
+                data: form,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(data){
+                    console.log(data);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Project has been updated',
+                        showConfirmButton: true,
+                        timer: 2000
+                    }).then(isConfirmed => {
+                        $('#modalEdit').modal('hide');
+                        location.reload();
+                    });
+                },
+                error: function(data){
+                    console.log(data);
+                    if(data.responseJSON.errors.admin_project)
+                    {
+                        $('#adminProject-input-edit').addClass('is-invalid')
+                        $('#adminProject-feedback-edit').text(data.responseJSON.errors.admin_project[0])
+                    } else {
+                        $('#adminProject-input-edit').removeClass('is-invalid')
+                    }
+
+                    if (data.responseJSON.errors.project_name) {
+                        $('#projectName-input-edit').addClass('is-invalid')
+                        $('#projectName-feedback-edit').text(data.responseJSON.errors.project_name[0])
+                    } else {
+                        $('#projectName-input-edit').removeClass('is-invalid')
+                    }
+
+                    if (data.responseJSON.errors.limit) {
+                        $('#limitReviewer-input-edit').addClass('is-invalid')
+                        $('#limitReviewer-feedback-edit').text(data.responseJSON.errors.limit[0])
+                    } else {
+                        $('#limitReviewer-input-edit').removeClass('is-invalid')
+                    }
+                }
+            })
+        })
     </script>
 @endsection

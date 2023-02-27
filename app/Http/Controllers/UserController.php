@@ -38,7 +38,7 @@ class UserController extends Controller
             'is_reviewer' => true
         ]);
 
-        return redirect()->back()->with('success', 'User Successfully Created');
+        // return redirect()->back()->with('success', 'User Successfully Created');
     }
 
     public function update(Request $request)

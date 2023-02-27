@@ -25,7 +25,7 @@ class ProjectController extends Controller
     {
         $this->authorize('superadmin');
         $request->validate([
-            'project_name' => 'required',
+            'project_name' => 'required|unique:projects,project_name',
             'limit' => 'required',
             'admin_project' => 'required',
         ]);

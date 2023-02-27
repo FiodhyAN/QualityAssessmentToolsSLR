@@ -18,9 +18,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('login.login');
-});
+Route::get('/', [LoginController::class, 'index']);
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -30,10 +28,10 @@ Route::get('/logout', [LoginController::class, 'logout'])->middleware('auth');
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
 Route::get('/dashboard/user', [UserController::class, 'index'])->middleware('auth');
 Route::post('/addUser', [UserController::class, 'create'])->middleware('auth');
-Route::post('/updateUser', [UserController::class, 'update'])->middleware('auth');
+Route::put('/updateUser', [UserController::class, 'update'])->middleware('auth');
 Route::get('/dashboard/project', [ProjectController::class, 'index'])->middleware('auth');
 Route::post('/addProject', [ProjectController::class, 'store'])->middleware('auth');
-Route::post('/updateProject', [ProjectController::class, 'update'])->middleware('auth');
+Route::put('/updateProject', [ProjectController::class, 'update'])->middleware('auth');
 //ajax
 Route::get('/findProjectUser', [ProjectController::class, 'findProjectUser'])->middleware('auth');
 
