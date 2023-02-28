@@ -116,16 +116,16 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table id="example" class="table table-striped table-bordered" style="width:100%">
+                <table id="project_table" class="table table-striped table-bordered" style="width:100%">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Name</th>
-                            <th>Admin Project</th>
-                            <th>Action</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    {{-- <tbody>
                         @foreach ($projects as $project)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
@@ -139,7 +139,7 @@
                             </td>
                         </tr>
                         @endforeach
-                    </tbody>
+                    </tbody> --}}
                 </table>
             </div>
         </div>
@@ -155,77 +155,114 @@
         </script>
     @endif
     <script>
-        //Delete Project
-        $('.deleteProject').on('click', function(){
-            var id = $(this).data('id');
-            console.log(id);
-            Swal.fire({
-            title: 'Delete this project?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/deleteProject',
-                        type: 'DELETE',
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                            "id": id
-                        },
-                        success: function(response){
-                            Swal.fire({
-                                title: 'Deleted!',
-                                text: 'Project has been deleted.',
-                                icon: 'success',
-                                confirmButtonText: 'Ok',
-                                timer: 5000
-                            }).then(isConfirmed => {
-                                location.reload();
-                            });
-                        }
-                    })
-                }
-            })
-        })
-        // Edit Modal
-        $('#modalEdit').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget) // Button that triggered the modal
-            var id = button.data('id')
-            var name = button.data('name')
-            var limit = button.data('limit')
-            var user = button.data('user')
-            var modal = $(this)
-            modal.find('.modal-body input[name="project_id"]').val(id)
-            modal.find('.modal-body input[name="project_name"]').val(name)
-            modal.find('.modal-body input[name="limit"]').val(limit)
-            modal.find('.modal-body input[name="old_admin"]').val(user)
-
-            $.ajax({
-                type: 'get',
-                url: '{!! URL::to('findProjectUser') !!}',
-                data: {'id': id},
-                success: function(data){
-                    console.log(data);
-                    var html = '';
-                    for (var i = 0; i < data.length; i++) {
-                        if (data[i].user_role == 'admin') {
-                            data[i].user_role = 'Admin Project'
-                        }
-                        else {
-                            data[i].user_role = 'Reviewer'
-                        }
-                        html += '<option value="' + data[i].user_id + '">' + data[i].user.name + ' (' + data[i].user_role + ')' + '</option>';
-                    }
-                    $('.select_edit_user').html(html);
-                    $('.select_edit_user').val(user);
-                    $('.select_edit_user').trigger('change');
+        //Datatable
+        var table = $('#project_table').DataTable({
+            aaSorting: [],
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '{!! URL::to('projectTable') !!}',
+                type: 'GET',
+            },
+            columns: [
+                {
+                    title: 'No',
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                    orderable: false,
+                    searchable: false
                 },
-            })
-        })
+                {
+                    title: 'Project Name',
+                    data: 'project_name',
+                    name: 'project_name'
+                },
+                {
+                    title: 'Project Admin',
+                    data: 'admin_project',
+                    name: 'admin_project'
+                },
+                {
+                    title: 'Action',
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                }
+            ],
+        }).on('click', '.aksi', function(e) {
+            e.preventDefault();
+            if($(this).hasClass('deleteProject')) {
+                var id = $(this).data('id');
+                console.log(id);
+                Swal.fire({
+                title: 'Delete this project?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/deleteProject',
+                            type: 'DELETE',
+                            data: {
+                                "_token": "{{ csrf_token() }}",
+                                "id": id
+                            },
+                            success: function(response){
+                                Swal.fire({
+                                    title: 'Deleted!',
+                                    text: 'Project has been deleted.',
+                                    icon: 'success',
+                                    confirmButtonText: 'Ok',
+                                    timer: 5000
+                                }).then(isConfirmed => {
+                                    table.ajax.reload();
+                                });
+                            }
+                        })
+                    }
+                })
+            } else {
+                var modal = $('#modalEdit');
+                var id = $(this).data('id');
+                console.log(id);
+                var name = $(this).data('project_name');
+                var limit = $(this).data('limit');
+                var user = $(this).data('admin_project');
+                modal.find('.modal-body input[name="project_id"]').val(id);
+                modal.find('.modal-body input[name="project_name"]').val(name);
+                modal.find('.modal-body input[name="limit"]').val(limit);
+                modal.find('.modal-body input[name="old_admin"]').val(user);
+                modal.modal('show');
+
+                $.ajax({
+                    type: 'get',
+                    url: '{!! URL::to('findProjectUser') !!}',
+                    data: {'id': id},
+                    dataType: 'json',
+                    success: function(data){
+                        console.log(data);
+                        var html = '';
+                        for (var i = 0; i < data.length; i++) {
+                            if (data[i].user_role == 'admin') {
+                                data[i].user_role = 'Admin Project'
+                            }
+                            else {
+                                data[i].user_role = 'Reviewer'
+                            }
+                            html += '<option value="' + data[i].user_id + '">' + data[i].user.name + ' (' + data[i].user_role + ')' + '</option>';
+                        }
+                        $('.select_edit_user').html(html);
+                        $('.select_edit_user').val(user);
+                        $('.select_edit_user').trigger('change');
+                    },
+                })
+            }
+        });
     </script>
     <script>
         $(document).ready(function() {
@@ -256,7 +293,8 @@
                         showConfirmButton: true,
                         timer: 5000,
                     }).then(isConfirmed => {
-                        location.reload();
+                        table.ajax.reload();
+                        $('#addProject').trigger('reset');
                     });
                 },
                 error: function(data){
@@ -306,7 +344,7 @@
                         showConfirmButton: true,
                         timer: 5000
                     }).then(isConfirmed => {
-                        location.reload();
+                        table.ajax.reload();
                     });
                 },
                 error: function(data){

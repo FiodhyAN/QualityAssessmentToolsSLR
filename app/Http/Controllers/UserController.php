@@ -2,18 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\DataTables\UserDataTable;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
-    public function index(UserDataTable $dataTable)
+    public function index()
     {
         $this->authorize('superadmin');
         return view('dashboard.superadmin.user', [
             'users' => User::where('id', '!=', auth()->user()->id)->get()
         ]);
+    }
+
+    public function userTable()
+    {
+        return DataTables::of(User::where('id', '!=', auth()->user()->id)->orderBy('id')->get())
+            ->addIndexColumn()
+            ->addColumn('name', function(User $user){
+                return $user->name;
+            })
+            ->addColumn('username', function(User $user){
+                return $user->username;
+            })
+            ->addColumn('action', function(User $row){
+                $btn = '<button type="button" class="btn btn-primary btn-sm aksi" data-toggle="modal" data-bs-target="#modalEdit" data-id="'.$row->id.'" data-name="'.$row->name.'" data-username="'.$row->username.'"><ion-icon name="create-outline"></ion-icon> Edit</button>';
+                $btn .= '<button type="button" class="btn btn-danger btn-sm ms-2 aksi deleteUser" data-id="'.$row->id.'"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
+                return $btn;
+            })
+            ->rawColumns(['action'])
+            ->toJson();
     }
 
     public function create(Request $request)
@@ -70,7 +89,17 @@ class UserController extends Controller
     public function delete(Request $request)
     {
         $this->authorize('superadmin');
-        User::where('id', $request->id)->delete();
-        // return redirect()->back()->with('success', 'User Successfully Deleted');
+        $user = User::with(['project_user' => function($query){
+            $query->where('user_role', 'admin');
+        }])->where('id', $request->id)->first();
+
+        if ($user->project_user->count() > 0) {
+            $string = 'User cannot be deleted because user is an admin in a project';
+            return json_encode(['error' => $string]);
+        }
+        else {
+            return $user->delete();
+            // return json_encode(['success' => 'User Successfully Deleted']);
+        }
     }
 }

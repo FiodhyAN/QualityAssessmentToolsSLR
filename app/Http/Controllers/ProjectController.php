@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\ProjectUser;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class ProjectController extends Controller
 {
@@ -15,10 +16,38 @@ class ProjectController extends Controller
         $project = Project::with(['project_user' => function($query){
             $query->with('user')->where('user_role', 'admin');
         }])->get();
+        // return $project[0]->project_user[0]->user->name;
         return view('dashboard.superAdmin.project', [
             'projects' => $project,
             'users' => User::where('id', '!=', auth()->user()->id)->get(),
         ]);
+    }
+
+    public function projectTable()
+    {
+        $this->authorize('superadmin');
+        $project = Project::with(['project_user' => function($query){
+            $query->with('user')->where('user_role', 'admin');
+        }])->orderBy('id')->get();
+        return DataTables::of($project)
+            ->addIndexColumn()
+            ->addColumn('project_name', function(Project $project){
+                return $project->project_name;
+            })
+            ->addColumn('limit_reviewer', function(Project $project){
+                return $project->limit_reviewer;
+            })
+            ->addColumn('admin_project', function(Project $project){
+                $name = $project->project_user[0]->user->name;
+                return $name;
+            })
+            ->addColumn('action', function(Project $row){
+                $btn = '<button type="button" class="btn btn-primary btn-sm aksi" data-toggle="modal" data-bs-target="#modalEdit" data-id="'.$row->id.'" data-project_name="'.$row->project_name.'" data-limit="'.$row->limit_reviewer.'" data-admin_project="'.$row->project_user[0]->user->id.'"><ion-icon name="create-outline"></ion-icon> Edit</button>';
+                $btn .= '<button type="button" class="btn btn-danger btn-sm ms-2 aksi deleteProject" data-id="'.$row->id.'"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
+                return $btn;
+            })
+            ->rawColumns(['action'])
+            ->toJson();
     }
 
     public function store(Request $request)
@@ -109,6 +138,6 @@ class ProjectController extends Controller
         $project = Project::with(['project_user' => function($query){
             $query->with('user')->orderBy('user_role');
         }])->where('id', $request->id)->first();
-        return $project->project_user;
+        return $project->project_user->toJson();
     }
 }

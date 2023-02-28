@@ -105,13 +105,13 @@
                       <table id="user_table" class="table table-striped table-bordered" style="width:100%">
                           <thead>
                               <tr>
-                                  <th>No</th>
-                                  <th>Name</th>
-                                  <th>Username</th>
-                                  <th>Action</th>
+                                  <th></th>
+                                  <th></th>
+                                  <th></th>
+                                  <th></th>
                               </tr>
                           </thead>
-                          <tbody>
+                          {{-- <tbody>
                                 @foreach ($users as $user)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
@@ -125,7 +125,7 @@
                                         </td>
                                     </tr>
                                 @endforeach
-                          </tbody>
+                          </tbody> --}}
                       </table>
                   </div>
               </div>
@@ -142,51 +142,103 @@
         </script>
     @endif
     <script>
-        $('.deleteUser').on('click', function(){
-            var id = $(this).data('id');
-            console.log(id);
-            Swal.fire({
-            title: 'Delete this user?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/deleteUser',
-                        type: 'DELETE',
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                            "id": id
-                        },
-                        success: function(response){
-                            Swal.fire({
-                                title: 'Deleted!',
-                                text: 'User has been deleted.',
-                                icon: 'success',
-                                confirmButtonText: 'Ok',
-                                timer: 2000
-                            }).then(isConfirmed => {
-                                location.reload();
-                            });
-                        }
-                    })
-                }
-            })
-        })
-        var table = $('#user_table').DataTable();
-        $('#modalEdit').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget) // Button that triggered the modal
-            var name = button.data('name') // Extract info from data-* attributes
-            var username = button.data('username') // Extract info from data-* attributes
-            var id = button.data('id') // Extract info from data-* attributes
-            var modal = $(this)
-            modal.find('.modal-body input[name="name"]').val(name)
-            modal.find('.modal-body input[name="username"]').val(username)
-            modal.find('.modal-body input[name="user_id"]').val(id)
+        var table = $('#user_table').DataTable({
+            aaSorting: [],
+            serverSide: true,
+            processing: true,
+            ajax: {
+                url: '{!! URL::to('userTable') !!}',
+                type: 'GET',
+            },
+            columns: [
+                {
+                    title: 'No',
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                    orderable: false,
+                    searchable: false,
+                    width: '5%'
+                },
+                {
+                    title: 'Name',
+                    data: 'name',
+                    name: 'name',
+                    width: '30%'
+                },
+                {
+                    title: 'Username',
+                    data: 'username',
+                    name: 'username',
+                    width: '30%'
+                },
+                {
+                    title: 'Action',
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false,
+                    width: '35%'
+                },
+            ],
+        }).on('click', '.aksi', function(e) {
+            e.preventDefault();
+            if ($(this).hasClass('deleteUser')) {
+                var id = $(this).data('id');
+                console.log(id);
+                Swal.fire({
+                title: 'Delete this user?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/deleteUser',
+                            type: 'DELETE',
+                            data: {
+                                "_token": "{{ csrf_token() }}",
+                                "id": id
+                            },
+                            dataType: 'json',
+                            success: function(response){
+                                console.log(response);
+                                if (response.error != null || response.error != undefined) {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: response.error,
+                                        icon: 'error',
+                                        confirmButtonText: 'Ok',
+                                    })
+                                } else{
+                                    Swal.fire({
+                                        title: 'Deleted!',
+                                        text: 'User has been deleted.',
+                                        icon: 'success',
+                                        confirmButtonText: 'Ok',
+                                    }).then(isConfirmed => {
+                                        table.ajax.reload();
+                                    });
+                                }
+                            },
+                            error: function(error){
+                                console.log('error');
+                            }
+                        })
+                    }
+                })
+            } else {
+                var modal = $('#modalEdit');
+                var id = $(this).data('id');
+                var name = $(this).data('name');
+                var username = $(this).data('username');
+                modal.find('.modal-body input[name="user_id"]').val(id);
+                modal.find('.modal-body input[name="name"]').val(name);
+                modal.find('.modal-body input[name="username"]').val(username);
+                modal.modal('show');
+            }
         });
         //ajax post with sweet alert
         $('#addUser').on('submit', function(e){
@@ -210,7 +262,8 @@
                         showConfirmButton: true,
                         timer: 5000,
                     }).then(isConfirmed => {
-                        location.reload();
+                        table.ajax.reload();
+                        $('#addUser').trigger("reset");
                     });
                 },
                 error: function(data) {
@@ -255,7 +308,7 @@
                         showConfirmButton: true,
                         timer: 5000
                     }).then(isConfirmed => {
-                        location.reload();
+                        table.ajax.reload();
                     });
                 },
                 error: function(data) {
