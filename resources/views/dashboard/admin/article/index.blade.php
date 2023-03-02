@@ -55,29 +55,25 @@
                                 @else
                                     <td>
                                         @foreach ($user->article_user as $article_user)
-                                            <tr>
-                                                <td>{{ $article_user->article->no }}</td>
-                                            </tr>
+                                            {{ $article_user->article->no }} <br>
+                                            <hr>
                                         @endforeach
                                     </td>
                                     <td>
                                         @foreach ($user->article_user as $article_user)
-                                            <tr>
-                                                <td>{{ $article_user->article->title }}</td>
-                                            </tr>
+                                            {{ $article_user->article->title }} <br>
+                                            <hr>
                                         @endforeach
                                     </td>
                                     <td>
                                         @foreach ($user->article_user as $article_user)
-                                            <tr>
-                                                <td>
-                                                    @if ($article_user->assessed == 1)
-                                                        <ion-icon name="checkmark-circle-outline"></ion-icon>
-                                                    @else
-                                                        <ion-icon name="close-circle-outline"></ion-icon>
-                                                    @endif
-                                                </td>
-                                            </tr>
+                                            @if ($article_user->is_assessed == 1)
+                                                <ion-icon name="checkmark-circle-outline"></ion-icon> <br>
+                                                <hr>
+                                            @else
+                                                <ion-icon name="close-circle-outline"></ion-icon> <br>
+                                                <hr>
+                                            @endif
                                         @endforeach
                                     </td>
                                 @endif

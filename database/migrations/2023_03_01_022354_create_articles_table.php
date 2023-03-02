@@ -35,7 +35,6 @@ return new class extends Migration
             $table->string('keyword')->default(NULL);
             $table->string('edatabase')->default(NULL);
             $table->string('edatabase_2')->default(NULL);
-            $table->tinyInteger('is_assessed')->default(0);
             $table->string('file')->default(NULL);
             $table->foreignId('project_id');
             $table->timestamps();
