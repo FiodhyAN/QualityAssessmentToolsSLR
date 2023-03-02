@@ -125,21 +125,6 @@
                             <th></th>
                         </tr>
                     </thead>
-                    {{-- <tbody>
-                        @foreach ($projects as $project)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $project->project_name }}</td>
-                            <td>{{ $project->project_user[0]->user->name }}</td>
-                            <td>
-                                <a class="btn btn-primary" id="modal_show_btn" data-bs-toggle="modal" data-bs-target="#modalEdit" data-id="{{ $project->id }}" data-name="{{ $project->project_name }}" data-limit="{{ $project->limit_reviewer }}" data-user="{{ $project->project_user[0]->user_id }}">
-                                    <ion-icon name="create-outline"></ion-icon> Edit
-                                </a>
-                                <button class="btn btn-danger deleteProject" data-id="{{ $project->id }}"><ion-icon name="trash-outline"></ion-icon> Delete</button>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody> --}}
                 </table>
             </div>
         </div>

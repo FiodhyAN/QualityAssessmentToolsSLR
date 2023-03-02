@@ -24,7 +24,7 @@
                         @if (auth()->user()->is_superAdmin == true)
                           Administrator
                         @elseif (auth()->user()->is_admin == true)
-                          Admin Proyek
+                          Admin Projek
                         @else
                           Assessor
                         @endif

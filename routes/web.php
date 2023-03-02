@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProjectAdminController;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
@@ -41,6 +42,10 @@ Route::delete('/deleteProject', [ProjectController::class, 'delete'])->middlewar
 //ajax
 Route::get('/findProjectUser', [ProjectController::class, 'findProjectUser'])->middleware('auth');
 
+//Admin
+Route::get('/dashboard/admin/project', [ProjectAdminController::class, 'index'])->middleware('auth');
+Route::get('/dashboard/admin/project/{project:id}', [ProjectAdminController::class, 'show'])->middleware('auth');
+Route::get('/articleTable', [ProjectAdminController::class, 'articleTable'])->middleware('auth');
 //////////////////////////////////////
 // PENGOLAHAN DATA
 /////////////////////////////////////
