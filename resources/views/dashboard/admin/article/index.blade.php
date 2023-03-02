@@ -6,7 +6,7 @@
 
     <div class="card">
         <div class="col mb-3 mt-3 ms-3">
-            <button type="button" class="btn btn-sm btn-success px-5"><ion-icon name="add-circle-outline"></ion-icon>Add Article</button>
+            <a href="#"><button type="button" class="btn btn-sm btn-success px-5"><ion-icon name="add-circle-outline"></ion-icon>Add Article</button></a>
             <button type="button" class="btn btn-sm btn-secondary px-5"><ion-icon name="document-outline"></ion-icon>Excel Template</button>
             <button type="button" class="btn btn-sm btn-primary px-5"><ion-icon name="cloud-upload-outline"></ion-icon>Import Excel</button>
 
@@ -47,15 +47,44 @@
                     </thead>
                     <tbody>
                         @foreach ($users as $user)
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $user->name }}</td>
-                            <td>Testing</td>
-                            <td>Testing</td>
-                            <td>Testing</td>
-                            <td>
-                                <button type="button" class="btn btn-sm btn-primary px-5"><ion-icon name="eye-outline"></ion-icon>View</button>
-                                <button type="button" class="btn btn-sm btn-success px-5"><ion-icon name="checkmark-circle-outline"></ion-icon>Assess</button>
-                            </td>
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $user->name }}</td>
+                                @if (count($user->article_user) == 0)
+                                    <td colspan="3" class="text-center">No Article Assigned</td>
+                                @else
+                                    <td>
+                                        @foreach ($user->article_user as $article_user)
+                                            <tr>
+                                                <td>{{ $article_user->article->no }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach ($user->article_user as $article_user)
+                                            <tr>
+                                                <td>{{ $article_user->article->title }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach ($user->article_user as $article_user)
+                                            <tr>
+                                                <td>
+                                                    @if ($article_user->assessed == 1)
+                                                        <ion-icon name="checkmark-circle-outline"></ion-icon>
+                                                    @else
+                                                        <ion-icon name="close-circle-outline"></ion-icon>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </td>
+                                @endif
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-success px-5"><ion-icon name="checkmark-circle-outline"></ion-icon>Assess</button>
+                                </td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
@@ -76,8 +105,8 @@
             columns: [
                 {
                     title: 'ID - No',
-                    data: 'id',
-                    name: 'id',
+                    data: 'no',
+                    name: 'no',
                     width: '10%',
                 },
                 {
@@ -85,6 +114,9 @@
                     data: 'title',
                     name: 'title',
                     width: '30%',
+                    render: function(data, type, row) {
+                        return '<span style="white-space:normal">' + data + "</span>";
+                    }
                 },
                 {
                     title: 'Year',
@@ -97,12 +129,18 @@
                     data: 'publication',
                     name: 'publication',
                     width: '10%',
+                    render: function(data, type, row) {
+                        return '<span style="white-space:normal">' + data + "</span>";
+                    }
                 },
                 {
                     title: 'Authors',
                     data: 'authors',
                     name: 'authors',
                     width: '20%',
+                    render: function(data, type, row) {
+                        return '<span style="white-space:normal">' + data + "</span>";
+                    }
                 },
                 {
                     title: 'Action',
@@ -115,6 +153,13 @@
             ]
         });
 
-        var table = $('#assessment_table').DataTable();
+        var assessment_table = $('#assessment_table').DataTable({
+            //no column sorting and searching false
+            columnDefs: [
+                { "orderable": false, "targets": 0 },
+                { "searchable": false, "targets": 0 },
+                { "width": 20, "targets": 0 }
+            ],
+        });
     </script>
 @endsection

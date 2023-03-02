@@ -14,22 +14,24 @@ return new class extends Migration
     public function up()
     {
         Schema::create('articles', function (Blueprint $table) {
-            $table->string('id')->unique()->primary();
+            $table->id();
+            $table->string('no')->default(NULL);
             $table->string('title')->default(NULL);
             $table->string('publication')->default(NULL);
             $table->string('index')->default(NULL);
             $table->string('quartile')->default(NULL);
             $table->integer('year')->default(NULL);
             $table->string('authors')->default(NULL);
-            $table->text('abstracts');
-            $table->text('keywords');
+            $table->text('abstracts')->default(NULL);
+            $table->text('keywords')->default(NULL);
             $table->string('language')->default(NULL);
             $table->string('type')->default(NULL);
             $table->string('publisher')->default(NULL);
-            $table->text('references_ori');
+            $table->text('references_ori')->default(NULL);
             $table->text('references_filter');
             $table->integer('cited')->default(0);
             $table->integer('cited_gs')->default(0);
+            $table->string('citing_new')->default(NULL);
             $table->string('keyword')->default(NULL);
             $table->string('edatabase')->default(NULL);
             $table->string('edatabase_2')->default(NULL);

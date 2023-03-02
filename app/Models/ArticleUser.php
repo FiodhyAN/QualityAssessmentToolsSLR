@@ -5,19 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Article extends Model
+class ArticleUser extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
 
-    public function article_user()
+    public function article()
     {
-        return $this->hasMany(ArticleUser::class);
+        return $this->belongsTo(Article::class);
     }
 
-    public function project()
+    public function user()
     {
-        return $this->belongsTo(Project::class);
+        return $this->belongsTo(User::class);
     }
 }

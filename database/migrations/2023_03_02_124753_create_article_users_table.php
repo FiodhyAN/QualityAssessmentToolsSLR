@@ -13,9 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('articles', function (Blueprint $table) {
-            $table->string('citing_new')->nullable()->contrained();
-            $table->foreign('citing_new')->references('id')->on('articles');
+        Schema::create('article_users', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('article_id');
+            $table->foreignId('user_id');
+            $table->tinyInteger('is_assessed')->default(0);
+            $table->timestamps();
         });
     }
 
@@ -26,8 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('articles', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('article_users');
     }
 };
