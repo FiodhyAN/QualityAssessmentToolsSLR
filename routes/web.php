@@ -46,6 +46,8 @@ Route::get('/findProjectUser', [ProjectController::class, 'findProjectUser'])->m
 Route::get('/dashboard/admin/project', [ProjectAdminController::class, 'index'])->middleware('auth');
 Route::get('/dashboard/admin/project/{project:id}', [ProjectAdminController::class, 'show'])->middleware('auth');
 Route::get('/articleTable', [ProjectAdminController::class, 'articleTable'])->middleware('auth');
+Route::get('/dashboard/admin/assignment', [ProjectAdminController::class, 'assessment'])->middleware('auth');
+Route::get('/dashboard/admin/article/create', [ProjectAdminController::class, 'create'])->middleware('auth');
 //////////////////////////////////////
 // PENGOLAHAN DATA
 /////////////////////////////////////
