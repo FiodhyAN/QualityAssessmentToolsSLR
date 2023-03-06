@@ -107,6 +107,7 @@ function getData(){
 }
 
 Route::get('/data/rank', function () {
+    $result = getData();
     // transporse table
     // https://stackoverflow.com/questions/6297591/how-to-invert-transpose-the-rows-and-columns-of-an-html-table
     $response = Http::timeout(999999)->post('http://127.0.0.1:5000/data/rank', [
