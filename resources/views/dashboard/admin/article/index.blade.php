@@ -4,9 +4,16 @@
     <h1>Article Management</h1>
     <hr/>
 
+    @if(session()->has('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>{{ session('success') }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <div class="card">
         <div class="col mb-3 mt-3 ms-3">
-            <a href="#"><button type="button" class="btn btn-sm btn-success px-5 mb-2"><ion-icon name="add-circle-outline"></ion-icon>Add Article</button></a>
+            <a href="/dashboard/admin/article/create"><button type="button" class="btn btn-sm btn-success px-5 mb-2"><ion-icon name="add-circle-outline"></ion-icon>Add Article</button></a>
             <button type="button" class="btn btn-sm btn-secondary px-5 mb-2"><ion-icon name="document-outline"></ion-icon>Excel Template</button>
             <button type="button" class="btn btn-sm btn-primary px-5 mb-2"><ion-icon name="cloud-upload-outline"></ion-icon>Import Excel</button>
 

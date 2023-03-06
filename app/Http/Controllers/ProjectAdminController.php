@@ -66,10 +66,4 @@ class ProjectAdminController extends Controller
             ->rawColumns(['action'])
             ->toJson();
     }
-
-    public function create()
-    {
-        $this->authorize('admin');
-        return view('dashboard.admin.article.create');
-    }
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectAdminController;
+use App\Http\Controllers\ArticleController;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
@@ -47,7 +48,8 @@ Route::get('/dashboard/admin/project', [ProjectAdminController::class, 'index'])
 Route::get('/dashboard/admin/project/{project:id}', [ProjectAdminController::class, 'show'])->middleware('auth');
 Route::get('/articleTable', [ProjectAdminController::class, 'articleTable'])->middleware('auth');
 Route::get('/dashboard/admin/assignment', [ProjectAdminController::class, 'assessment'])->middleware('auth');
-Route::get('/dashboard/admin/article/create', [ProjectAdminController::class, 'create'])->middleware('auth');
+Route::get('/dashboard/admin/article/create', [ArticleController::class, 'create'])->middleware('auth');
+Route::post('/dashboard/admin/article/store', [ArticleController::class, 'store'])->middleware('auth');
 //////////////////////////////////////
 // PENGOLAHAN DATA
 /////////////////////////////////////
