@@ -65,7 +65,6 @@ function getData(){
                 ->get();
 
     $data = json_decode($articles, true);
-
     $result = [];
 
     $flag=0;
