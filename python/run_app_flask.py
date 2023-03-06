@@ -152,7 +152,8 @@ def makeTermGraph(table, authors, author_matrix):
         value = int(author_matrix[row_index, 2][0])
         G.add_edge(authors[x], authors[y], weight=value)
 
-    fig, ax = plt.subplots(figsize=(50,40)) # increase plot size to 10x8 inches
+    # fig, ax = plt.subplots(figsize=(15,12)) # increase plot size to 10x8 inches
+    fig, ax = plt.subplots(figsize=(90,72)) # increase plot size to 10x8 inches
     pos = nx.spring_layout(G, seed=7, k=0.4) # decrease k parameter to increase spacing between nodes
     nx.draw_networkx_nodes(G, pos, node_size=200, alpha=0.7) # increase node size to 200
     nx.draw_networkx_edges(G, pos, edgelist=G.edges(), width=1, alpha=0.5, edge_color="b")
