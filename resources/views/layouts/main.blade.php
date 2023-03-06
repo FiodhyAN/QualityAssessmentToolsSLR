@@ -33,6 +33,9 @@
   {{-- bootstrap icons --}}
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
 
+  {{-- datepicker --}}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
   <style>
     .loader_bg{
       position:fixed;
@@ -174,7 +177,10 @@
       $(".loader_bg").fadeOut("slow");
     });
   </script>
+  {{-- sweetalert --}}
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  {{-- datepicker --}}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
   @yield('script')
 
 
