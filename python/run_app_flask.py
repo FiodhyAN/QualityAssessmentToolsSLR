@@ -144,14 +144,20 @@ def makeTermGraph(table, authors, author_matrix):
     author_matrix = np.array(author_matrix)
     G = nx.Graph()
 
+    # Add nodes to the graph
+    for author in authors:
+        G.add_node(author)
+
     rows, cols = np.where(table > 0)
     edges = zip(rows.tolist(), cols.tolist())
 
+    # Add edges to the graph with weights
     for x, y in edges:
         row_index = np.where((author_matrix[:,0] == authors[y]) & (author_matrix[:,1] == authors[x]))
         value = int(author_matrix[row_index, 2][0])
         G.add_edge(authors[x], authors[y], weight=value)
 
+    # Draw the graph
     # fig, ax = plt.subplots(figsize=(15,12)) # increase plot size to 10x8 inches
     fig, ax = plt.subplots(figsize=(90,72)) # increase plot size to 10x8 inches
     pos = nx.spring_layout(G, seed=7, k=0.4) # decrease k parameter to increase spacing between nodes
