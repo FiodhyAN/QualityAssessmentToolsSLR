@@ -175,8 +175,16 @@ class ArticleController extends Controller
         return $article->delete();
     }
 
-    public function import()
+    public function storeExcel(Request $request)
     {
-        Excel::import(new ArticleImport, request()->file('file'));
+        $this->authorize('admin');
+        $request->validate([
+            'file' => 'required|mimes:xls,xlsx'
+        ]);
+        $file = $request->file('excel_file');
+
+        Execel::import(new ArticleImport($request->project_id), $file);
+
+        return back()->with('success', 'Excel data imported successfully.');
     }
 }

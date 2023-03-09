@@ -6,6 +6,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectAdminController;
 use App\Http\Controllers\ArticleController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
@@ -52,6 +53,7 @@ Route::post('/dashboard/admin/article/store', [ArticleController::class, 'store'
 Route::delete('/deleteArticle', [ArticleController::class, 'delete'])->middleware('auth');
 Route::get('/dashboard/admin/article/{id}/edit', [ArticleController::class, 'edit'])->middleware('auth')->name('article.edit');
 Route::patch('/dashboard/admin/article/update', [ArticleController::class, 'update'])->middleware('auth')->name('article.update');
+Route::post('/article/import', [ArticleController::class, 'storeExcel'])->middleware('auth')->name('article.import');
 //////////////////////////////////////
 // PENGOLAHAN DATA
 /////////////////////////////////////

@@ -15,8 +15,7 @@
         <div class="col mb-3 mt-3 ms-3">
             <a href="/dashboard/admin/article/create?id={{ $project->project->id }}"><button type="button" class="btn btn-sm btn-success px-5 mb-2"><ion-icon name="add-circle-outline"></ion-icon>Add Article</button></a>
             <button type="button" class="btn btn-sm btn-secondary px-5 mb-2"><ion-icon name="document-outline"></ion-icon>Excel Template</button>
-            <button type="button" class="btn btn-sm btn-primary px-5 mb-2"><ion-icon name="cloud-upload-outline"></ion-icon>Import Excel</button>
-
+            <button type="button" class="btn btn-sm btn-primary px-5 mb-2" id="import_excel" data-bs-toggle="modal" data-bs-target="#exampleModal"><ion-icon name="cloud-upload-outline"></ion-icon>Import Excel</button>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -90,6 +89,33 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Import Excel</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('article.import') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <input type="hidden" name="project_id" value="{{ $project->project->id }}">
+                        <label for="formFile" class="form-label">Import Excel</label>
+                        <input class="form-control" type="file" id="formFile" name="excel_file">
+                    </div>  
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Import</button>
+                </div>
+            </form>
+          </div>
+        </div>
+    </div>
+
 @endsection
 @section('script')
     <script>
