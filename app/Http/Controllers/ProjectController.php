@@ -71,7 +71,8 @@ class ProjectController extends Controller
             'is_admin' => true,
         ]);
 
-        return redirect()->back()->with('success', 'Project Created Successfully');
+        // return ->with('success', 'Project Created Successfully');
+        // return json_encode(['success' => 'Project Created Successfully']);
     }
 
     public function update(Request $request)

@@ -179,7 +179,7 @@
             e.preventDefault();
             if($(this).hasClass('deleteProject')) {
                 var id = $(this).data('id');
-                console.log(id);
+                
                 Swal.fire({
                 title: 'Delete this project?',
                 text: "You won't be able to revert this!",
@@ -214,7 +214,7 @@
             } else {
                 var modal = $('#modalEdit');
                 var id = $(this).data('id');
-                console.log(id);
+                
                 var name = $(this).data('project_name');
                 var limit = $(this).data('limit');
                 var user = $(this).data('admin_project');
@@ -280,6 +280,12 @@
                     }).then(isConfirmed => {
                         table.ajax.reload();
                         $('#addProject').trigger('reset');
+                        //reset the select option
+                        $('.select_user').val(null).trigger('change');
+                        // remove all invalid feedback
+                        $('.invalid-feedback').text('');
+                        // remove all is-invalid class
+                        $('.is-invalid').removeClass('is-invalid');
                     });
                 },
                 error: function(data){
