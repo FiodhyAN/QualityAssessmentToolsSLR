@@ -45,15 +45,18 @@ Route::delete('/deleteProject', [ProjectController::class, 'delete'])->middlewar
 Route::get('/findProjectUser', [ProjectController::class, 'findProjectUser'])->middleware('auth');
 
 //Admin
+//project
 Route::get('/dashboard/admin/project', [ProjectAdminController::class, 'index'])->middleware('auth');
 Route::get('/dashboard/admin/project/{id}', [ProjectAdminController::class, 'show'])->middleware('auth')->name('project.show');
-Route::get('/articleTable', [ArticleController::class, 'articleTable'])->middleware('auth')->name('article.table');
+//article
+Route::get('/articleTable/{id}', [ArticleController::class, 'articleTable'])->middleware('auth')->name('article.table');
 Route::get('/dashboard/admin/article/create', [ArticleController::class, 'create'])->middleware('auth')->name('article.create');
 Route::post('/dashboard/admin/article/store', [ArticleController::class, 'store'])->middleware('auth')->name('article.store');
 Route::delete('/deleteArticle', [ArticleController::class, 'delete'])->middleware('auth');
 Route::get('/dashboard/admin/article/{id}/edit', [ArticleController::class, 'edit'])->middleware('auth')->name('article.edit');
 Route::patch('/dashboard/admin/article/update', [ArticleController::class, 'update'])->middleware('auth')->name('article.update');
 Route::post('/article/import', [ArticleController::class, 'storeExcel'])->middleware('auth')->name('article.import');
+Route::get('/article/download', [ArticleController::class, 'downloadExcel'])->middleware('auth')->name('article.download');
 //////////////////////////////////////
 // PENGOLAHAN DATA
 /////////////////////////////////////

@@ -11,10 +11,10 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ArticleController extends Controller
 {
-    public function articleTable()
+    public function articleTable($id)
     {
         $this->authorize('admin');
-        $articles = Article::all();
+        $articles = Article::where('project_id', $id)->get();
         return DataTables::of($articles)
             ->addColumn('no', function(Article $article){
                 return $article->no;
@@ -25,8 +25,8 @@ class ArticleController extends Controller
             ->addColumn('year', function(Article $article){
                 return $article->year;
             })
-            ->addColumn('publisher', function(Article $article){
-                return $article->publisher;
+            ->addColumn('publication', function(Article $article){
+                return $article->publication;
             })
             ->addColumn('authors', function(Article $article){
                 return $article->authors;
@@ -57,6 +57,7 @@ class ArticleController extends Controller
             'kode_artikel' => 'required',
             'file' => 'mimes:pdf|nullable',
             'title' => 'required',
+            'publication' => 'required',
             'year' => 'required',
             'authors' => 'required',
             'language' => 'required',
@@ -79,6 +80,7 @@ class ArticleController extends Controller
             'no' => $request->kode_artikel,
             'file' => $file_name ?? null,
             'title' => $request->title,
+            'publication' => $request->publication,
             'index' => $request->index ?? null,
             'quartile' => $request->quartile ?? null,
             'year' => $request->year,
@@ -92,7 +94,7 @@ class ArticleController extends Controller
             'references_filter' => $request->references_filter ?? null,
             'cited' => $request->cited,
             'cited_gs' => $request->cited_gs,
-            'citing_new' => $request->cited_other,
+            'citing' => $request->cited_other,
             'keyword' => $request->keyword,
             'edatabase' => $request->edatabase,
             'edatabase_2' => $request->edatabase2 ?? null,
@@ -119,6 +121,7 @@ class ArticleController extends Controller
             'kode_artikel' => 'required',
             'file' => 'mimes:pdf|nullable',
             'title' => 'required',
+            'publication' => 'required',
             'year' => 'required',
             'authors' => 'required',
             'language' => 'required',
@@ -147,6 +150,7 @@ class ArticleController extends Controller
             'no' => $request->kode_artikel,
             'file' => $file_name ?? $article->file,
             'title' => $request->title ?? $article->title,
+            'publication' => $request->publication ?? $article->publication,
             'index' => $request->index ?? $article->index,
             'quartile' => $request->quartile ?? $article->quartile,
             'year' => $request->year ?? $article->year,
@@ -179,12 +183,18 @@ class ArticleController extends Controller
     {
         $this->authorize('admin');
         $request->validate([
-            'file' => 'required|mimes:xls,xlsx'
+            'excel_file' => 'required|mimes:xls,xlsx'
         ]);
         $file = $request->file('excel_file');
 
-        Execel::import(new ArticleImport($request->project_id), $file);
+        Excel::import(new ArticleImport($request->project_id), $file);
 
-        return back()->with('success', 'Excel data imported successfully.');
+        return response()->json(['success' => 'Excel data imported successfully.']);
+    }
+
+    public function downloadExcel()
+    {
+        $this->authorize('admin');
+        return response()->download(public_path('articles/TemplateSLR.xlsx'));
     }
 }

@@ -13,6 +13,7 @@ class ProjectAdminController extends Controller
 {
     public function index()
     {
+        $article = Article::all();
         $this->authorize('admin');
         $projects = ProjectUser::with('project')->where('user_id', auth()->user()->id)->get();
         return view('dashboard.admin.project', compact('projects'));

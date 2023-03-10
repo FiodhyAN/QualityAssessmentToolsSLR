@@ -14,7 +14,7 @@
     <div class="card">
         <div class="col mb-3 mt-3 ms-3">
             <a href="/dashboard/admin/article/create?id={{ $project->project->id }}"><button type="button" class="btn btn-sm btn-success px-5 mb-2"><ion-icon name="add-circle-outline"></ion-icon>Add Article</button></a>
-            <button type="button" class="btn btn-sm btn-secondary px-5 mb-2"><ion-icon name="document-outline"></ion-icon>Excel Template</button>
+            <a href="/article/download"><button type="button" class="btn btn-sm btn-secondary px-5 mb-2"><ion-icon name="document-outline"></ion-icon>Excel Template</button></a>
             <button type="button" class="btn btn-sm btn-primary px-5 mb-2" id="import_excel" data-bs-toggle="modal" data-bs-target="#exampleModal"><ion-icon name="cloud-upload-outline"></ion-icon>Import Excel</button>
         </div>
         <div class="card-body">
@@ -98,7 +98,7 @@
               <h5 class="modal-title" id="exampleModalLabel">Import Excel</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('article.import') }}" method="POST" enctype="multipart/form-data">
+            <form id="form_import_excel" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
@@ -119,12 +119,62 @@
 @endsection
 @section('script')
     <script>
+        $('#form_import_excel').on('submit', function(e) {
+            e.preventDefault();
+            console.log('test');
+            $('#exampleModal').modal('hide');
+
+            // show loading sweeralert
+            Swal.fire({
+                title: 'Importing...',
+                html: 'Please wait while importing article.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                },
+            });
+
+            // post with ajax
+            $.ajax({
+                url: '{{ route('article.import') }}',
+                type: 'POST',
+                data: new FormData(this),
+                dataType: 'JSON',
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(result){
+                    console.log(result);
+                    // close loading sweeralert
+                    Swal.close();
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Article has been imported.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(isConfirmed => {
+                        table.ajax.reload();
+                        //reset form
+                        $('#form_import_excel')[0].reset();
+                    })
+                },
+                error: function(result) {
+                    console.log(result);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Article failed to import.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    })
+                }
+            });
+        });
         // Datatable
         var table = $('#article_table').DataTable({
             serverSide: true,
             processing: true,
             ajax: {
-                url: '{{ route('article.table') }}',
+                url: '{{ route('article.table', $project->project->id) }}',
                 type: 'GET',
             },
             columns: [
@@ -150,9 +200,9 @@
                     width: '10%',
                 },
                 {
-                    title: 'Publisher',
-                    data: 'publisher',
-                    name: 'publisher',
+                    title: 'Publication',
+                    data: 'publication',
+                    name: 'publication',
                     width: '10%',
                     render: function(data, type, row) {
                         return '<span style="white-space:normal">' + data + "</span>";
@@ -209,6 +259,7 @@
                             })
                         },
                         error: function(result) {
+                            console.log(result);
                             Swal.fire({
                                 title: 'Error!',
                                 text: 'Article failed to delete.',
@@ -229,7 +280,5 @@
                 { "width": 20, "targets": 0 }
             ],
         });
-
-
     </script>
 @endsection

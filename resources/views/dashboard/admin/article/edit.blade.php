@@ -44,6 +44,16 @@
                     @enderror
                 </div>
                 <div class="col-12">
+                    <label for="publication" class="form-label">Publication</label>
+                    <small class="text-danger">*required</small>
+                    <input class="form-control @error('publication') is-invalid @enderror" type="text" placeholder="Publication" name="publication" aria-label="default input example" value="{{ old('publication', $article->publication) }}" required>
+                    @error('publication')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+                <div class="col-12">
                     <label for="index" class="form-label">Index Journal</label>
                     <input class="form-control" type="text" placeholder="Index" name="index" aria-label="default input example" value="{{ old('index', $article->index) }}">
                 </div>

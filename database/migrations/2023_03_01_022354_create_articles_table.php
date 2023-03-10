@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('no')->default(NULL)->nullable();
             $table->string('title')->default(NULL)->nullable();
+            $table->string('publication')->default(NULL)->nullable();
             $table->string('index')->default(NULL)->nullable();
             $table->string('quartile')->default(NULL)->nullable();
             $table->integer('year')->default(NULL)->nullable();
@@ -28,8 +29,9 @@ return new class extends Migration
             $table->string('publisher')->default(NULL)->nullable();
             $table->text('references_ori')->default(NULL)->nullable();
             $table->text('references_filter')->default(NULL)->nullable();
-            $table->integer('cited')->default(0)->nullable();
-            $table->integer('cited_gs')->default(0)->nullable();
+            $table->string('cited')->default(NULL)->nullable();
+            $table->string('cited_gs')->default(NULL)->nullable();
+            $table->string('citing')->default(NULL)->nullable();
             $table->string('citing_new')->default(NULL)->nullable();
             $table->string('keyword')->default(NULL)->nullable();
             $table->string('edatabase')->default(NULL)->nullable();
