@@ -53,6 +53,10 @@ class AssignReviewerController extends Controller
             }
         }
         return DataTables::of($article)
+            ->addColumn('action', function(Article $article){
+                //add checkbox
+                return '<input type="checkbox" name="article_id[]" class="cb_child" value="'.$article->id.'">';
+            })->rawColumns(['action'])
             ->addColumn('no', function(Article $article){
                 return $article->no;
             })
@@ -84,6 +88,10 @@ class AssignReviewerController extends Controller
             }
         }
         return DataTables::of($articles)
+            ->addColumn('action', function(Article $article){
+                //add checkbox
+                return '<input type="checkbox" name="article_id[]" class="cb_child" value="'.$article->id.'">';
+            })->rawColumns(['action'])
             ->addColumn('no', function(Article $article){
                 return $article->no;
             })
