@@ -12,29 +12,6 @@ class AssignReviewerController extends Controller
     public function index()
     {
         $this->authorize('admin');
-        //not assign table
-        // $data = Article::with(['article_user' => function($query) {
-        //     $query->where('user_id', request()->uid);
-        // }])->where('project_id', request()->pid)->get();
-        // $article = [];
-        // foreach ($data as $key => $value) {
-        //     if ($value->article_user->isEmpty()) {
-        //         $article[$key] = $value;
-        //     }
-        // }
-        // return $article;
-        
-        //assign table
-        // $data = ArticleUser::with(['article' => function($query){
-        //     $query->where('project_id', request()->pid);
-        // }])->where('user_id', request()->uid)->get();
-        // $articles = [];
-        // foreach ($data as $key => $value) {
-        //     if ($value->article != null) {
-        //         $articles[$key] = $value->article;
-        //     }
-        // }
-        // return $articles;
         return view('dashboard.admin.article.assign', [
             'project_id' => request()->pid,
             'user_id' => request()->uid
@@ -48,8 +25,8 @@ class AssignReviewerController extends Controller
         }])->where('project_id', $request->project_id)->get();
         $article = [];
         foreach ($data as $key => $value) {
-            if ($value->article_user->isEmpty()) {
-                $article[$key] = $value;
+            if (count($value->article_user) == 0) {
+                $article[] = $value;
             }
         }
         return DataTables::of($article)
@@ -90,7 +67,7 @@ class AssignReviewerController extends Controller
         return DataTables::of($articles)
             ->addColumn('action', function(Article $article){
                 //add checkbox
-                return '<input type="checkbox" name="article_id[]" class="cb_child" value="'.$article->id.'">';
+                return '<input type="checkbox" name="article_id[]" class="cb_child_assign" value="'.$article->id.'">';
             })->rawColumns(['action'])
             ->addColumn('no', function(Article $article){
                 return $article->no;

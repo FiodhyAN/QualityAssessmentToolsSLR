@@ -3,7 +3,7 @@
 @section('container')
     <h1>Assign Article</h1>
     <hr>
-    <a href="/dashboard/admin/project/{{ $project_id }}"><button type="button" class="btn btn-secondary mb-2 ms-3"><ion-icon name="arrow-back"></ion-icon> Back to Project</button></a>
+    <a href="/dashboard/admin/project/{{ $project_id }}"><button type="button" class="btn btn-secondary mb-2"><ion-icon name="arrow-back"></ion-icon> Back to Project</button></a>
     <div class="card">
         <div class="col mb-3 mt-3 ms-3">
             <button disabled type="button" class="btn btn-primary" id="assign_btn"><ion-icon name="bookmark"></ion-icon> Assign Article</button>
@@ -279,7 +279,7 @@
                         orderable: false,
                         searchable: false,
                         render: function(data, type, row) {
-                            return '<input type="checkbox" class="cb_child" value="' + data + '">';
+                            return '<input type="checkbox" class="cb_child_assign" value="' + data + '">';
                         }
                     },
                     {
@@ -332,7 +332,7 @@
                 },
             });
 
-            $('#AssignTable tbody').on('click', '.cb_child', function(e){
+            $('#AssignTable tbody').on('click', '.cb_child_assign', function(e){
                 var $row = $(this).closest('tr');
 
                 // Get row data
@@ -363,7 +363,7 @@
                 }
 
                 // Update state of "Select all" control
-                updateDataTableSelectAllCtrl(articleAssign);
+                updateDataTableSelectAllCtrlAssign(articleAssign);
 
                 // Prevent click event from propagating to parent
                 e.stopPropagation();
@@ -387,7 +387,7 @@
 
             articleNotAssign.on('draw', function(){
                 // Update state of "Select all" control
-                updateDataTableSelectAllCtrl(articleAssign);
+                updateDataTableSelectAllCtrlAssign(articleAssign);
             });
         });
         // console.log(articleNotAssign);

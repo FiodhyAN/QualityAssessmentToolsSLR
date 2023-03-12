@@ -32,9 +32,9 @@ class ArticleController extends Controller
             ->addColumn('authors', function(Article $article){
                 return $article->authors;
             })
-            ->addColumn('action', function(Article $article){
+            ->addColumn('action', function(Article $article) use ($id) {
                 $btn = '<button type="button" class="btn btn-warning text-white btn-sm me-2 aksi scoreArticle" data-id="'.$article->id.'"><ion-icon name="stats-chart-outline"></ion-icon> Score</button>';
-                $btn .= '<a href="/dashboard/admin/article/'.$article->id.'/edit"><button type="button" class="btn btn-primary btn-sm aksi"><ion-icon name="create-outline"></ion-icon> Edit</button></a>';
+                $btn .= '<a href="/dashboard/admin/article/'.$article->id.'/edit?pid='.$id.'"><button type="button" class="btn btn-primary btn-sm aksi"><ion-icon name="create-outline"></ion-icon> Edit</button></a>';
                 $btn .= '<button type="button" class="btn btn-danger btn-sm ms-2 aksi deleteArticle" data-id="'.$article->id.'"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
                 return $btn;
             })
@@ -110,7 +110,8 @@ class ArticleController extends Controller
         $article = Article::find($id);
         // return $article;
         return view('dashboard.admin.article.edit', [
-            'article' => $article
+            'article' => $article,
+            'project_id' => request()->pid
         ]);
     }
 
