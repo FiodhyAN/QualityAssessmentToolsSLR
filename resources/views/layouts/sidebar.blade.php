@@ -1,7 +1,7 @@
 <aside class="sidebar-wrapper" data-simplebar="true">
     <div class="sidebar-header">
       <div>
-        <img src="/assets/images/logo/logo-icon-2.png" class="logo-icon" alt="logo icon">
+        <img src="/assets/images/logo/Lambang-ITS-2-300x300.png" class="logo-icon" alt="logo icon">
       </div>
       <div>
         <h4 class="logo-text text-center">Assessment System</h4>

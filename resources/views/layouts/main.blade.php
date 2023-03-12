@@ -2,7 +2,7 @@
 <html lang="en" class="light-theme">
 
 <head>
-  <link rel="icon" href="/assets/images/logo/logo-no-text-removebg-preview.png" type="image/x-icon" />
+  <link rel="icon" href="/assets/images/logo/Lambang-ITS-2-300x300.png" type="image/x-icon" />
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -35,6 +35,9 @@
 
   {{-- datepicker --}}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+  {{-- datatable checkbox --}}
+  <link type="text/css" href="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.12/css/dataTables.checkboxes.css" rel="stylesheet" />
 
   <style>
     .loader_bg{
@@ -181,6 +184,8 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   {{-- datepicker --}}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  {{-- datatable checkbox --}}
+  <script type="text/javascript" src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.12/js/dataTables.checkboxes.min.js"></script>
   @yield('script')
 
 

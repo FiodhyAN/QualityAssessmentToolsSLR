@@ -104,8 +104,8 @@
                     <small class="text-danger">*required</small>
                     <select class="form-select @error('article_type') is-invalid @enderror" name="article_type" aria-label="Default select example" required>
                         <option disabled selected>Select Type</option>
-                        <option value="journal" {{ old('article_type', $article->type) == 'journal' ? 'selected' : '' }}>Journal</option>
-                        <option value="proceeding" {{ old('article_type', $article->type) == 'proceeding' ? 'selected' : '' }}>Proceeding</option>
+                        <option value="Journal" {{ old('article_type', $article->type) == 'Journal' || 'journal' ? 'selected' : '' }}>Journal</option>
+                        <option value="Proceeding" {{ old('article_type', $article->type) == 'Proceeding' || 'proceeding' ? 'selected' : '' }}>Proceeding</option>
                     </select>
                     @error('article_type')
                         <div class="invalid-feedback">

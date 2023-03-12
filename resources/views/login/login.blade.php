@@ -4,7 +4,7 @@
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">
-  <link rel="icon" href="/assets/images/favicon.png" type="image/png" sizes="16x16">
+  <link rel="icon" href="/assets/images/Lambang-ITS-2-300x300.png" type="image/png" sizes="16x16">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- loader-->
