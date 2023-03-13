@@ -91,4 +91,21 @@ class AssignReviewerController extends Controller
             ->rawColumns(['action'])
             ->toJson();
     }
+
+    public function assignArticle(Request $request)
+    {
+        $this->authorize('admin');
+        $article_id = $request->article_id;
+        $user_id = $request->user_id;
+        foreach ($article_id as $key => $value) {
+            ArticleUser::create([
+                'article_id' => $value,
+                'user_id' => $user_id
+            ]);
+        }
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Article has been assigned'
+        ]);
+    }
 }
