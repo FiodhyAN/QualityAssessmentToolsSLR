@@ -56,7 +56,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $user->name }}</td>
-                                @if (count($user->article_user) == 0)
+                                @if (count($user->article_user) == 0 || $user->article_user[0]->article == null)
                                     <td colspan="3" class="text-center">No Article Assigned</td>
                                 @else
                                     <td>

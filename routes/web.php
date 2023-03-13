@@ -62,6 +62,8 @@ Route::get('/article/download', [ArticleController::class, 'downloadExcel'])->mi
 Route::get('/dashboard/admin/assign', [AssignReviewerController::class, 'index'])->middleware('auth');
 Route::get('/assignedTable', [AssignReviewerController::class, 'articleAssignTable'])->middleware('auth')->name('assigned.table');
 Route::get('/notAssignedTable', [AssignReviewerController::class, 'articleNotAssignTable'])->middleware('auth')->name('notAssigned.table');
+Route::post('/dashboard/admin/assign/store', [AssignReviewerController::class, 'assignArticle'])->middleware('auth')->name('assign.store');
+Route::post('/dashboard/admin/assign/delete', [AssignReviewerController::class, 'deleteAssignArticle'])->middleware('auth')->name('assign.remove');
 //////////////////////////////////////
 // PENGOLAHAN DATA
 /////////////////////////////////////

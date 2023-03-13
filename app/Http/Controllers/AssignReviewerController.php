@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\ArticleUser;
+use App\Models\ProjectUser;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -95,17 +96,35 @@ class AssignReviewerController extends Controller
     public function assignArticle(Request $request)
     {
         $this->authorize('admin');
-        $article_id = $request->article_id;
-        $user_id = $request->user_id;
-        foreach ($article_id as $key => $value) {
+        foreach($request->article_id as $value) {
             ArticleUser::create([
                 'article_id' => $value,
-                'user_id' => $user_id
+                'user_id' => $request->user_id
+            ]);
+        }
+        $project_user = ProjectUser::where('project_id', $request->project_id)->where('user_id', $request->user_id)->where('user_role', 'reviewer')->first();
+        if ($project_user == null) {
+            ProjectUser::create([
+                'project_id' => $request->project_id,
+                'user_id' => $request->user_id,
+                'user_role' => 'reviewer'
             ]);
         }
         return response()->json([
             'status' => 'success',
             'message' => 'Article has been assigned'
+        ]);
+    }
+
+    public function deleteAssignArticle(Request $request)
+    {
+        $this->authorize('admin');
+        foreach($request->article_id as $value) {
+            ArticleUser::where('article_id', $value)->where('user_id', $request->user_id)->delete();
+        }
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Article has been removed'
         ]);
     }
 }

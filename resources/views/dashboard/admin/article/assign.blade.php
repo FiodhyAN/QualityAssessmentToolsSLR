@@ -5,51 +5,61 @@
     <hr>
     <a href="/dashboard/admin/project/{{ $project_id }}"><button type="button" class="btn btn-secondary mb-2"><ion-icon name="arrow-back"></ion-icon> Back to Project</button></a>
     <div class="card">
-        <div class="col mb-3 mt-3 ms-3">
-            <button disabled type="button" class="btn btn-primary" id="assign_btn"><ion-icon name="bookmark"></ion-icon> Assign Article</button>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table id="notAssignTable" class="table table-striped table-bordered" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+        <form action="/dashboard/admin/assign/store" id="assign_form">
+            @csrf
+            <input type="hidden" name="user_id" value="{{ $user_id }}">
+            <input type="hidden" name="project_id" value="{{ $project_id }}">
+            <div class="col mb-3 mt-3 ms-3">
+                <button disabled type="submit" class="btn btn-primary" id="assign_btn"><ion-icon name="bookmark"></ion-icon> Assign Article</button>
             </div>
-        </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="notAssignTable" class="table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
     </div>
 
 
     <h1>Article Management</h1>
     <hr>
     <div class="card">
-        <div class="col mb-3 mt-3 ms-3">
-            <button disabled type="button" class="btn btn-danger" id="delete_btn"><ion-icon name="trash"></ion-icon> Delete Article</button>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table id="AssignTable" class="table table-striped table-bordered" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                </table>
+        <form action="/dashboard/admin/assign/delete" id="rm_assign_form">
+            @csrf
+            <input type="hidden" name="user_id" value="{{ $user_id }}">
+            <input type="hidden" name="project_id" value="{{ $project_id }}">
+            <div class="col mb-3 mt-3 ms-3">
+                <button disabled type="submit" class="btn btn-danger" id="delete_btn"><ion-icon name="trash"></ion-icon> Delete Article</button>
             </div>
-        </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="AssignTable" class="table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </form>
     </div>
 @endsection
 @section('script')
@@ -222,7 +232,58 @@
                 // Update state of "Select all" control
                 updateDataTableSelectAllCtrl(articleNotAssign);
             });
-        });
+
+            //on submit
+            $('#assign_form').on('submit', function(e){
+                e.preventDefault();
+                var form = this;
+
+                // Iterate over all selected checkboxes
+                $.each(rows_selected, function(index, rowId){
+                    // Create a hidden element
+                    $(form).append(
+                        $('<input>')
+                            .attr('type', 'hidden')
+                            .attr('name', 'article_id[]')
+                            .val(rowId)
+                    );
+                });
+
+                var formData = new FormData(this);
+                $.ajax({
+                    url: '{{ route('assign.store') }}',
+                    type: 'POST',
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Article has been assigned',
+                            showConfirmButton: true,
+                        }).then(isConfirmed => {
+                            rows_selected = [];
+                            $('#assign_btn').prop('disabled', true);
+                            articleNotAssign.ajax.reload();
+                            articleAssign.ajax.reload();
+                        })
+                    },
+                    error: function(data) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                            showConfirmButton: true,
+                        })
+                    }
+                });
+                console.log(rows_selected);
+            });
+        // })
+
+
 
 
         // Assign Table
@@ -255,7 +316,7 @@
             }
         }
 
-        $(document).ready(function(){
+        // $(document).ready(function(){
             var articleAssign = $('#AssignTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -388,6 +449,53 @@
             articleNotAssign.on('draw', function(){
                 // Update state of "Select all" control
                 updateDataTableSelectAllCtrlAssign(articleAssign);
+            });
+
+            $('#rm_assign_form').on('submit', function(e){
+                e.preventDefault();
+                var form = this;
+
+                // Iterate over all selected checkboxes
+                $.each(rows_selected2, function(index, rowId){
+                    // Create a hidden element
+                    $(form).append(
+                        $('<input>')
+                            .attr('type', 'hidden')
+                            .attr('name', 'article_id[]')
+                            .val(rowId)
+                    );
+                });
+
+                var formData = new FormData(this);
+                $.ajax({
+                    url: '{{ route('assign.remove') }}',
+                    type: 'POST',
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Article has been removed',
+                            showConfirmButton: true,
+                        }).then(isConfirmed => {
+                            rows_selected2 = [];
+                            $('#delete_btn').prop('disabled', true);
+                            articleAssign.ajax.reload();
+                            articleNotAssign.ajax.reload();
+                        })
+                    },
+                    error: function(data) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                            showConfirmButton: true,
+                        })
+                    }
+                });
             });
         });
         // console.log(articleNotAssign);
