@@ -1,6 +1,7 @@
 @extends('layouts.main')
 
 @section('container')
+
     <h1>Article Management</h1>
     <hr/>
 
@@ -10,6 +11,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
+    <a href="/dashboard/admin/project"><button type="button" class="btn btn-secondary mb-2"><ion-icon name="arrow-back"></ion-icon> Back to Project</button></a>
+
 
     <div class="card">
         <div class="col mb-3 mt-3 ms-3">

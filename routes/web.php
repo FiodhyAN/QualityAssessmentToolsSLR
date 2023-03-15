@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectAdminController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AssignReviewerController;
+use App\Http\Controllers\AssessmentController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
@@ -64,6 +65,10 @@ Route::get('/assignedTable', [AssignReviewerController::class, 'articleAssignTab
 Route::get('/notAssignedTable', [AssignReviewerController::class, 'articleNotAssignTable'])->middleware('auth')->name('notAssigned.table');
 Route::post('/dashboard/admin/assign/store', [AssignReviewerController::class, 'assignArticle'])->middleware('auth')->name('assign.store');
 Route::post('/dashboard/admin/assign/delete', [AssignReviewerController::class, 'deleteAssignArticle'])->middleware('auth')->name('assign.remove');
+
+
+//Reviewer
+Route::get('/dashboard/reviewer/assessment', [AssessmentController::class, 'index'])->middleware('auth');
 //////////////////////////////////////
 // PENGOLAHAN DATA
 /////////////////////////////////////

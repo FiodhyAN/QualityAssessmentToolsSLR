@@ -105,6 +105,10 @@
                 order: [
                     [1, 'asc']
                 ],
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, "All"]
+                ],
                 ajax: {
                     url: '{{ route('notAssigned.table') }}',
                     data: {
@@ -322,6 +326,10 @@
                 serverSide: true,
                 order: [
                     [1, 'asc']
+                ],
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, "All"]
                 ],
                 ajax: {
                     url: '{{ route('assigned.table') }}',

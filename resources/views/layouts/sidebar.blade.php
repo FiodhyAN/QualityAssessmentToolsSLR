@@ -57,14 +57,18 @@
             <div class="menu-title">Project Management</div>
           </a>
         </li>
+      @endcan
+      @can('reviewer')
         <li>
-          <a href="#">
+          <a href="/dashboard/reviewer/assessment">
             <div class="parent-icon">
               <ion-icon name="newspaper-sharp"></ion-icon>
             </div>
             <div class="menu-title">Article Assessment</div>
           </a>
         </li>
+      @endcan
+      @can('admin')
         <li>
           <a href="javascript:;">
             <div class="parent-icon">
