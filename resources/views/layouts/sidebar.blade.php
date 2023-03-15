@@ -59,6 +59,9 @@
         </li>
       @endcan
       @can('reviewer')
+        @if (auth()->user()->is_reviewer == true && auth()->user()->is_admin == false)
+          <li class="menu-label">Assessor</li>
+        @endif
         <li>
           <a href="/dashboard/reviewer/assessment">
             <div class="parent-icon">

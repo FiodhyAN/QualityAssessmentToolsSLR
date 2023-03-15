@@ -36,7 +36,7 @@ class AssignReviewerController extends Controller
                 return '<input type="checkbox" name="article_id[]" class="cb_child" value="'.$article->id.'">';
             })->rawColumns(['action'])
             ->addColumn('no', function(Article $article){
-                return $article->no;
+                return $article->id.' - '.$article->no;
             })
             ->addColumn('title', function(Article $article){
                 return $article->title;
@@ -71,7 +71,7 @@ class AssignReviewerController extends Controller
                 return '<input type="checkbox" name="article_id[]" class="cb_child_assign" value="'.$article->id.'">';
             })->rawColumns(['action'])
             ->addColumn('no', function(Article $article){
-                return $article->no;
+                return $article->id.' - '.$article->no;
             })
             ->addColumn('title', function(Article $article){
                 return $article->title;

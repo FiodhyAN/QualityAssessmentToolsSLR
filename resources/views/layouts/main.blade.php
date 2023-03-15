@@ -85,6 +85,7 @@
       }
     }
   </style>
+  @yield('css')
 
   <title>Assessment System</title>
 </head>

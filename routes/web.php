@@ -66,9 +66,9 @@ Route::get('/notAssignedTable', [AssignReviewerController::class, 'articleNotAss
 Route::post('/dashboard/admin/assign/store', [AssignReviewerController::class, 'assignArticle'])->middleware('auth')->name('assign.store');
 Route::post('/dashboard/admin/assign/delete', [AssignReviewerController::class, 'deleteAssignArticle'])->middleware('auth')->name('assign.remove');
 
-
 //Reviewer
 Route::get('/dashboard/reviewer/assessment', [AssessmentController::class, 'index'])->middleware('auth');
+Route::get('/assessmentTable', [AssessmentController::class, 'assessmentTable'])->middleware('auth')->name('assessment.table');
 //////////////////////////////////////
 // PENGOLAHAN DATA
 /////////////////////////////////////

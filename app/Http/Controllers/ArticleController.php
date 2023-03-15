@@ -18,7 +18,7 @@ class ArticleController extends Controller
         $articles = Article::where('project_id', $id)->get();
         return DataTables::of($articles)
             ->addColumn('no', function(Article $article){
-                return $article->no;
+                return $article->id.' - '.$article->no;
             })
             ->addColumn('title', function(Article $article){
                 return $article->title;

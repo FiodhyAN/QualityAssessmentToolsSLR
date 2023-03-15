@@ -64,7 +64,7 @@
                                 @else
                                     <td>
                                         @foreach ($user->article_user as $article_user)
-                                            {{ $article_user->article->no }} <br>
+                                            {{ $article_user->article->id }} - {{ $article_user->article->no }} <br>
                                         @endforeach
                                     </td>
                                     <td>
