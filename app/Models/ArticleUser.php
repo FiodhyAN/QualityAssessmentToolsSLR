@@ -20,4 +20,9 @@ class ArticleUser extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function questionaires()
+    {
+        return $this->hasMany(ArticleUserQuestionaire::class);
+    }
 }

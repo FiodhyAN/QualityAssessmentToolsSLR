@@ -175,6 +175,15 @@
             }
     
             nextBtn.addEventListener('click', () => {
+                // if radio button is not checked then show alert
+                if (step[current_step].querySelector('input[type="radio"]:checked') == null) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Please select an answer!',
+                    });
+                    return false;
+                }
                 current_step++;
                 let previous_step = current_step - 1;
                 if ((current_step > 0) && (current_step <= stepCount)) {
