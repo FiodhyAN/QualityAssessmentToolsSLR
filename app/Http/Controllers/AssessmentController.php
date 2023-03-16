@@ -12,8 +12,8 @@ class AssessmentController extends Controller
     public function index()
     {
         $this->authorize('reviewer');
-        $questionaire = Questionaire::all();
-        return view('dashboard.reviewer.assessment', compact('questionaire'));
+        $questionaires = Questionaire::all();
+        return view('dashboard.reviewer.assessment', compact('questionaires'));
     }
 
     public function assessmentTable()
