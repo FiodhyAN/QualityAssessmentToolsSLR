@@ -17,9 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('article_user_id')->references('id')->on('article_users');
             $table->foreignId('questionaire_id')->references('id')->on('questionaires');
-            $table->integer('pos_answer_score')->default(0)->nullable();
-            $table->integer('net_answer_score')->default(0)->nullable();
-            $table->integer('neg_answer_score')->default(0)->nullable();
+            $table->integer('score')->nullable();
             $table->timestamps();
         });
     }

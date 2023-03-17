@@ -18,12 +18,15 @@
                             style="width: 0%"></div>
                     </div>
                     <div id="qbox-container">
-                        <form class="needs-validation assessment_form" id="form-wrapper" method="post" name="form-wrapper" novalidate>
+                        <form action="/dashboard/reviewer/assessment/store" class="needs-validation assessment_form" id="form-wrapper" method="post" name="form-wrapper" novalidate>
+                            @csrf
+                            <input type="hidden" name="article_id" id="article_id">
                             <div id="steps-container">
                                 @foreach ($questionaires as $question)
                                     <div class="step">
                                         <h3>{{ $question->name }}</h3>
                                         <h4>{{ $question->question }}</h4>
+                                        <input type="hidden" name="questionaire_id[]" value="{{ $question->id }}">
                                         <div class="form-check ps-0 q-box">
                                             <div class="q-box__question">
                                                 <input class="form-check-input question__input"
@@ -147,6 +150,7 @@
 
             // add to modal title
             $(this).find('.modal-title').text('Assess Article ' + id + ' - ' + no);
+            $(this).find('#article_id').val(id);
         });
 
         let step = document.getElementsByClassName('step');
@@ -158,9 +162,6 @@
             let bodyElement = document.querySelector('body');
             let succcessDiv = document.getElementById('success');
     
-            form.onsubmit = () => {
-                return false
-            }
             let current_step = 0;
             const stepCount = {{ count($questionaires) }}
             step[current_step].classList.add('d-block');
@@ -260,6 +261,41 @@
                     submitBtn.classList.add('d-none');
                     nextBtn.classList.add('d-inline-block');
                 }
+            });
+
+            $('.assessment_form').on('submit', function(e) {
+                e.preventDefault();
+                
+                // run ajax request
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: "{{ route('assessment.store') }}",
+                    type: "POST",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        // hide modal
+                        $('#exampleModal').modal('hide');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Assessment submitted successfully!',
+                            showConfirmButton: true,
+                        }).then(isConfirmed => {
+                            table.ajax.reload();
+                        });
+                    },
+                    error: function(data) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    }
+                });
             });
     </script>
 @endsection
