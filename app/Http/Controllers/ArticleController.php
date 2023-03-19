@@ -7,6 +7,8 @@ use App\Models\Article;
 use App\Models\ProjectUser;
 use Yajra\DataTables\DataTables;
 use App\Imports\ArticleImport;
+use App\Models\ArticleUser;
+use App\Models\ArticleUserQuestionaire;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -178,6 +180,11 @@ class ArticleController extends Controller
     {
         $this->authorize('admin');
         $article = Article::find($request->id);
+        $articleUser = ArticleUser::where('article_id', $request->id)->get();
+        foreach ($articleUser as $au) {
+            ArticleUserQuestionaire::where('article_user_id', $au->id)->delete();
+        }
+        ArticleUser::where('article_id', $request->id)->delete();
         return $article->delete();
     }
 

@@ -11,7 +11,7 @@ class Questionaire extends Model
 
     protected $guarded = ['id'];
 
-    public function article_users()
+    public function article_user_questionaire()
     {
         return $this->hasMany(ArticleUserQuestionaire::class);
     }

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
+use App\Models\ArticleUser;
+use App\Models\ArticleUserQuestionaire;
 use App\Models\Project;
 use App\Models\ProjectUser;
 use App\Models\User;
@@ -123,6 +126,16 @@ class ProjectController extends Controller
         ProjectUser::where('project_id', $request->id)->delete();
 
         $users = User::with('project_user')->get();
+        $articles = Article::where('project_id', $request->id)->get();
+        foreach ($articles as $article) {
+            $articleUser = ArticleUser::where('article_id', $article->id);
+            foreach ($articleUser as $au) {
+                ArticleUserQuestionaire::where('article_user_id', $au->id)->delete();
+            }
+            $articleUser->delete();
+        }
+        Article::where('project_id', $request->id)->delete();
+
         
         foreach ($users as $user) {
             if ($user->project_user->count() == 0) {

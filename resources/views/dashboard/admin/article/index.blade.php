@@ -303,7 +303,7 @@
                                 icon: 'success',
                                 confirmButtonText: 'OK'
                             }).then(isConfirmed => {
-                                table.ajax.reload();
+                                location.reload();
                             })
                         },
                         error: function(result) {
