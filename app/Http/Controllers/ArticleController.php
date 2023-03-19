@@ -33,7 +33,7 @@ class ArticleController extends Controller
                 return $article->authors;
             })
             ->addColumn('action', function(Article $article) use ($id) {
-                $btn = '<button type="button" class="btn btn-warning text-white btn-sm me-2 aksi scoreArticle" data-id="'.$article->id.'"><ion-icon name="stats-chart-outline"></ion-icon> Score</button>';
+                $btn = '<button type="button" class="btn btn-warning text-white btn-sm me-2 aksi scoreArticle" id="scoreArticle" data-bs-toggle="modal" data-bs-target="#modalScore" data-id="'.$article->id.'" data-title="'.$article->title.'"><ion-icon name="stats-chart-outline"></ion-icon> Score</button>';
                 $btn .= '<a href="/dashboard/admin/article/'.$article->id.'/edit?pid='.$id.'"><button type="button" class="btn btn-primary btn-sm aksi"><ion-icon name="create-outline"></ion-icon> Edit</button></a>';
                 $btn .= '<button type="button" class="btn btn-danger btn-sm ms-2 aksi deleteArticle" data-id="'.$article->id.'"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
                 return $btn;

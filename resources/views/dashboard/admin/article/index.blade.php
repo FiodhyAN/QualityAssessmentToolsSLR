@@ -1,24 +1,33 @@
 @extends('layouts.main')
 
 @section('container')
-
     <h1>Article Management</h1>
-    <hr/>
+    <hr />
 
-    @if(session()->has('success'))
+    @if (session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <strong>{{ session('success') }}</strong>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
-    <a href="/dashboard/admin/project"><button type="button" class="btn btn-secondary mb-2"><ion-icon name="arrow-back"></ion-icon> Back to Project</button></a>
+    <a href="/dashboard/admin/project"><button type="button" class="btn btn-secondary mb-2">
+            <ion-icon name="arrow-back"></ion-icon> Back to Project
+        </button></a>
 
 
     <div class="card">
         <div class="col mb-3 mt-3 ms-3">
-            <a href="/dashboard/admin/article/create?id={{ $project->project->id }}"><button type="button" class="btn btn-sm btn-success px-5 mb-2"><ion-icon name="add-circle-outline"></ion-icon>Add Article</button></a>
-            <a href="/article/download"><button type="button" class="btn btn-sm btn-secondary px-5 mb-2"><ion-icon name="document-outline"></ion-icon>Excel Template</button></a>
-            <button type="button" class="btn btn-sm btn-primary px-5 mb-2" id="import_excel" data-bs-toggle="modal" data-bs-target="#exampleModal"><ion-icon name="cloud-upload-outline"></ion-icon>Import Excel</button>
+            <a href="/dashboard/admin/article/create?id={{ $project->project->id }}"><button type="button"
+                    class="btn btn-sm btn-success px-5 mb-2">
+                    <ion-icon name="add-circle-outline"></ion-icon>Add Article
+                </button></a>
+            <a href="/article/download"><button type="button" class="btn btn-sm btn-secondary px-5 mb-2">
+                    <ion-icon name="document-outline"></ion-icon>Excel Template
+                </button></a>
+            <button type="button" class="btn btn-sm btn-primary px-5 mb-2" id="import_excel" data-bs-toggle="modal"
+                data-bs-target="#exampleModal">
+                <ion-icon name="cloud-upload-outline"></ion-icon>Import Excel
+            </button>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -83,7 +92,17 @@
                                     </td>
                                 @endif
                                 <td>
-                                    <a href="/dashboard/admin/assign?pid={{ $project->project->id }}&uid={{ $user->id }}"><button type="button" class="btn btn-sm btn-success px-5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg> Assign</button></a>
+                                    <a
+                                        href="/dashboard/admin/assign?pid={{ $project->project->id }}&uid={{ $user->id }}"><button
+                                            type="button" class="btn btn-sm btn-success px-5"><svg
+                                                xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="feather feather-user-check">
+                                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                                <circle cx="8.5" cy="7" r="4"></circle>
+                                                <polyline points="17 11 19 13 23 9"></polyline>
+                                            </svg> Assign</button></a>
                                 </td>
                             </tr>
                         @endforeach
@@ -93,35 +112,62 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Import Excel</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="form_import_excel" enctype="multipart/form-data">
-                @csrf
+    {{-- Modal for score --}}
+    <div class="modal fade" id="modalScore" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title-score" id="exampleModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <input type="hidden" name="project_id" value="{{ $project->project->id }}">
-                        <label for="formFile" class="form-label">Import Excel</label>
-                        <input class="form-control" type="file" id="formFile" name="excel_file">
-                    </div>  
+                    
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Import</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
-            </form>
-          </div>
+            </div>
         </div>
     </div>
 
+    <!-- Modal For Import -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Import Excel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form_import_excel" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <input type="hidden" name="project_id" value="{{ $project->project->id }}">
+                            <label for="formFile" class="form-label">Import Excel</label>
+                            <input class="form-control" type="file" id="formFile" name="excel_file">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Import</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('script')
     <script>
+        // get data title from scoreArticle button
+        $('#modalScore').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget)
+            var title = button.data('title')
+            var modal = $(this)
+            modal.find('.modal-title-score').text('Score For ' + title)
+        });
+
+
         $('#form_import_excel').on('submit', function(e) {
             e.preventDefault();
             console.log('test');
@@ -146,7 +192,7 @@
                 contentType: false,
                 cache: false,
                 processData: false,
-                success: function(result){
+                success: function(result) {
                     console.log(result);
                     // close loading sweeralert
                     Swal.close();
@@ -180,8 +226,7 @@
                 url: '{{ route('article.table', $project->project->id) }}',
                 type: 'GET',
             },
-            columns: [
-                {
+            columns: [{
                     title: 'ID - No',
                     data: 'no',
                     name: 'no',
@@ -277,11 +322,19 @@
 
         var assessment_table = $('#assessment_table').DataTable({
             //no column sorting and searching false
-            columnDefs: [
-                { "orderable": false, "targets": 0 },
-                { "searchable": false, "targets": 0 },
-                { "width": 20, "targets": 0 }
+            columnDefs: [{
+                    "orderable": false,
+                    "targets": 0
+                },
+                {
+                    "searchable": false,
+                    "targets": 0
+                },
+                {
+                    "width": 20,
+                    "targets": 0
+                }
             ],
-        });
+        }); 
     </script>
 @endsection
