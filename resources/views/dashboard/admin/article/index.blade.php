@@ -81,12 +81,12 @@
                                             {{ $article_user->article->title }} <br>
                                         @endforeach
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         @foreach ($user->article_user as $article_user)
                                             @if ($article_user->is_assessed == 1)
-                                                <ion-icon name="checkmark-circle-outline"></ion-icon> <br>
+                                                <span class="badge bg-success">Assessed</span> <br>
                                             @else
-                                                <ion-icon name="close-circle-outline"></ion-icon> <br>
+                                                <span class="badge bg-danger">Not Assessed</span> <br>
                                             @endif
                                         @endforeach
                                     </td>
@@ -114,7 +114,7 @@
 
     {{-- Modal for score --}}
     <div class="modal fade" id="modalScore" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-dialog modal-dialog-scrollable modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title-score" id="exampleModalLabel"></h5>
@@ -335,6 +335,6 @@
                     "targets": 0
                 }
             ],
-        }); 
+        });
     </script>
 @endsection
