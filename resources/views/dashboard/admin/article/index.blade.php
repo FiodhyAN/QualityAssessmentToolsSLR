@@ -70,6 +70,8 @@
                                 <td>{{ $user->name }}</td>
                                 @if (count($user->article_user) == 0 || $user->article_user[0]->article == null)
                                     <td colspan="3" class="text-center">No Article Assigned</td>
+                                    <td class="d-none"></td>
+                                    <td class="d-none"></td>
                                 @else
                                     <td>
                                         @foreach ($user->article_user as $article_user)

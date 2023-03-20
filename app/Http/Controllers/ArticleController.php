@@ -9,6 +9,8 @@ use Yajra\DataTables\DataTables;
 use App\Imports\ArticleImport;
 use App\Models\ArticleUser;
 use App\Models\ArticleUserQuestionaire;
+use App\Models\Project;
+use App\Models\User;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -42,6 +44,43 @@ class ArticleController extends Controller
             })
             ->rawColumns(['action'])
             ->toJson();
+    }
+
+    public function assignmentTable($id)
+    {
+        $this->authorize('admin');
+        $project_limit = Project::select('limit_reviewer')->where('id', $id)->first();
+        $user_project = ProjectUser::where('project_id', $id)->where('user_role', 'reviewer')->count();
+
+        if ($user_project == $project_limit->limit_reviewer) {
+            $users = User::with(['article_user' => function($query) use ($id) {
+                $query->with('article')->whereHas('article', function($query) use ($id) {
+                    $query->where('project_id', $id);
+                });
+            }])->where('id', '!=', auth()->user()->id)->where('is_superadmin', false)->whereHas('article_user', function($query) use ($id) {
+                $query->whereHas('article', function($query) use ($id) {
+                    $query->where('project_id', $id);
+                });
+            })->get();
+        }
+        else {
+            $users = User::with(['article_user' => function($query) use ($id) {
+                $query->with('article')->whereHas('article', function($query) use ($id) {
+                    $query->where('project_id', $id);
+                });
+            }])->where('id', '!=', auth()->user()->id)->where('is_superadmin', false)->get();
+        }
+
+        return DataTables::of($users)
+            ->addIndexColumn()
+            ->addColumn('name', function(User $user){
+                return $user->name;
+            })
+            ->addColumn('id-no', function(User $user){
+                if (count($user->article_user) == 0 || $user->article_user[0]->article == null) {
+                    
+                }
+            });
     }
 
     public function create()
