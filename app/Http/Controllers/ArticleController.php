@@ -78,9 +78,61 @@ class ArticleController extends Controller
             })
             ->addColumn('id-no', function(User $user){
                 if (count($user->article_user) == 0 || $user->article_user[0]->article == null) {
-                    
+                    return false;
                 }
-            });
+                else {
+                    $id_no = '';
+                    foreach ($user->article_user as $value) {
+                        $id_no .= $value->article->id.' - '.$value->article->no.'<br>';
+                    }
+                    return $id_no;
+                }
+            })
+            ->addColumn('title', function(User $user){
+                if (count($user->article_user) == 0 || $user->article_user[0]->article == null) {
+                    return false;
+                }
+                else {
+                    $title = '';
+                    foreach ($user->article_user as $value) {
+                        $title .= $value->article->title.'<br>';
+                    }
+                    return $title;
+                }
+            })
+            ->addColumn('assessed', function(User $user){
+                if (count($user->article_user) == 0 || $user->article_user[0]->article == null) {
+                    return false;
+                }
+                else {
+                    $assessed = '';
+                    foreach ($user->article_user as $value) {
+                        if($value->is_assessed == true) {
+                            $assessed .= '<span class="badge bg-success">Assessed</span><br>';
+                        }
+                        else {
+                            $assessed .= '<span class="badge bg-danger">Not Assessed</span><br>';
+                        }
+                    }
+                    return $assessed;
+                }
+            })
+            ->addColumn('action', function(User $user) use ($id) {
+                $btn = '<a
+                href="/dashboard/admin/assign?pid='.$id.'&uid='.$user->id.'"><button
+                    type="button" class="btn btn-sm btn-success px-5"><svg
+                        xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-user-check">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <polyline points="17 11 19 13 23 9"></polyline>
+                    </svg> Assign</button></a>';
+                return $btn;
+            })
+            ->rawColumns(['id-no', 'title', 'assessed', 'action'])
+            ->toJson();
     }
 
     public function create()

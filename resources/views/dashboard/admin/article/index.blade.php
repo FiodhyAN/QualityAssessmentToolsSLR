@@ -64,7 +64,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($users as $user)
+                        {{-- @foreach ($users as $user)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $user->name }}</td>
@@ -107,7 +107,7 @@
                                             </svg> Assign</button></a>
                                 </td>
                             </tr>
-                        @endforeach
+                        @endforeach --}}
                     </tbody>
                 </table>
             </div>
@@ -224,6 +224,8 @@
         var table = $('#article_table').DataTable({
             serverSide: true,
             processing: true,
+            scrollY: '50vh',
+            scrollCollapse: true,
             ajax: {
                 url: '{{ route('article.table', $project->project->id) }}',
                 type: 'GET',
@@ -305,7 +307,8 @@
                                 icon: 'success',
                                 confirmButtonText: 'OK'
                             }).then(isConfirmed => {
-                                location.reload();
+                                table.ajax.reload();
+                                assessment_table.ajax.reload();
                             })
                         },
                         error: function(result) {
@@ -324,19 +327,45 @@
 
         var assessment_table = $('#assessment_table').DataTable({
             //no column sorting and searching false
-            columnDefs: [{
-                    "orderable": false,
-                    "targets": 0
+            serverSide: true,
+            processing: true,
+            ajax: {
+                url: '{{ route('assignment.table', $project->project->id) }}',
+                type: 'GET',
+            },
+            columns: [{
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                    width: '5%',
                 },
                 {
-                    "searchable": false,
-                    "targets": 0
+                    data: 'name',
+                    name: 'name',
+                    width: '20%',
                 },
                 {
-                    "width": 20,
-                    "targets": 0
-                }
-            ],
+                    data: 'id-no',
+                    name: 'id-no',
+                    width: '20%',
+                },
+                {
+                    data: 'title',
+                    name: 'title',
+                    width: '30%',
+                },
+                {
+                    data: 'assessed',
+                    name: 'assessed',
+                    class: 'text-center',
+                    width: '10%',
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false,
+                    width: '20%',
+                }]
         });
     </script>
 @endsection

@@ -102,6 +102,8 @@
             var articleNotAssign = $('#notAssignTable').DataTable({
                 processing: true,
                 serverSide: true,
+                scrollY: '50vh',
+                scrollCollapse: true,
                 order: [
                     [1, 'asc']
                 ],

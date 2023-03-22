@@ -59,6 +59,7 @@ Route::get('/dashboard/admin/article/{id}/edit', [ArticleController::class, 'edi
 Route::patch('/dashboard/admin/article/update', [ArticleController::class, 'update'])->middleware('auth')->name('article.update');
 Route::post('/article/import', [ArticleController::class, 'storeExcel'])->middleware('auth')->name('article.import');
 Route::get('/article/download', [ArticleController::class, 'downloadExcel'])->middleware('auth')->name('article.download');
+Route::get('/assignmentTable/{id}', [ArticleController::class, 'assignmentTable'])->middleware('auth')->name('assignment.table');
 //Assign Article
 Route::get('/dashboard/admin/assign', [AssignReviewerController::class, 'index'])->middleware('auth');
 Route::get('/assignedTable', [AssignReviewerController::class, 'articleAssignTable'])->middleware('auth')->name('assigned.table');
