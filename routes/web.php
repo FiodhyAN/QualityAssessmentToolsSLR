@@ -93,10 +93,8 @@ function getData(){
     $flag=0;
     foreach ($data as $row) {
         $flag++;
-        // if($flag==44||$flag==44||$flag==48||$flag==49||$flag==50)continue;
         if($flag<=0) continue;
-        // if($flag==38)echo $row['authors'];
-        if($flag>60) break;
+        // if($flag>60) break;
         $keywords = preg_split('/\s*[,;\/]\s*/', $row['keywords']);
         $authors = preg_split('/\s*[,;\/]\s*/', $row['authors']);
 
@@ -129,20 +127,20 @@ function getData(){
 }
 
 Route::get('/data/rank', function () {
-    // $result = getData();
+    $result = getData();
     // transporse table
     // https://stackoverflow.com/questions/6297591/how-to-invert-transpose-the-rows-and-columns-of-an-html-table
-    $response = Http::timeout(999999)->post('http://127.0.0.1:5000/data/rank', [
+    $response = Http::timeout(600)->post('http://127.0.0.1:5000/data/rank', [
         'data' => 
-            // $result
-            [  
-                [ "a1", ['a','b','c'],   ['a','b','c','k','l']    ,'1993',['p1','p2']                                              ]
-                , [ "a2", ['c','d','e'],   ['a','c','d','e','m','n'],'1993',['p1','p3']                                              ]
-                , [ "a3", ['f','g','h'],   ['c','d','f','g','h','o'],'1993',['p2','p4','p5']                                         ]
-                , [ "a4", ['i','j'],       ['c','d','p','q']        ,'1994',['p3','p6']      ,['a1','a2']                            ]
-                , [ "a5", ['dj','dk'],     ['a','dj','dk','m','r']  ,'1994',['p1','p7']      ,['a1','a2','a3']                       ]
-                , [ "a6", ['d','ac','ad'], ['d','ac','ad','s','t']  ,'1994',['p8','p9']      ,['a1','a3']                            ]
-            ]
+            $result
+            // [  
+            //     [ "a1", ['a','b','c'],   ['a','b','c','k','l']    ,'1993',['p1','p2']                                              ]
+            //     , [ "a2", ['c','d','e'],   ['a','c','d','e','m','n'],'1993',['p1','p3']                                              ]
+            //     , [ "a3", ['f','g','h'],   ['c','d','f','g','h','o'],'1993',['p2','p4','p5']                                         ]
+            //     , [ "a4", ['i','j'],       ['c','d','p','q']        ,'1994',['p3','p6']      ,['a1','a2']                            ]
+            //     , [ "a5", ['dj','dk'],     ['a','dj','dk','m','r']  ,'1994',['p1','p7']      ,['a1','a2','a3']                       ]
+            //     , [ "a6", ['d','ac','ad'], ['d','ac','ad','s','t']  ,'1994',['p8','p9']      ,['a1','a3']                            ]
+            // ]
     ]);
     // return $response;
     // return json_decode($response);
@@ -164,19 +162,19 @@ Route::get('/data/rank', function () {
 
 });
 Route::get('/data/graph', function () {
-    // $result = getData();
+    $result = getData();
 
-    $response = Http::post('http://127.0.0.1:5000/data/graph', [
+    $response = Http::timeout(600)->post('http://127.0.0.1:5000/data/graph', [
         'data' => 
-        // $result
-        [  
-            [ "a1", ['a','b','c'],   ['a','b','c','k','l']    ,'1993',['p1','p2']                                              ]
-            , [ "a2", ['c','d','e'],   ['a','c','d','e','m','n'],'1993',['p1','p3']                                              ]
-            , [ "a3", ['f','g','h'],   ['c','d','f','g','h','o'],'1993',['p2','p4','p5']                                         ]
-            , [ "a4", ['i','j'],       ['c','d','p','q']        ,'1994',['p3','p6']      ,['a1','a2']                            ]
-            , [ "a5", ['dj','dk'],     ['a','dj','dk','m','r']  ,'1994',['p1','p7']      ,['a1','a2','a3']                       ]
-            , [ "a6", ['d','ac','ad'], ['d','ac','ad','s','t']  ,'1994',['p8','p9']      ,['a1','a3']                            ]
-        ]
+        $result
+        // [  
+        //     [ "a1", ['a','b','c'],   ['a','b','c','k','l']    ,'1993',['p1','p2']                                              ]
+        //     , [ "a2", ['c','d','e'],   ['a','c','d','e','m','n'],'1993',['p1','p3']                                              ]
+        //     , [ "a3", ['f','g','h'],   ['c','d','f','g','h','o'],'1993',['p2','p4','p5']                                         ]
+        //     , [ "a4", ['i','j'],       ['c','d','p','q']        ,'1994',['p3','p6']      ,['a1','a2']                            ]
+        //     , [ "a5", ['dj','dk'],     ['a','dj','dk','m','r']  ,'1994',['p1','p7']      ,['a1','a2','a3']                       ]
+        //     , [ "a6", ['d','ac','ad'], ['d','ac','ad','s','t']  ,'1994',['p8','p9']      ,['a1','a3']                            ]
+        // ]
     ]);
     return view('pengolahan_data_slr.graph', ['src' => "data:image/png;base64, $response"]);
 

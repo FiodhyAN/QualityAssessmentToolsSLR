@@ -76,43 +76,29 @@ def getData(data=None):
         return(table)
 
 def getArticleIdAuthorReferencesAndAuthor(table):
-    pairs = []
-    authors = []
+    pairs, authors = [], []
     for row in table:
-        article_id = row[0]
-        author_list = row[4]
-        reference_list = row[5] if len(row) == 6 else []
-        pairs.append([article_id, author_list, reference_list])
+        article_id, author_list = row[0], row[4]
+        pairs.append([article_id, author_list, row[5] if len(row) == 6 else []])
         authors.extend(author_list)
-    unique_authors = sorted(set(authors))
-    authors = unique_authors
-    return pairs,authors
+        unique_authors = sorted(set(authors))
+    return pairs, unique_authors
 
 def author_matrixs(authors):
     print("Semua Kemungkinan Relasi Antar Penulis")
     from itertools import product
-
-    # Get all possible author pairs (including self-referential pairs)
-    author_pairs = list(product(authors, authors))
-
-    # Display all possible author pairs (including self-referential pairs)
-    author_matrix=[]
-    for pair in author_pairs:
-        row=[pair[0],pair[1],0]
-        author_matrix.append(row)
+    author_matrix = [[pair[0], pair[1], 0] for pair in product(authors, authors)]
     return author_matrix
 
 def getTable2Data(pairs,author_matrix):
-    for pair in pairs:
-        authors_from_article=pair[1]
-        references=pair[2]
+    for articles,authors_from_article,references in pairs:
         for reference in references:
             for author_2 in pairs:
                 if author_2[0] == reference:
                     for author_2_detail in author_2[1]:
                         for author_detail in authors_from_article:
-                            for i in range(len(author_matrix)):
-                                if author_matrix[i][0] == author_detail and author_matrix[i][1] == author_2_detail and author_2_detail!=author_detail:
+                            for i, row in enumerate(author_matrix):
+                                if row[0] == author_detail and row[1] == author_2_detail and author_2_detail != author_detail:
                                     author_matrix[i][2] += 1
     return author_matrix
         
@@ -172,19 +158,13 @@ def makeTermGraph(table, authors, author_matrix):
 
 
 def addTable2TotalRowAndColoumn(pretable2,authors):
-    # Initialize list for row and column totals
-    row_totals = [0] * len(pretable2)
-    col_totals = [0] * len(pretable2[0])
+    # Hitung row dan column totals
+    row_totals = [sum(row) for row in pretable2]
+    col_totals = [sum(col) for col in zip(*pretable2)]
 
-    # Calculate row and column totals
-    for i, row in enumerate(pretable2):
-        for j, val in enumerate(row):
-            row_totals[i] += val
-            col_totals[j] += val
-
-    # Add row and column totals to pretable2
-    for i, row in enumerate(pretable2):
-        row.append(row_totals[i])
+    # Tambahkan row dan column totals ke pretable2
+    for row in pretable2:
+        row.append(sum(row))
     col_totals.append(sum(col_totals))
     pretable2.append(col_totals)
     return pretable2
@@ -206,28 +186,21 @@ def makeNewAdjMatrix(pretable3,lenauthor):
 def rank(pretable3,lenauthor):
     import numpy as np
 
-    # Set damping factor
+    # Set damping factor dan inisialisasi row vector
     d = 0.850466963
-
-    # Initialize row vector
     row = [1 / lenauthor] * lenauthor
-
     # Initialize table4 with row vector
     table4 = [row]
 
-    # Iterate to calculate PageRank
-    for i in range(10000):
-        row_new = []
-        for j in range(lenauthor):
-            val = (1 - d) + d * np.matmul(pretable3[j][:lenauthor], row[:lenauthor])
-            row_new.append(val)
+    # Hitung PageRank
+    for i in range(100):
+        row_new = [(1 - d) + d * np.matmul(pretable3[j][:lenauthor], row[:lenauthor]) for j in range(lenauthor)]
         table4.append(row_new)
-        diff = np.abs(np.array(row) - np.array(row_new)).max()
-        if diff < 0.001:
+        if np.abs(np.array(row) - np.array(row_new)).max() < 0.001:
             break
         row = row_new
 
-    # Calculate ranking from PageRank
+    # Hitung ranking dari PageRank
     rank = [sorted(row, reverse=True).index(x) for x in row]
     rank = [x + 1 for x in rank]
 
@@ -252,11 +225,6 @@ def rank(pretable3,lenauthor):
 def data(name):
     if request.method == 'POST' or request.method == 'GET':
     # tabel 1
-        # requestjson=request.get_json()
-        # if request.method == 'POST':
-        #     table=getData(1,requestjson["data"]);
-        # if request.method == 'GET':
-        #     table=getData(0,None);
         if request.method == 'POST':
             table=getData(request.get_json()["data"]);
         elif request.method == 'GET':
