@@ -102,8 +102,6 @@
             var articleNotAssign = $('#notAssignTable').DataTable({
                 processing: true,
                 serverSide: true,
-                scrollY: '50vh',
-                scrollCollapse: true,
                 order: [
                     [1, 'asc']
                 ],
@@ -124,7 +122,6 @@
                         title: '<input type="checkbox" id="head_cb" name="select_all" value="1">',
                         data: 'id',
                         name: 'id',
-                        width: '5%',
                         orderable: false,
                         searchable: false,
                         render: function(data, type, row) {
@@ -135,13 +132,11 @@
                         title: 'ID - No',
                         data: 'no',
                         name: 'no',
-                        width: '10%',
                     },
                     {
                         title: 'Title',
                         data: 'title',
                         name: 'title',
-                        width: '30%',
                         render: function(data, type, row) {
                             return '<span style="white-space:normal">' + data + "</span>";
                         }
@@ -150,13 +145,11 @@
                         title: 'Year',
                         data: 'year',
                         name: 'year',
-                        width: '10%',
                     },
                     {
                         title: 'Publication',
                         data: 'publication',
                         name: 'publication',
-                        width: '25%',
                         render: function(data, type, row) {
                             return '<span style="white-space:normal">' + data + "</span>";
                         }
@@ -165,7 +158,6 @@
                         title: 'Authors',
                         data: 'authors',
                         name: 'authors',
-                        width: '20%',
                         render: function(data, type, row) {
                             return '<span style="white-space:normal">' + data + "</span>";
                         }
@@ -346,7 +338,6 @@
                         title: '<input type="checkbox" id="head_cb_assign" name="select_all_assign" value="1">',
                         data: 'id',
                         name: 'id',
-                        width: '5%',
                         orderable: false,
                         searchable: false,
                         render: function(data, type, row) {
@@ -357,13 +348,11 @@
                         title: 'ID - No',
                         data: 'no',
                         name: 'no',
-                        width: '10%',
                     },
                     {
                         title: 'Title',
                         data: 'title',
                         name: 'title',
-                        width: '30%',
                         render: function(data, type, row) {
                             return '<span style="white-space:normal">' + data + "</span>";
                         }
@@ -372,13 +361,11 @@
                         title: 'Year',
                         data: 'year',
                         name: 'year',
-                        width: '10%',
                     },
                     {
                         title: 'Publication',
                         data: 'publication',
                         name: 'publication',
-                        width: '10%',
                         render: function(data, type, row) {
                             return '<span style="white-space:normal">' + data + "</span>";
                         }
@@ -387,7 +374,6 @@
                         title: 'Authors',
                         data: 'authors',
                         name: 'authors',
-                        width: '20%',
                         render: function(data, type, row) {
                             return '<span style="white-space:normal">' + data + "</span>";
                         }

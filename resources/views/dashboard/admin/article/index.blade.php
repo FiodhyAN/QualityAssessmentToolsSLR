@@ -123,7 +123,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -224,8 +224,6 @@
         var table = $('#article_table').DataTable({
             serverSide: true,
             processing: true,
-            scrollY: '50vh',
-            scrollCollapse: true,
             ajax: {
                 url: '{{ route('article.table', $project->project->id) }}',
                 type: 'GET',
@@ -234,13 +232,11 @@
                     title: 'ID - No',
                     data: 'no',
                     name: 'no',
-                    width: '10%',
                 },
                 {
                     title: 'Title',
                     data: 'title',
                     name: 'title',
-                    width: '30%',
                     render: function(data, type, row) {
                         return '<span style="white-space:normal">' + data + "</span>";
                     }
@@ -249,13 +245,11 @@
                     title: 'Year',
                     data: 'year',
                     name: 'year',
-                    width: '10%',
                 },
                 {
                     title: 'Publication',
                     data: 'publication',
                     name: 'publication',
-                    width: '10%',
                     render: function(data, type, row) {
                         return '<span style="white-space:normal">' + data + "</span>";
                     }
@@ -264,7 +258,6 @@
                     title: 'Authors',
                     data: 'authors',
                     name: 'authors',
-                    width: '20%',
                     render: function(data, type, row) {
                         return '<span style="white-space:normal">' + data + "</span>";
                     }
@@ -275,7 +268,6 @@
                     name: 'action',
                     orderable: false,
                     searchable: false,
-                    width: '20%',
                 },
             ]
         }).on('click', '.deleteArticle', function(e) {
@@ -336,36 +328,40 @@
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',
-                    width: '5%',
                 },
                 {
                     data: 'name',
                     name: 'name',
-                    width: '20%',
                 },
                 {
-                    data: 'id-no',
-                    name: 'id-no',
-                    width: '20%',
+                    data: 'id_no',
+                    name: 'id_no',
                 },
                 {
                     data: 'title',
                     name: 'title',
-                    width: '30%',
                 },
                 {
                     data: 'assessed',
                     name: 'assessed',
                     class: 'text-center',
-                    width: '10%',
                 },
                 {
                     data: 'action',
                     name: 'action',
                     orderable: false,
                     searchable: false,
-                    width: '20%',
-                }]
+                }
+            ],
+            rowCallback: function(row, data, index) {
+                if (data.id_no == false) {
+                    $(row).find('td:eq(2)').attr('colspan', '3');
+                    $(row).find('td:eq(2)').text('No Article Assigned');
+                    $(row).find('td:eq(3)').addClass('d-none');
+                    $(row).find('td:eq(4)').addClass('d-none');
+                    $(row).find('td:eq(2)').addClass('text-center');
+                }
+            }
         });
     </script>
 @endsection

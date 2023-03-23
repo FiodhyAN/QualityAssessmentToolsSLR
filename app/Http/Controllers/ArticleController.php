@@ -76,7 +76,7 @@ class ArticleController extends Controller
             ->addColumn('name', function(User $user){
                 return $user->name;
             })
-            ->addColumn('id-no', function(User $user){
+            ->addColumn('id_no', function(User $user){
                 if (count($user->article_user) == 0 || $user->article_user[0]->article == null) {
                     return false;
                 }
@@ -131,7 +131,7 @@ class ArticleController extends Controller
                     </svg> Assign</button></a>';
                 return $btn;
             })
-            ->rawColumns(['id-no', 'title', 'assessed', 'action'])
+            ->rawColumns(['id_no', 'title', 'assessed', 'action'])
             ->toJson();
     }
 
