@@ -2,14 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\ProjectUser;
-use App\Models\Project;
-use App\Models\Article;
-use App\Models\ArticleUserQuestionaire;
-use App\Models\Questionaire;
-use App\Models\User;
-use Yajra\DataTables\DataTables;
 
 class ProjectAdminController extends Controller
 {

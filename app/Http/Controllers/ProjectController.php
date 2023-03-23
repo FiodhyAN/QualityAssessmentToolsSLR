@@ -61,15 +61,22 @@ class ProjectController extends Controller
             'limit' => 'required',
             'admin_project' => 'required',
         ]);
-        Project::create([
+        $project = Project::create([
             'project_name' => $request->project_name,
             'limit_reviewer' => $request->limit,
         ]);
         ProjectUser::create([
-            'project_id' => Project::latest()->first()->id,
+            'project_id' => $project->id,
             'user_id' => $request->admin_project,
             'user_role' => 'admin',
         ]);
+        foreach ($request->reviewer as $reviewer) {
+            ProjectUser::create([
+                'project_id' => $project->id,
+                'user_id' => $reviewer,
+                'user_role' => 'reviewer',
+            ]);
+        }
         User::where('id', $request->admin_project)->update([
             'is_admin' => true,
         ]);
@@ -153,5 +160,21 @@ class ProjectController extends Controller
             $query->with('user')->orderBy('user_role');
         }])->where('id', $request->id)->first();
         return $project->project_user->toJson();
+    }
+
+    public function findReviewer(Request $request)
+    {
+        $this->authorize('superadmin');
+        $user = User::where('id', '!=', $request->user_id)->where('is_superadmin', '!=', true)->where('id', '!=', auth()->user()->id)->get();
+        return $user->toJson();
+    }
+
+    public function findEditReviewer(Request $request)
+    {
+        $this->authorize('superadmin');
+        $user = User::where('id', '!=', $request->user_id)->where('is_superadmin', '!=', true)->where('id', '!=', auth()->user()->id)->with('project_user', function($query) use ($request){
+            $query->where('project_id', $request->project_id);
+        })->get();
+        return $user->toJson();
     }
 }

@@ -1,110 +1,131 @@
 @extends('layouts.main')
 @section('container')
-
     <div class="modal fade" id="exampleVerticallycenteredModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title">Add New Project</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Project</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addProject">
+                    <div class="modal-body">
+                        @csrf
+                        <div class="col mb-3">
+                            <label class="form-label">Project Name</label>
+                            <input id="projectName-input" type="text" class="form-control" name="project_name"
+                                placeholder="Enter Project Name..." value="{{ old('project_name') }}" autocomplete="off"
+                                required>
+                            <div class="invalid-feedback" id="projectName-feedback">
+                            </div>
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">Limit Max Reviewer</label>
+                            <input id="limitReviewer-input" type="number"
+                                class="form-control @error('limit') is-invalid @enderror" name="limit"
+                                placeholder="Enter Max Reviewer..." autocomplete="off" value="{{ old('limit') }}" required>
+                            <div class="invalid-feedback" id="limitReviewer-feedback">
+                            </div>
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">Project Admin</label>
+                            <select id="adminProject-input" class="select_user" name="admin_project">
+                                <option disabled selected>-- Select User --</option>
+                                @foreach ($users as $user)
+                                    <option value="{{ $user->id }}"
+                                        {{ old('admin_project') == $user->id ? 'selected' : '' }}>{{ $user->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="invalid-feedback d-block" id="adminProject-feedback">
+                            </div>
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">Project Reviewer</label>
+                            <select class="reviewerProject-input" data-placeholder="Choose anything" multiple="multiple"
+                                name="reviewer[]">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add Project</button>
+                    </div>
+                </form>
             </div>
-            <form id="addProject">
-                <div class="modal-body">
-                    @csrf
-                    <div class="col mb-3">
-                        <label class="form-label">Project Name</label>
-                        <input id="projectName-input" type="text" class="form-control" name="project_name" placeholder="Enter Project Name..." value="{{ old('project_name') }}" autocomplete="off" required>
-                        <div class="invalid-feedback" id="projectName-feedback">
-                        </div>
-                    </div>
-                    <div class="col mb-3">
-                        <label class="form-label">Limit Max Reviewer</label>
-                        <input id="limitReviewer-input" type="number" class="form-control @error('limit') is-invalid @enderror" name="limit" placeholder="Enter Max Reviewer..." autocomplete="off" value="{{ old('limit') }}" required>
-                        <div class="invalid-feedback" id="limitReviewer-feedback">
-                        </div>
-                    </div>
-                    <div class="col mb-3">
-                        <label class="form-label">Project Admin</label>
-                        <select id="adminProject-input" class="select_user" name="admin_project">
-                            <option disabled selected>-- Select User --</option>
-                            @foreach ($users as $user)
-                                <option value="{{ $user->id }}" {{ old('admin_project') == $user->id ? 'selected' : ''}}>{{ $user->name }}</option>
-                            @endforeach
-                        </select>
-                        <div class="invalid-feedback d-block" id="adminProject-feedback">
-                        </div>
-                    </div>      
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Add Project</button>
-                </div>
-            </form>
-        </div>
         </div>
     </div>
 
     <div class="modal fade" id="modalEdit" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title">Edit Project</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Project</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="updateProject">
+                    @csrf
+                    @method('put')
+                    <div class="modal-body">
+                        <div class="col mb-3">
+                            <label class="form-label">Project Name</label>
+                            <input type="text" class="form-control @error('project_name') is-invalid @enderror"
+                                name="project_name" placeholder="Enter Project Name..." value="{{ old('project_name') }}"
+                                autocomplete="off" required>
+                            @error('project_name')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">Limit Max Reviewer</label>
+                            <input type="number" class="form-control @error('limit') is-invalid @enderror" name="limit"
+                                placeholder="Enter Max Reviewer..." autocomplete="off" value="{{ old('limit') }}" required>
+                            @error('limit')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">Project Admin</label>
+                            <select class="select_edit_user" name="admin_project" id="admin">
+                            </select>
+                            @error('admin_project')
+                                <div class="invalid-feedback d-block">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">Project Reviewer</label>
+                            <select class="reviewerProject-edit" data-placeholder="Choose anything" multiple="multiple"
+                                name="reviewer[]">
+                            </select>
+                        </div>
+                        <input type="hidden" name="project_id">
+                        <input type="hidden" name="old_admin">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
             </div>
-            <form id="updateProject">
-                @csrf
-                @method('put')
-                <div class="modal-body">
-                    <div class="col mb-3">
-                        <label class="form-label">Project Name</label>
-                        <input type="text" class="form-control @error('project_name') is-invalid @enderror" name="project_name" placeholder="Enter Project Name..." value="{{ old('project_name') }}" autocomplete="off" required>
-                        @error('project_name')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                    <div class="col mb-3">
-                        <label class="form-label">Limit Max Reviewer</label>
-                        <input type="number" class="form-control @error('limit') is-invalid @enderror" name="limit" placeholder="Enter Max Reviewer..." autocomplete="off" value="{{ old('limit') }}" required>
-                        @error('limit')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                    <div class="col mb-3">
-                        <label class="form-label">Project Admin</label>
-                        <select class="select_edit_user" name="admin_project" id="admin">
-                        </select>
-                        @error('admin_project')
-                            <div class="invalid-feedback d-block">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>  
-                    <input type="hidden" name="project_id">    
-                    <input type="hidden" name="old_admin">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </div>
-            </form>
-        </div>
         </div>
     </div>
 
     <h1>Project Management</h1>
-    <hr/>
-    @if (session()->has('success'))    
+    <hr />
+    @if (session()->has('success'))
         <div class="alert alert-dismissible fade show py-2 bg-success">
             <div class="d-flex align-items-center">
-            <div class="fs-3 text-white"><ion-icon name="checkmark-circle-sharp"></ion-icon>
-            </div>
-            <div class="ms-3">
-                <div class="text-white">{{ session('success') }}</div>
-            </div>
+                <div class="fs-3 text-white">
+                    <ion-icon name="checkmark-circle-sharp"></ion-icon>
+                </div>
+                <div class="ms-3">
+                    <div class="text-white">{{ session('success') }}</div>
+                </div>
             </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -112,7 +133,10 @@
 
     <div class="card">
         <div class="col mb-3 mt-3 ms-3">
-            <button type="button" class="btn btn-sm btn-success px-5" data-bs-toggle="modal" data-bs-target="#exampleVerticallycenteredModal"><ion-icon name="add-circle-outline"></ion-icon>Add Project</button>
+            <button type="button" class="btn btn-sm btn-success px-5" data-bs-toggle="modal"
+                data-bs-target="#exampleVerticallycenteredModal">
+                <ion-icon name="add-circle-outline"></ion-icon>Add Project
+            </button>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -133,7 +157,7 @@
 @section('script')
     @if (session()->has('errors'))
         <script>
-            $(document).ready(function(){
+            $(document).ready(function() {
                 $('#exampleVerticallycenteredModal').modal('show');
                 $('#modalEdit').modal('show');
             });
@@ -149,8 +173,7 @@
                 url: '{!! URL::to('projectTable') !!}',
                 type: 'GET',
             },
-            columns: [
-                {
+            columns: [{
                     title: 'No',
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',
@@ -177,17 +200,17 @@
             ],
         }).on('click', '.aksi', function(e) {
             e.preventDefault();
-            if($(this).hasClass('deleteProject')) {
+            if ($(this).hasClass('deleteProject')) {
                 var id = $(this).data('id');
-                
+
                 Swal.fire({
-                title: 'Delete this project?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
+                    title: 'Delete this project?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
@@ -197,7 +220,7 @@
                                 "_token": "{{ csrf_token() }}",
                                 "id": id
                             },
-                            success: function(response){
+                            success: function(response) {
                                 Swal.fire({
                                     title: 'Deleted!',
                                     text: 'Project has been deleted.',
@@ -214,7 +237,7 @@
             } else {
                 var modal = $('#modalEdit');
                 var id = $(this).data('id');
-                
+
                 var name = $(this).data('project_name');
                 var limit = $(this).data('limit');
                 var user = $(this).data('admin_project');
@@ -227,28 +250,70 @@
                 $.ajax({
                     type: 'get',
                     url: '{!! URL::to('findProjectUser') !!}',
-                    data: {'id': id},
+                    data: {
+                        'id': id
+                    },
                     dataType: 'json',
-                    success: function(data){
-                        console.log(data);
-                        var html = '';
+                    success: function(data) {
+                        var admin = '';
+                        var reviewer = '';
                         for (var i = 0; i < data.length; i++) {
                             if (data[i].user_role == 'admin') {
                                 data[i].user_role = 'Admin Project'
-                            }
-                            else {
+                            } else {
                                 data[i].user_role = 'Reviewer'
+                                reviewer += '<option value="' + data[i].user_id + '" selected>' + data[
+                                    i].user.name + '</option>';
                             }
-                            html += '<option value="' + data[i].user_id + '">' + data[i].user.name + ' (' + data[i].user_role + ')' + '</option>';
+                            admin += '<option value="' + data[i].user_id + '">' + data[i].user.name +
+                                ' (' + data[i].user_role + ')' + '</option>';
                         }
-                        $('.select_edit_user').html(html);
+                        $('.select_edit_user').html(admin);
                         $('.select_edit_user').val(user);
                         $('.select_edit_user').trigger('change');
+                        $('.reviewerProject-edit').html(reviewer);
                     },
+                })
+
+                $('.select_edit_user').on('change', function() {
+                    var id = $(this).val();
+                    var project_id = $('#modalEdit').find('.modal-body input[name="project_id"]').val();
+                    $.ajax({
+                        url: '{!! URL::to('findEditReviewer') !!}',
+                        type: 'GET',
+                        data: {
+                            'user_id': id,
+                            'project_id': project_id
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            var reviewer = '';
+                            for (var i = 0; i < data.length; i++) {
+                                if (data[i].project_user.length > 0) {
+                                    reviewer += '<option value="' + data[i].id + '" selected>' +
+                                        data[i].name + '</option>';
+                                } else {
+                                    var notReviewer = data[i];
+                                    var selected = $('.reviewerProject-edit option[value="' +
+                                        notReviewer.id + '"]').is(':selected');
+                                    if (selected) {
+                                        reviewer += '<option value="' + data[i].id +
+                                            '" selected>' + data[i].name + '</option>';
+                                    } else {
+                                        reviewer += '<option value="' + data[i].id + '">' +
+                                            data[i].name + '</option>';
+                                    }
+                                }
+                            }
+                            $('.reviewerProject-edit').html(reviewer);
+                        }
+                    })
                 })
             }
         });
     </script>
+
+
     <script>
         $(document).ready(function() {
             $('.select_user').select2({
@@ -257,9 +322,44 @@
             $('.select_edit_user').select2({
                 dropdownParent: $('#modalEdit .modal-content')
             });
+            $('.reviewerProject-input').select2({
+                dropdownParent: $('#exampleVerticallycenteredModal .modal-content')
+            });
+            $('.reviewerProject-edit').select2({
+                dropdownParent: $('#modalEdit .modal-content')
+            });
         });
+
+        $('#adminProject-input').on('change', function() {
+            var user_id = $(this).val();
+
+            $.ajax({
+                url: '{!! URL::to('findReviewer') !!}',
+                type: 'GET',
+                data: {
+                    'user_id': user_id
+                },
+                dataType: 'json',
+                success: function(data) {
+                    var html = '';
+                    var old_reviewer = {{ old('reviewer') }}
+                    console.log(old_reviewer);
+                    for (var i = 0; i < data.length; i++) {
+                        if (old_reviewer == data[i].id) {
+                            html += '<option value="' + data[i].id + '" selected>' + data[i].name +
+                                '</option>';
+                        } else {
+                            html += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                        }
+                    }
+                    $('.reviewerProject-input').html(html);
+                    $('.reviewerProject-input').trigger('change');
+                },
+            })
+        })
+
         // Add Project
-        $('#addProject').on('submit', function(e){
+        $('#addProject').on('submit', function(e) {
             e.preventDefault();
             var form = new FormData(this);
             $.ajax({
@@ -269,7 +369,7 @@
                 contentType: false,
                 cache: false,
                 processData: false,
-                success: function(data){
+                success: function(data) {
                     console.log(data);
                     $('#exampleVerticallycenteredModal').modal('hide');
                     Swal.fire({
@@ -288,10 +388,9 @@
                         $('.is-invalid').removeClass('is-invalid');
                     });
                 },
-                error: function(data){
+                error: function(data) {
                     console.log(data);
-                    if(data.responseJSON.errors.admin_project)
-                    {
+                    if (data.responseJSON.errors.admin_project) {
                         $('#adminProject-input').addClass('is-invalid')
                         $('#adminProject-feedback').text(data.responseJSON.errors.admin_project[0])
                     } else {
@@ -315,7 +414,7 @@
             })
         })
         // Update Project
-        $('#updateProject').on('submit', function(e){
+        $('#updateProject').on('submit', function(e) {
             e.preventDefault();
             var form = new FormData(this);
             $.ajax({
@@ -325,7 +424,7 @@
                 contentType: false,
                 cache: false,
                 processData: false,
-                success: function(data){
+                success: function(data) {
                     console.log(data);
                     $('#modalEdit').modal('hide');
                     Swal.fire({
@@ -338,10 +437,9 @@
                         table.ajax.reload();
                     });
                 },
-                error: function(data){
+                error: function(data) {
                     console.log(data);
-                    if(data.responseJSON.errors.admin_project)
-                    {
+                    if (data.responseJSON.errors.admin_project) {
                         $('#adminProject-input-edit').addClass('is-invalid')
                         $('#adminProject-feedback-edit').text(data.responseJSON.errors.admin_project[0])
                     } else {

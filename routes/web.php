@@ -43,6 +43,8 @@ Route::get('/projectTable', [ProjectController::class, 'projectTable'])->middlew
 Route::post('/addProject', [ProjectController::class, 'store'])->middleware('auth');
 Route::put('/updateProject', [ProjectController::class, 'update'])->middleware('auth');
 Route::delete('/deleteProject', [ProjectController::class, 'delete'])->middleware('auth');
+Route::get('/findReviewer', [ProjectController::class, 'findReviewer'])->middleware('auth');
+Route::get('/findEditReviewer', [ProjectController::class, 'findEditReviewer'])->middleware('auth');
 //ajax
 Route::get('/findProjectUser', [ProjectController::class, 'findProjectUser'])->middleware('auth');
 
