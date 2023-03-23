@@ -122,9 +122,6 @@ class AssignReviewerController extends Controller
         foreach($request->article_id as $value) {
             ArticleUser::where('article_id', $value)->where('user_id', $request->user_id)->delete();
         }
-        if (count(ArticleUser::where('user_id', $request->user_id)->get()) == 0) {
-            ProjectUser::where('project_id', $request->project_id)->where('user_id', $request->user_id)->where('user_role', 'reviewer')->delete();
-        }
         return response()->json([
             'status' => 'success',
             'message' => 'Article has been removed'

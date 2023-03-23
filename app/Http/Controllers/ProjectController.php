@@ -30,26 +30,37 @@ class ProjectController extends Controller
     {
         $this->authorize('superadmin');
         $project = Project::with(['project_user' => function($query){
-            $query->with('user')->where('user_role', 'admin');
+            $query->with('user');
         }])->orderBy('id')->get();
         return DataTables::of($project)
             ->addIndexColumn()
             ->addColumn('project_name', function(Project $project){
                 return $project->project_name;
             })
-            ->addColumn('limit_reviewer', function(Project $project){
-                return $project->limit_reviewer;
-            })
             ->addColumn('admin_project', function(Project $project){
-                $name = $project->project_user[0]->user->name;
+                $name = '';
+                foreach ($project->project_user as $pu) {
+                    if ($pu->user_role == 'admin') {
+                        $name = $pu->user->name;
+                    }
+                }
                 return $name;
+            })
+            ->addColumn('reviewer', function(Project $project){
+                $reviewer = '';
+                foreach ($project->project_user as $pu) {
+                    if ($pu->user_role == 'reviewer') {
+                        $reviewer .= $pu->user->name.'<br>';
+                    }
+                }
+                return $reviewer;
             })
             ->addColumn('action', function(Project $row){
                 $btn = '<button type="button" class="btn btn-primary btn-sm aksi" data-toggle="modal" data-bs-target="#modalEdit" data-id="'.$row->id.'" data-project_name="'.$row->project_name.'" data-limit="'.$row->limit_reviewer.'" data-admin_project="'.$row->project_user[0]->user->id.'"><ion-icon name="create-outline"></ion-icon> Edit</button>';
                 $btn .= '<button type="button" class="btn btn-danger btn-sm ms-2 aksi deleteProject" data-id="'.$row->id.'"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
                 return $btn;
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['action', 'reviewer'])
             ->toJson();
     }
 
@@ -106,6 +117,30 @@ class ProjectController extends Controller
             User::where('id', $request->admin_project)->update([
                 'is_admin' => true,
             ]);
+        }
+        
+        $project_user = ProjectUser::where('project_id', $request->project_id)->where('user_role', 'reviewer')->get();
+        foreach ($project_user as $pu) {
+            if (!in_array($pu->user_id, $request->reviewer)) {
+                ProjectUser::where('project_id', $request->project_id)->where('user_id', $pu->user_id)->delete();
+                $article_user = ArticleUser::whereHas('article', function($query) use ($request){
+                    $query->where('project_id', $request->project_id);
+                })->where('user_id', $pu->user_id);
+                $article_user->delete();
+
+                ArticleUserQuestionaire::where('article_user_id', $article_user->pluck('id')->toArray())->delete();
+            }
+        }
+        foreach ($request->reviewer as $reviewer) {
+            if (!in_array($reviewer, $project_user->pluck('user_id')->toArray())) {
+                // update or create
+                ProjectUser::updateOrCreate([
+                    'project_id' => $request->project_id,
+                    'user_id' => $reviewer,
+                ],[
+                    'user_role' => 'reviewer',
+                ]);
+            }
         }
 
         $user = User::with(['project_user' => function($query) use ($request){

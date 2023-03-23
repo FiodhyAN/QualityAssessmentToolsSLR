@@ -147,6 +147,7 @@
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th></th>
                         </tr>
                     </thead>
                 </table>
@@ -189,6 +190,11 @@
                     title: 'Project Admin',
                     data: 'admin_project',
                     name: 'admin_project'
+                },
+                {
+                    title: 'Reviewer',
+                    data: 'reviewer',
+                    name: 'reviewer'
                 },
                 {
                     title: 'Action',
@@ -323,10 +329,20 @@
                 dropdownParent: $('#modalEdit .modal-content')
             });
             $('.reviewerProject-input').select2({
-                dropdownParent: $('#exampleVerticallycenteredModal .modal-content')
+                dropdownParent: $('#exampleVerticallycenteredModal .modal-content'),
+                closeOnSelect: false,
+                allowClear: true,
+                placeholder: 'Select Reviewer',
+                tags: true,
+                tokenSeparators: [',', ' ']
             });
             $('.reviewerProject-edit').select2({
-                dropdownParent: $('#modalEdit .modal-content')
+                dropdownParent: $('#modalEdit .modal-content'),
+                closeOnSelect: false,
+                allowClear: true,
+                placeholder: 'Select Reviewer',
+                tags: true,
+                tokenSeparators: [',', ' ']
             });
         });
 
