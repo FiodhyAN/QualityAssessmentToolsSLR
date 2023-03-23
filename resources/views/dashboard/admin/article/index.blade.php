@@ -64,50 +64,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- @foreach ($users as $user)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $user->name }}</td>
-                                @if (count($user->article_user) == 0 || $user->article_user[0]->article == null)
-                                    <td colspan="3" class="text-center">No Article Assigned</td>
-                                    <td class="d-none"></td>
-                                    <td class="d-none"></td>
-                                @else
-                                    <td>
-                                        @foreach ($user->article_user as $article_user)
-                                            {{ $article_user->article->id }} - {{ $article_user->article->no }} <br>
-                                        @endforeach
-                                    </td>
-                                    <td>
-                                        @foreach ($user->article_user as $article_user)
-                                            {{ $article_user->article->title }} <br>
-                                        @endforeach
-                                    </td>
-                                    <td class="text-center">
-                                        @foreach ($user->article_user as $article_user)
-                                            @if ($article_user->is_assessed == 1)
-                                                <span class="badge bg-success">Assessed</span> <br>
-                                            @else
-                                                <span class="badge bg-danger">Not Assessed</span> <br>
-                                            @endif
-                                        @endforeach
-                                    </td>
-                                @endif
-                                <td>
-                                    <a
-                                        href="/dashboard/admin/assign?pid={{ $project->project->id }}&uid={{ $user->id }}"><button
-                                            type="button" class="btn btn-sm btn-success px-5"><svg
-                                                xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round"
-                                                class="feather feather-user-check">
-                                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                                <circle cx="8.5" cy="7" r="4"></circle>
-                                                <polyline points="17 11 19 13 23 9"></polyline>
-                                            </svg> Assign</button></a>
-                                </td>
-                            </tr>
-                        @endforeach --}}
                     </tbody>
                 </table>
             </div>
