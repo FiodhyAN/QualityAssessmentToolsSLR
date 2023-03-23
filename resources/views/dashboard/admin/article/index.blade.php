@@ -64,50 +64,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- @foreach ($users as $user)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $user->name }}</td>
-                                @if (count($user->article_user) == 0 || $user->article_user[0]->article == null)
-                                    <td colspan="3" class="text-center">No Article Assigned</td>
-                                    <td class="d-none"></td>
-                                    <td class="d-none"></td>
-                                @else
-                                    <td>
-                                        @foreach ($user->article_user as $article_user)
-                                            {{ $article_user->article->id }} - {{ $article_user->article->no }} <br>
-                                        @endforeach
-                                    </td>
-                                    <td>
-                                        @foreach ($user->article_user as $article_user)
-                                            {{ $article_user->article->title }} <br>
-                                        @endforeach
-                                    </td>
-                                    <td class="text-center">
-                                        @foreach ($user->article_user as $article_user)
-                                            @if ($article_user->is_assessed == 1)
-                                                <span class="badge bg-success">Assessed</span> <br>
-                                            @else
-                                                <span class="badge bg-danger">Not Assessed</span> <br>
-                                            @endif
-                                        @endforeach
-                                    </td>
-                                @endif
-                                <td>
-                                    <a
-                                        href="/dashboard/admin/assign?pid={{ $project->project->id }}&uid={{ $user->id }}"><button
-                                            type="button" class="btn btn-sm btn-success px-5"><svg
-                                                xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round"
-                                                class="feather feather-user-check">
-                                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                                <circle cx="8.5" cy="7" r="4"></circle>
-                                                <polyline points="17 11 19 13 23 9"></polyline>
-                                            </svg> Assign</button></a>
-                                </td>
-                            </tr>
-                        @endforeach --}}
                     </tbody>
                 </table>
             </div>
@@ -123,7 +79,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -224,8 +180,6 @@
         var table = $('#article_table').DataTable({
             serverSide: true,
             processing: true,
-            scrollY: '50vh',
-            scrollCollapse: true,
             ajax: {
                 url: '{{ route('article.table', $project->project->id) }}',
                 type: 'GET',
@@ -234,13 +188,11 @@
                     title: 'ID - No',
                     data: 'no',
                     name: 'no',
-                    width: '10%',
                 },
                 {
                     title: 'Title',
                     data: 'title',
                     name: 'title',
-                    width: '30%',
                     render: function(data, type, row) {
                         return '<span style="white-space:normal">' + data + "</span>";
                     }
@@ -249,13 +201,11 @@
                     title: 'Year',
                     data: 'year',
                     name: 'year',
-                    width: '10%',
                 },
                 {
                     title: 'Publication',
                     data: 'publication',
                     name: 'publication',
-                    width: '10%',
                     render: function(data, type, row) {
                         return '<span style="white-space:normal">' + data + "</span>";
                     }
@@ -264,7 +214,6 @@
                     title: 'Authors',
                     data: 'authors',
                     name: 'authors',
-                    width: '20%',
                     render: function(data, type, row) {
                         return '<span style="white-space:normal">' + data + "</span>";
                     }
@@ -275,7 +224,6 @@
                     name: 'action',
                     orderable: false,
                     searchable: false,
-                    width: '20%',
                 },
             ]
         }).on('click', '.deleteArticle', function(e) {
@@ -336,36 +284,40 @@
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',
-                    width: '5%',
                 },
                 {
                     data: 'name',
                     name: 'name',
-                    width: '20%',
                 },
                 {
-                    data: 'id-no',
-                    name: 'id-no',
-                    width: '20%',
+                    data: 'id_no',
+                    name: 'id_no',
                 },
                 {
                     data: 'title',
                     name: 'title',
-                    width: '30%',
                 },
                 {
                     data: 'assessed',
                     name: 'assessed',
                     class: 'text-center',
-                    width: '10%',
                 },
                 {
                     data: 'action',
                     name: 'action',
                     orderable: false,
                     searchable: false,
-                    width: '20%',
-                }]
+                }
+            ],
+            rowCallback: function(row, data, index) {
+                if (data.id_no == false) {
+                    $(row).find('td:eq(2)').attr('colspan', '3');
+                    $(row).find('td:eq(2)').text('No Article Assigned');
+                    $(row).find('td:eq(3)').addClass('d-none');
+                    $(row).find('td:eq(4)').addClass('d-none');
+                    $(row).find('td:eq(2)').addClass('text-center');
+                }
+            }
         });
     </script>
 @endsection
