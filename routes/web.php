@@ -80,12 +80,47 @@ Route::post('/dashboard/reviewer/assessment/store', [AssessmentController::class
 // cd ./python
 // python run_app_flask.py
 
+use Illuminate\Http\Response;
+
 Route::get('/pengolahan-data', function () {
     return view('pengolahan_data_slr.home');
 });
 
+
+Route::get('/gambar-graph', function () {
+    $articles = DB::table('graphimage')
+                ->select('base64code')
+                ->get();
+
+    $data = json_decode($articles, true);
+    $response=$data[0]['base64code'];
+    return view('graph', ['src' => "data:image/png;base64, $response"]);
+});
+
+
+Route::get('/my-image', function() {
+    $articles = DB::table('graphimage')
+                ->select('base64code')
+                ->get();
+
+    $data = json_decode($articles, true);
+    $response=$data[0]['base64code'];
+
+    // Create an HTTP response with the image data
+    $headers = [
+        'Content-Type' => 'image/png',
+    ];
+    $statusCode = 200;
+    $content = base64_decode($response);
+    $response = new Response($content, $statusCode, $headers);
+
+    // Return the HTTP response
+    return $response;
+});
+
+
 function getData(){
-    $articles = DB::table('article')
+    $articles = DB::table('articles')
                 ->select('no', 'keywords', 'abstracts', 'year', 'authors', 'citing_new')
                 ->get();
 
@@ -96,7 +131,7 @@ function getData(){
     foreach ($data as $row) {
         $flag++;
         if($flag<=0) continue;
-        // if($flag>60) break;
+        if($flag>60) break;
         $keywords = preg_split('/\s*[,;\/]\s*/', $row['keywords']);
         $authors = preg_split('/\s*[,;\/]\s*/', $row['authors']);
 
@@ -125,6 +160,7 @@ function getData(){
             $result[] = [$row['no'], $keywords, $abstracts,(string) $row['year'],$authors,  $citingNew];
         }    
     }
+    $result[] = ["dummywriter", [], [],[],["dummywriter"]];
     return $result;
 }
 
@@ -132,7 +168,8 @@ Route::get('/data/rank', function () {
     $result = getData();
     // transporse table
     // https://stackoverflow.com/questions/6297591/how-to-invert-transpose-the-rows-and-columns-of-an-html-table
-    $response = Http::timeout(600)->post('http://127.0.0.1:5000/data/rank', [
+    set_time_limit(6000);
+    $response = Http::timeout(6000)->post('http://127.0.0.1:5000/data/rank', [
         'data' => 
             $result
             // [  
@@ -143,6 +180,8 @@ Route::get('/data/rank', function () {
             //     , [ "a5", ['dj','dk'],     ['a','dj','dk','m','r']  ,'1994',['p1','p7']      ,['a1','a2','a3']                       ]
             //     , [ "a6", ['d','ac','ad'], ['d','ac','ad','s','t']  ,'1994',['p8','p9']      ,['a1','a3']                            ]
             // ]
+        ,'outer'=>true
+        ,'author-rank'=>10
     ]);
     // return $response;
     // return json_decode($response);
@@ -165,8 +204,8 @@ Route::get('/data/rank', function () {
 });
 Route::get('/data/graph', function () {
     $result = getData();
-
-    $response = Http::timeout(600)->post('http://127.0.0.1:5000/data/graph', [
+    set_time_limit(6000);
+    $response =  Http::timeout(6000)->post('http://127.0.0.1:5000/data/graph', [
         'data' => 
         $result
         // [  
@@ -177,6 +216,8 @@ Route::get('/data/graph', function () {
         //     , [ "a5", ['dj','dk'],     ['a','dj','dk','m','r']  ,'1994',['p1','p7']      ,['a1','a2','a3']                       ]
         //     , [ "a6", ['d','ac','ad'], ['d','ac','ad','s','t']  ,'1994',['p8','p9']      ,['a1','a3']                            ]
         // ]
+        ,'outer'=>true
+        ,'author-rank'=>10
     ]);
     return view('pengolahan_data_slr.graph', ['src' => "data:image/png;base64, $response"]);
 
