@@ -8,7 +8,7 @@ use App\Http\Controllers\ProjectAdminController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AssignReviewerController;
 use App\Http\Controllers\AssessmentController;
-use App\Http\Controllers\DataProcessingController
+use App\Http\Controllers\DataProcessingController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
