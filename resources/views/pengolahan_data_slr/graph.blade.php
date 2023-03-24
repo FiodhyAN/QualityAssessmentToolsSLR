@@ -1,5 +1,5 @@
-@extends('pengolahan_data_slr.template')
-@section('main')
+@extends('layouts.main')
+@section('container')
 
 <!-- CSS -->
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" />
