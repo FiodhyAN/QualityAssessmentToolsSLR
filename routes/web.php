@@ -80,9 +80,9 @@ Route::post('/dashboard/reviewer/assessment/store', [AssessmentController::class
 // sebelumnya bisa ikuti command dibawah
 // cd ./python
 // python run_app_flask.py
-Route::post('/pengolahan-data', [DataProcessingController::class, 'pengolahan_data'])->middleware('auth')->name('assessment.store');
-Route::post('/gambar-graph', [DataProcessingController::class, 'gambar_graph'])->middleware('auth')
-Route::post('/gambar-graph', [DataProcessingController::class, 'gambar_graph'])->middleware('auth')
-Route::post('/my-image', [DataProcessingController::class, 'my_image'])->middleware('auth')
-Route::post('/data/rank', [DataProcessingController::class, 'data_rank'])->middleware('auth')
-Route::post('/data/graph', [DataProcessingController::class, 'data_graph'])->middleware('auth')
+Route::get('/pengolahan-data', [DataProcessingController::class, 'pengolahan_data'])->middleware('auth');
+Route::get('/gambar-graph', [DataProcessingController::class, 'gambar_graph'])->middleware('auth');
+Route::get('/gambar-graph', [DataProcessingController::class, 'gambar_graph'])->middleware('auth');
+Route::get('/my-image', [DataProcessingController::class, 'my_image'])->middleware('auth');
+Route::get('/data/rank', [DataProcessingController::class, 'data_rank'])->middleware('auth');
+Route::get('/data/graph', [DataProcessingController::class, 'data_graph'])->middleware('auth');
