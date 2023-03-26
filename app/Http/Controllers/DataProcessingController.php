@@ -11,11 +11,29 @@ use Illuminate\Support\Facades\Http;
 class DataProcessingController extends Controller
 {
     public function pengolahan_data() {
-        return view('pengolahan_data_slr.home');
+        $graph = DB::table('data_graph')
+                    ->select('base64code')
+                    ->get();
+        $data = json_decode($graph, true);
+        $graph=$data[0]['base64code'];
+
+        $rank_meta = DB::table('data_rank')
+        ->select('json')
+        ->get();
+        $data = json_decode($rank_meta, true);
+        $rank_meta=$data[0]['json'];
+        $data_rank = json_decode($rank_meta, true);
+
+        $author_ranks = array();
+        for ($i = 0; $i < count($data_rank["author"]); $i++) {
+            $author_ranks[] = array($data_rank["author"][$i], $data_rank["ranks"][$i]);
+        }
+
+        return view('pengolahan_data_slr.home', ['src' => "data:image/png;base64, $graph",'author_ranks' => $author_ranks]);
     }   
 
     public function gambar_graph() {
-        $articles = DB::table('graphimage')
+        $articles = DB::table('data_graph')
                     ->select('base64code')
                     ->get();
     

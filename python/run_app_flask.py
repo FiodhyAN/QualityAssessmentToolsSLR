@@ -14,6 +14,7 @@ from tabulate import tabulate
 matplotlib.use('Agg')
 from matplotlib.pylab import *
 from flask_mysqldb import MySQL
+import json
 
 
 app = Flask(__name__)
@@ -27,54 +28,25 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
 
-@app.route("/")
-def home():
-    return "hi"
-@app.route("/index")
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-   message = None
-   if request.method == 'POST':
-        datafromjs = request.form['mydata']
-        # result = "return this"
-        # resp = make_response('{"response": '+result+'}')
-        # resp.headers['Content-Type'] = "application/json"
-        # return resp
-        # return render_template('login.html', message='')
-
-        fig = Figure()
-        axis = fig.add_subplot(1, 1, 1)
-        xs = range(100)
-        ys = [random.randint(1, 50) for x in xs]
-        axis.plot(xs, ys)
-        import urllib.parse
-        output = io.BytesIO()
-        FigureCanvas(fig).print_png(output)
-        return Response(output.getvalue(), mimetype='image/png')
-   else:
-        fig = Figure()
-        axis = fig.add_subplot(1, 1, 1)
-        xs = range(100)
-        ys = [random.randint(1, 50) for x in xs]
-        axis.plot(xs, ys)
-        
-        output = io.BytesIO()
-        FigureCanvas(fig).print_png(output)
-        return Response(output.getvalue(), mimetype='image/png')
-
-
-@app.route('/create_graphimage_table')
+@app.route('/create_data_processing_table')
 def create_graphimage_table():
     cur = mysql.connection.cursor()
-    cur.execute("CREATE TABLE graphimage (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, nama_project VARCHAR(255) NOT NULL, base64code LONGTEXT NOT NULL)")
+    cur.execute("CREATE TABLE data_graph (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, nama_project VARCHAR(255) NOT NULL, base64code LONGTEXT NOT NULL)")
+    cur.execute("CREATE TABLE data_rank (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, nama_project VARCHAR(255) NOT NULL, json LONGTEXT NOT NULL)")
     mysql.connection.commit()
     cur.close()
     return "Tabel berhasil dibuat!"
 
-def query(nama_project,base64code):
+def query_graph(nama_project,base64code):
     cur = mysql.connection.cursor()
-    cur.execute("INSERT INTO graphimage (nama_project, base64code) VALUES (%s, %s)", (nama_project, base64code))
+    cur.execute("INSERT INTO data_graph (nama_project, base64code) VALUES (%s, %s)", (nama_project, base64code))
+    mysql.connection.commit()
+    cur.close()
+    return "Data berhasil disimpan!"
+
+def query_rank(nama_project,json):
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO data_rank (nama_project, json) VALUES (%s, %s)", (nama_project, json))
     mysql.connection.commit()
     cur.close()
     return "Data berhasil disimpan!"
@@ -256,7 +228,7 @@ def makeTermGraph(table, authors,author_matrixs,author_rank,outer_author,ranking
     output=buf
     output.seek(0)
     my_base64_jpgData = base64.b64encode(output.read())
-    # query("project23maret",my_base64_jpgData)
+    # query_graph("project 1",my_base64_jpgData)
 
     return buf
 
@@ -307,9 +279,10 @@ def makeNewAdjMatrix(pretable3,lenauthor):
     print(table3)
     return pretable3
 
-def rank(pretable3,lenauthor,name):
+def rank(pretable3,author,name):
     import numpy as np
     import pandas as pd
+    lenauthor=len(author)
     d=0.850466963
     table4=[]
     row=[]
@@ -333,6 +306,9 @@ def rank(pretable3,lenauthor,name):
     table5=pd.DataFrame(table4)
     print("tabel 3: Ranking")
     print(table5.T)
+
+    json_data = json.dumps({"author": author, "ranks": rank})
+    # query_rank("project 1",json_data)
 
     if name=="graph":
         return table4,rowbaru
@@ -382,7 +358,7 @@ def data(name):
         # makeNewAdjMatrix
         newAdjMatrixs=makeNewAdjMatrix(raw_table2WithRowCol,len(authors))
         # rank author
-        table,author_rank=rank(newAdjMatrixs,len(authors),name)
+        table,author_rank=rank(newAdjMatrixs,authors,name)
 
         try:
             outer_author= request.get_json()["outer"]
@@ -406,23 +382,3 @@ def data(name):
 
 if __name__ == "__main__":
     app.run(debug = True)
-
-# fig = Figure()
-#         axis = fig.add_subplot(1, 1, 1)
-#         xs = range(100)
-#         ys = [random.randint(1, 50) for x in xs]
-#         axis.plot(xs, ys)
-#         output = io.BytesIO()
-
-#         from io import BytesIO
-#         from PIL import Image, ImageDraw
-#         image = Image.new("RGB", (300, 50))
-#         draw = ImageDraw.Draw(image)
-#         draw.text((0, 0), "This text is drawn on image")
-
-#         image.save(output, 'PNG')
-#         import base64
-#         return base64.b64encode(output.getvalue()).decode()
-        
-#         FigureCanvas(fig).print_png(output)
-#         return Response(output.getvalue(), mimetype='image/png')
