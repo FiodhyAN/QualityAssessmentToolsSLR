@@ -91,6 +91,7 @@ class DataProcessingController extends Controller
 
 
     public function data_rank() {
+        $sum_top_author=10;
         $result = $this->getData();
         // transporse table
         // https://stackoverflow.com/questions/6297591/how-to-invert-transpose-the-rows-and-columns-of-an-html-table
@@ -107,7 +108,7 @@ class DataProcessingController extends Controller
                 //     , [ "a6", ['d','ac','ad'], ['d','ac','ad','s','t']  ,'1994',['p8','p9']      ,['a1','a3']                            ]
                 // ]
             ,'outer'=>true
-            ,'author-rank'=>10
+            ,'author-rank'=>$sum_top_author
         ]);
         // return $response;
         // return json_decode($response);
@@ -124,12 +125,14 @@ class DataProcessingController extends Controller
         usort($author_ranks, function($a, $b) {
             return $a[1] - $b[1];
         });
-    
+        //dapatkan data top 10 
+        $author_ranks = array_slice($author_ranks, 0, $sum_top_author);
         return view('pengolahan_data_slr.rank',  ['authors'=> $response[0],'ranktable' => $response[1][0],'rank' => $response[1][1],'author_ranks' => $author_ranks]);
     
     }
 
     public function data_graph() {
+        $sum_top_author=10;
         $result = $this->getData();
         set_time_limit(6000);
         $response =  Http::timeout(6000)->post('http://127.0.0.1:5000/data/graph', [
@@ -144,7 +147,7 @@ class DataProcessingController extends Controller
             //     , [ "a6", ['d','ac','ad'], ['d','ac','ad','s','t']  ,'1994',['p8','p9']      ,['a1','a3']                            ]
             // ]
             ,'outer'=>true
-            ,'author-rank'=>10
+            ,'author-rank'=>$sum_top_author
         ]);
         return view('pengolahan_data_slr.graph', ['src' => "data:image/png;base64, $response"]);
     

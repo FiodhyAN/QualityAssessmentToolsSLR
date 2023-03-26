@@ -205,7 +205,12 @@ def makeTermGraph(table, authors,author_matrixs,author_rank,outer_author,ranking
     for author_matrix in author_matrixs:
         if author_matrix[2] > 0:
             # print("value:"+str(author_matrix[2]))
-            G.add_edge(author_matrix[0], author_matrix[1], weight=author_matrix[2])
+            # jika ada hubungan dengan top author maka tambahkan edge
+            if outer_author == False:
+                if (author_matrix[0] in top_authors or author_matrix[1] in top_authors):
+                    G.add_edge(author_matrix[0], author_matrix[1], weight=author_matrix[2])
+            else:
+                G.add_edge(author_matrix[0], author_matrix[1], weight=author_matrix[2])
             index=authors.index(author_matrix[1])
             if my_node_sizes[index] == 8 or my_node_sizes[index] == 0:
                 # node yang merujuk tapi tidak dirujuk ubah size=100
