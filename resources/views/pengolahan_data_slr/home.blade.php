@@ -14,8 +14,16 @@
         <div class="container">
         <!-- HTML -->
             <a data-fancybox="gallery" href="{{$src}}">
-            <img class="img-fluid" src="{{$src}}" alt="Gambar 1" />
+            <img class="img-fluid" src="{{$src}}" alt="Gambar 1"  id="my-image"/>
             </a>
+
+            <script>
+                document.getElementById('my-image').onerror = function() {
+                    this.onerror = null;
+                    this.src = 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831';
+                };
+            </script>
+
         </div>
     </div>
     <div class="col-md-6">
