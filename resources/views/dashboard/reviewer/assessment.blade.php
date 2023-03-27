@@ -273,7 +273,7 @@
                 nextBtn.classList.add('d-inline-block');
             }
         });
-        
+
 
         $('.assessment_form').on('submit', function(e) {
             e.preventDefault();
@@ -310,23 +310,6 @@
             });
         });
 
-        // $('#q_1_pos').is('click', function() {
-        //     console.log('test');
-        //     $('#summary1').text('1');
-        // });
-        
-        // for (let i = 1; i <= stepCount; i++) {
-        //     $('#q_' + i + '_pos').on('click', ) 
-        //         console.log('q_' + i + '_pos is checked');
-        //         $('#summary' + i + '').text() = '1';
-        //     } else if ($('#q_' + i + '_net').is(':checked')) {
-        //         console.log('q_' + i + '_net is checked');
-        //         $('#summary' + i + '').text() = '0';
-        //     } else if ($('#q_' + i + '_neg').is(':checked')) {
-        //         console.log('q_' + i + '_neg is checked');
-        //         $('#summary' + i + '').text() = '-1';
-        //     }
-        // }
         for (let i = 1; i <= stepCount; i++) {
             $('#q_' + i + '_pos').on('click', function() {
                 // get the text of the label
