@@ -79,11 +79,24 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-
+                    <div class="table-responsive">
+                        <table id="score_table" class="table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Question</th>
+                                    <th>User</th>
+                                    <th>Score</th>
+                                    <th>Sum</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scoreData">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
@@ -118,13 +131,6 @@
 @section('script')
     <script>
         // get data title from scoreArticle button
-        $('#modalScore').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget)
-            var title = button.data('title')
-            var modal = $(this)
-            modal.find('.modal-title-score').text('Score For ' + title)
-        });
-
 
         $('#form_import_excel').on('submit', function(e) {
             e.preventDefault();
@@ -269,6 +275,60 @@
                             })
                         }
                     });
+                }
+            })
+        });
+
+        table.on('click', '.scoreArticle', function() {
+            // var button = $(event.relatedTarget)
+            var title = $(this).data('title');
+            $('.modal-title-score').text('Score For ' + title)
+
+            // Score Data
+            var article_id = $(this).data('id');
+            // console.log(id);
+            $.ajax({
+                url: '{{ route('article.score') }}',
+                type: 'GET',
+                data: {
+                    article_id: article_id
+                },
+                dataType: 'JSON',
+                success: function(result){
+                    console.log(result);
+                    var html = '';
+                    var no = 1;
+
+                    $.each(result, function(key, value){
+                        var sum = 0;
+                        var name = '';
+                        var score = '';
+                        // console.log(value.article_user_questionaire[0].article_user.user.name);
+                        $.each(value.article_user_questionaire, function(key, value){
+                            if(value.article_user == null) {
+                                name += '';
+                                score += '';
+                                sum += 0;
+                            }
+                            else {
+                                sum += value.score;
+                                name += value.article_user.user.name + '<br>';
+                                score += value.score + '<br>';
+                            }
+                        });
+                        // sum += value.article_user_questionaire.score;
+                        html += '<tr>';
+                        html += '<td>' + no++ + '</td>';
+                        html += '<td>' + value.question + '</td>';
+                        html += '<td class="name">' + name + '</td>';
+                        html += '<td class="text-center">' + score + '</td>';
+                        html += '<td class="text-center">' + sum + '</td>';
+                        html += '</tr>';
+                    });
+                    $('#scoreData').html(html);
+                },
+                error: function(error){
+                    console.log(error);
                 }
             })
         });

@@ -18,7 +18,8 @@
                             style="width: 0%"></div>
                     </div>
                     <div id="qbox-container">
-                        <form action="/dashboard/reviewer/assessment/store" class="needs-validation assessment_form" id="form-wrapper" method="post" name="form-wrapper" novalidate>
+                        <form action="/dashboard/reviewer/assessment/store" class="needs-validation assessment_form"
+                            id="form-wrapper" method="post" name="form-wrapper" novalidate>
                             @csrf
                             <input type="hidden" name="article_id" id="article_id">
                             <div id="steps-container">
@@ -43,7 +44,9 @@
                                                     for="q_{{ $loop->iteration }}_net">{{ $question->net_answer }}</label>
                                             </div>
                                             <div class="q-box__question">
-                                                <input class="form-check-input question__input" id="q_{{ $loop->iteration }}_neg" name="{{ $question->name }}" type="radio" value="-1">
+                                                <input class="form-check-input question__input"
+                                                    id="q_{{ $loop->iteration }}_neg" name="{{ $question->name }}"
+                                                    type="radio" value="-1">
                                                 <label class="form-check-label question__label"
                                                     for="q_{{ $loop->iteration }}_neg">{{ $question->neg_answer }}</label>
                                             </div>
@@ -53,7 +56,15 @@
                                 <div class="step">
                                     <div class="mt-1">
                                         <div class="closing-text">
-                                            <h4>Assessment Selesai! Terima Kasih!</h4>
+                                            <h4>Assessment Selesai! Apakah Anda Yakin dengan Penilaian Anda?</h4>
+                                            @foreach ($questionaires as $item)
+                                                <ul>
+                                                    <li>
+                                                        <p>{{ $item->question }}</p>
+                                                        <p id="summary{{ $loop->iteration }}"></p>
+                                                    </li>
+                                                </ul>
+                                            @endforeach
                                             <p>Click tombol submit untuk melanjutkan.</p>
                                         </div>
                                     </div>
@@ -154,148 +165,182 @@
         });
 
         let step = document.getElementsByClassName('step');
-            let prevBtn = document.getElementById('prev-btn');
-            let nextBtn = document.getElementById('next-btn');
-            let submitBtn = document.getElementById('submit-btn');
-            let form = document.getElementsByTagName('form')[0];
-            let preloader = document.getElementById('preloader-wrapper');
-            let bodyElement = document.querySelector('body');
-            let succcessDiv = document.getElementById('success');
-    
-            let current_step = 0;
-            const stepCount = {{ count($questionaires) }}
+        let prevBtn = document.getElementById('prev-btn');
+        let nextBtn = document.getElementById('next-btn');
+        let submitBtn = document.getElementById('submit-btn');
+        let form = document.getElementsByTagName('form')[0];
+        let preloader = document.getElementById('preloader-wrapper');
+        let bodyElement = document.querySelector('body');
+        let succcessDiv = document.getElementById('success');
+
+        let current_step = 0;
+        const stepCount = {{ count($questionaires) }}
+        step[current_step].classList.add('d-block');
+        if (current_step == 0) {
+            prevBtn.classList.add('d-none');
+            submitBtn.classList.add('d-none');
+            nextBtn.classList.add('d-inline-block');
+        }
+
+        const progress = (value) => {
+            document.getElementsByClassName('progress-bar')[0].style.width = `${value}%`;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            // if radio button is not checked then show alert
+            if (step[current_step].querySelector('input[type="radio"]:checked') == null) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please select an answer!',
+                });
+                return false;
+            }
+            current_step++;
+            let previous_step = current_step - 1;
+            if ((current_step > 0) && (current_step <= stepCount)) {
+                prevBtn.classList.remove('d-none');
+                prevBtn.classList.add('d-inline-block');
+                step[current_step].classList.remove('d-none');
+                step[current_step].classList.add('d-block');
+                step[previous_step].classList.remove('d-block');
+                step[previous_step].classList.add('d-none');
+                if (current_step == stepCount) {
+                    submitBtn.classList.remove('d-none');
+                    submitBtn.classList.add('d-inline-block');
+                    nextBtn.classList.remove('d-inline-block');
+                    nextBtn.classList.add('d-none');
+                }
+            } else {
+                if (current_step > stepCount) {
+                    form.onsubmit = () => {
+                        return true
+                    }
+                }
+            }
+            progress((100 / stepCount) * current_step);
+        });
+
+
+        prevBtn.addEventListener('click', () => {
+            if (current_step > 0) {
+                current_step--;
+                let previous_step = current_step + 1;
+                prevBtn.classList.add('d-none');
+                prevBtn.classList.add('d-inline-block');
+                step[current_step].classList.remove('d-none');
+                step[current_step].classList.add('d-block');
+                step[previous_step].classList.remove('d-block');
+                step[previous_step].classList.add('d-none');
+                if (current_step < stepCount) {
+                    submitBtn.classList.remove('d-inline-block');
+                    submitBtn.classList.add('d-none');
+                    nextBtn.classList.remove('d-none');
+                    nextBtn.classList.add('d-inline-block');
+                    prevBtn.classList.remove('d-none');
+                    prevBtn.classList.add('d-inline-block');
+                }
+            }
+
+            if (current_step == 0) {
+                prevBtn.classList.remove('d-inline-block');
+                prevBtn.classList.add('d-none');
+            }
+            progress((100 / stepCount) * current_step);
+        });
+
+        //on close modal progress bar reset
+        $('#exampleModal').on('hidden.bs.modal', function() {
+            progress(0);
+            current_step = 0;
             step[current_step].classList.add('d-block');
+            step[current_step].classList.remove('d-none');
+            nextBtn.classList.remove('d-none');
+            nextBtn.classList.add('d-inline-block');
+            // for each step beside the first one hide it
+            for (let i = 1; i < stepCount + 1; i++) {
+                step[i].classList.add('d-none');
+                step[i].classList.remove('d-block');
+            }
+            // remove all checked radio button
+            let radioBtns = document.querySelectorAll('input[type="radio"]');
+            radioBtns.forEach((radioBtn) => {
+                radioBtn.checked = false;
+            });
             if (current_step == 0) {
                 prevBtn.classList.add('d-none');
                 submitBtn.classList.add('d-none');
                 nextBtn.classList.add('d-inline-block');
             }
-    
-            const progress = (value) => {
-                document.getElementsByClassName('progress-bar')[0].style.width = `${value}%`;
-            }
-    
-            nextBtn.addEventListener('click', () => {
-                // if radio button is not checked then show alert
-                if (step[current_step].querySelector('input[type="radio"]:checked') == null) {
+        });
+        
+
+        $('.assessment_form').on('submit', function(e) {
+            e.preventDefault();
+
+            // run ajax request
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: "{{ route('assessment.store') }}",
+                type: "POST",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    // hide modal
+                    $('#exampleModal').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Assessment submitted successfully!',
+                        showConfirmButton: true,
+                    }).then(isConfirmed => {
+                        table.ajax.reload();
+                    });
+                },
+                error: function(data) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
-                        text: 'Please select an answer!',
-                    });
-                    return false;
+                        text: 'Something went wrong!',
+                    })
                 }
-                current_step++;
-                let previous_step = current_step - 1;
-                if ((current_step > 0) && (current_step <= stepCount)) {
-                    prevBtn.classList.remove('d-none');
-                    prevBtn.classList.add('d-inline-block');
-                    step[current_step].classList.remove('d-none');
-                    step[current_step].classList.add('d-block');
-                    step[previous_step].classList.remove('d-block');
-                    step[previous_step].classList.add('d-none');
-                    if (current_step == stepCount) {
-                        submitBtn.classList.remove('d-none');
-                        submitBtn.classList.add('d-inline-block');
-                        nextBtn.classList.remove('d-inline-block');
-                        nextBtn.classList.add('d-none');
-                    }
-                } else {
-                    if (current_step > stepCount) {
-                        form.onsubmit = () => {
-                            return true
-                        }
-                    }
-                }
-                progress((100 / stepCount) * current_step);
             });
-    
-    
-            prevBtn.addEventListener('click', () => {
-                if (current_step > 0) {
-                    current_step--;
-                    let previous_step = current_step + 1;
-                    prevBtn.classList.add('d-none');
-                    prevBtn.classList.add('d-inline-block');
-                    step[current_step].classList.remove('d-none');
-                    step[current_step].classList.add('d-block');
-                    step[previous_step].classList.remove('d-block');
-                    step[previous_step].classList.add('d-none');
-                    if (current_step < stepCount) {
-                        submitBtn.classList.remove('d-inline-block');
-                        submitBtn.classList.add('d-none');
-                        nextBtn.classList.remove('d-none');
-                        nextBtn.classList.add('d-inline-block');
-                        prevBtn.classList.remove('d-none');
-                        prevBtn.classList.add('d-inline-block');
-                    }
-                }
-    
-                if (current_step == 0) {
-                    prevBtn.classList.remove('d-inline-block');
-                    prevBtn.classList.add('d-none');
-                }
-                progress((100 / stepCount) * current_step);
-            });
+        });
 
-            //on close modal progress bar reset
-            $('#exampleModal').on('hidden.bs.modal', function () {
-                progress(0);
-                current_step = 0;
-                step[current_step].classList.add('d-block');
-                step[current_step].classList.remove('d-none');
-                nextBtn.classList.remove('d-none');
-                  nextBtn.classList.add('d-inline-block');
-                // for each step beside the first one hide it
-                  for (let i = 1; i < stepCount+1; i++) {
-                     step[i].classList.add('d-none');
-                     step[i].classList.remove('d-block');
-                  }
-                  // remove all checked radio button
-                  let radioBtns = document.querySelectorAll('input[type="radio"]');
-                  radioBtns.forEach((radioBtn) => {
-                      radioBtn.checked = false;
-                  });
-                if (current_step == 0) {
-                    prevBtn.classList.add('d-none');
-                    submitBtn.classList.add('d-none');
-                    nextBtn.classList.add('d-inline-block');
-                }
+        // $('#q_1_pos').is('click', function() {
+        //     console.log('test');
+        //     $('#summary1').text('1');
+        // });
+        
+        // for (let i = 1; i <= stepCount; i++) {
+        //     $('#q_' + i + '_pos').on('click', ) 
+        //         console.log('q_' + i + '_pos is checked');
+        //         $('#summary' + i + '').text() = '1';
+        //     } else if ($('#q_' + i + '_net').is(':checked')) {
+        //         console.log('q_' + i + '_net is checked');
+        //         $('#summary' + i + '').text() = '0';
+        //     } else if ($('#q_' + i + '_neg').is(':checked')) {
+        //         console.log('q_' + i + '_neg is checked');
+        //         $('#summary' + i + '').text() = '-1';
+        //     }
+        // }
+        for (let i = 1; i <= stepCount; i++) {
+            $('#q_' + i + '_pos').on('click', function() {
+                // get the text of the label
+                let label = $(this).parent().text();
+                $('#summary' + i + '').text('Answer: ' + label);
             });
-
-            $('.assessment_form').on('submit', function(e) {
-                e.preventDefault();
-                
-                // run ajax request
-                var formData = new FormData(this);
-
-                $.ajax({
-                    url: "{{ route('assessment.store') }}",
-                    type: "POST",
-                    data: formData,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    success: function(data) {
-                        // hide modal
-                        $('#exampleModal').modal('hide');
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: 'Assessment submitted successfully!',
-                            showConfirmButton: true,
-                        }).then(isConfirmed => {
-                            table.ajax.reload();
-                        });
-                    },
-                    error: function(data) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Something went wrong!',
-                        })
-                    }
-                });
+            $('#q_' + i + '_net').on('click', function() {
+                let label = $(this).parent().text();
+                $('#summary' + i + '').text('Answer: ' + label);
             });
+            $('#q_' + i + '_neg').on('click', function() {
+                let label = $(this).parent().text();
+                $('#summary' + i + '').text('Answer: ' + label);
+            });
+        }
     </script>
 @endsection

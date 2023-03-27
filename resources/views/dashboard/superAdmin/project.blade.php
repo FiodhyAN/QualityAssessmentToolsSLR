@@ -78,7 +78,7 @@
                             @enderror
                         </div>
                         <div class="col mb-3">
-                            <label class="form-label">Limit Max Reviewer</label>
+                            <label class="form-label">Limit Min Reviewer</label>
                             <input type="number" class="form-control @error('limit') is-invalid @enderror" name="limit"
                                 placeholder="Enter Max Reviewer..." autocomplete="off" value="{{ old('limit') }}" required>
                             @error('limit')
@@ -247,11 +247,15 @@
                 var name = $(this).data('project_name');
                 var limit = $(this).data('limit');
                 var user = $(this).data('admin_project');
+                console.log(user);
                 modal.find('.modal-body input[name="project_id"]').val(id);
                 modal.find('.modal-body input[name="project_name"]').val(name);
                 modal.find('.modal-body input[name="limit"]').val(limit);
                 modal.find('.modal-body input[name="old_admin"]').val(user);
                 modal.modal('show');
+                var admin = '';
+                var reviewer = '';
+                var role = '';
 
                 $.ajax({
                     type: 'get',
@@ -261,21 +265,23 @@
                     },
                     dataType: 'json',
                     success: function(data) {
-                        var admin = '';
-                        var reviewer = '';
+                        
                         for (var i = 0; i < data.length; i++) {
                             if (data[i].user_role == 'admin') {
-                                data[i].user_role = 'Admin Project'
+                                role = 'Admin Project';
+                                user = data[i].user_id;
+                                admin += '<option value="' + data[i].user_id + '" selected>' + data[i].user
+                                    .name + ' (' + role + ')' + '</option>';
                             } else {
-                                data[i].user_role = 'Reviewer'
+                                role = 'Reviewer'
                                 reviewer += '<option value="' + data[i].user_id + '" selected>' + data[
                                     i].user.name + '</option>';
+                                admin += '<option value="' + data[i].user_id + '">' + data[i].user
+                                    .name + ' (' + role + ')' + '</option>';
                             }
-                            admin += '<option value="' + data[i].user_id + '">' + data[i].user.name +
-                                ' (' + data[i].user_role + ')' + '</option>';
                         }
                         $('.select_edit_user').html(admin);
-                        $('.select_edit_user').val(user);
+                        $('.select_edit_user').val();
                         $('.select_edit_user').trigger('change');
                         $('.reviewerProject-edit').html(reviewer);
                     },
@@ -284,6 +290,7 @@
                 $('.select_edit_user').on('change', function() {
                     var id = $(this).val();
                     var project_id = $('#modalEdit').find('.modal-body input[name="project_id"]').val();
+                    var selected;
                     $.ajax({
                         url: '{!! URL::to('findEditReviewer') !!}',
                         type: 'GET',
@@ -296,18 +303,13 @@
                             var reviewer = '';
                             for (var i = 0; i < data.length; i++) {
                                 if (data[i].project_user.length > 0) {
-                                    reviewer += '<option value="' + data[i].id + '" selected>' +
-                                        data[i].name + '</option>';
+                                    reviewer += '<option value="' + data[i].id + '" selected>' + data[i].name + '</option>';
                                 } else {
-                                    var notReviewer = data[i];
-                                    var selected = $('.reviewerProject-edit option[value="' +
-                                        notReviewer.id + '"]').is(':selected');
+                                    selected = $('.reviewerProject-edit option[value="' + data[i].id + '"]').is(':selected');
                                     if (selected) {
-                                        reviewer += '<option value="' + data[i].id +
-                                            '" selected>' + data[i].name + '</option>';
+                                        reviewer += '<option value="' + data[i].id + '" selected>' + data[i].name + '</option>';
                                     } else {
-                                        reviewer += '<option value="' + data[i].id + '">' +
-                                            data[i].name + '</option>';
+                                        reviewer += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
                                     }
                                 }
                             }
@@ -346,6 +348,7 @@
             });
         });
 
+        // add project find reviewer
         $('#adminProject-input').on('change', function() {
             var user_id = $(this).val();
 
@@ -358,7 +361,7 @@
                 dataType: 'json',
                 success: function(data) {
                     var html = '';
-                    var old_reviewer = {{ old('reviewer') }}
+                    var old_reviewer = $('.reviewerProject-input').val();
                     console.log(old_reviewer);
                     for (var i = 0; i < data.length; i++) {
                         if (old_reviewer == data[i].id) {
@@ -402,6 +405,7 @@
                         $('.invalid-feedback').text('');
                         // remove all is-invalid class
                         $('.is-invalid').removeClass('is-invalid');
+                        $('.reviewerProject-input').select2('close');
                     });
                 },
                 error: function(data) {
@@ -433,6 +437,17 @@
         $('#updateProject').on('submit', function(e) {
             e.preventDefault();
             var form = new FormData(this);
+            $('#modalEdit').modal('hide');
+
+            Swal.fire({
+                title: 'Updating...',
+                html: 'Please wait while updating project',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                },
+            });
+
             $.ajax({
                 url: '{!! URL::to('updateProject') !!}',
                 type: "POST",
@@ -441,8 +456,7 @@
                 cache: false,
                 processData: false,
                 success: function(data) {
-                    console.log(data);
-                    $('#modalEdit').modal('hide');
+                    Swal.close()
                     Swal.fire({
                         icon: 'success',
                         title: 'Success',
@@ -451,6 +465,9 @@
                         timer: 5000
                     }).then(isConfirmed => {
                         table.ajax.reload();
+                        //reset the select option
+                        //reload the multi select
+                        $('.reviewerProject-edit').select2('close');
                     });
                 },
                 error: function(data) {

@@ -70,6 +70,14 @@
             <div class="menu-title">Article Assessment</div>
           </a>
         </li>
+        <li>
+          <a href="/dashboard/reviewer/assessed">
+            <div class="parent-icon">
+              <ion-icon name="checkbox"></ion-icon>
+            </div>
+            <div class="menu-title">Assessed Article</div>
+          </a>
+        </li>
       @endcan
       @can('admin')
         <li>

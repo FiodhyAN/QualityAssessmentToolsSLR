@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\ArticleUser;
+use App\Models\ArticleUserQuestionaire;
 use App\Models\ProjectUser;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -17,13 +18,15 @@ class AssignReviewerController extends Controller
             'project_id' => request()->pid,
             'user_id' => request()->uid
         ]);
+
+        
     }
 
     public function articleNotAssignTable(Request $request)
     {
         $data = Article::with(['article_user' => function($query) use ($request) {
             $query->where('user_id', $request->user_id);
-        }])->where('project_id', $request->project_id)->get();
+        }, 'project'])->where('project_id', $request->project_id)->get();
         $article = [];
         foreach ($data as $key => $value) {
             if (count($value->article_user) == 0) {
@@ -49,6 +52,11 @@ class AssignReviewerController extends Controller
             })
             ->addColumn('authors', function(Article $article){
                 return $article->authors;
+            })
+            ->addColumn('reviewer', function(Article $article) use ($request){
+                $article_count_user = Article::with('article_user')->where('project_id', $request->project_id)->where('id', $article->id)->first();
+                $count = count($article_count_user->article_user);
+                return $count.'/'.$article->project->limit_reviewer;
             })
             ->toJson();
     }
@@ -120,7 +128,9 @@ class AssignReviewerController extends Controller
     {
         $this->authorize('admin');
         foreach($request->article_id as $value) {
-            ArticleUser::where('article_id', $value)->where('user_id', $request->user_id)->delete();
+            $article_user = ArticleUser::where('article_id', $value)->where('user_id', $request->user_id);
+            ArticleUserQuestionaire::where('article_user_id', $article_user->first()->id)->delete();
+            $article_user->delete();
         }
         return response()->json([
             'status' => 'success',

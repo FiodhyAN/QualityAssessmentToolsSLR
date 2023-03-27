@@ -62,6 +62,7 @@ Route::patch('/dashboard/admin/article/update', [ArticleController::class, 'upda
 Route::post('/article/import', [ArticleController::class, 'storeExcel'])->middleware('auth')->name('article.import');
 Route::get('/article/download', [ArticleController::class, 'downloadExcel'])->middleware('auth')->name('article.download');
 Route::get('/assignmentTable/{id}', [ArticleController::class, 'assignmentTable'])->middleware('auth')->name('assignment.table');
+Route::get('/articleScore', [ArticleController::class, 'articleScore'])->middleware('auth')->name('article.score');
 //Assign Article
 Route::get('/dashboard/admin/assign', [AssignReviewerController::class, 'index'])->middleware('auth');
 Route::get('/assignedTable', [AssignReviewerController::class, 'articleAssignTable'])->middleware('auth')->name('assigned.table');
@@ -73,6 +74,8 @@ Route::post('/dashboard/admin/assign/delete', [AssignReviewerController::class, 
 Route::get('/dashboard/reviewer/assessment', [AssessmentController::class, 'index'])->middleware('auth');
 Route::get('/assessmentTable', [AssessmentController::class, 'assessmentTable'])->middleware('auth')->name('assessment.table');
 Route::post('/dashboard/reviewer/assessment/store', [AssessmentController::class, 'store'])->middleware('auth')->name('assessment.store');
+Route::get('/dashboard/reviewer/assessed', [AssessmentController::class, 'assessedIndex'])->middleware('auth');
+Route::get('/assessedTable', [AssessmentController::class, 'assessedTable'])->middleware('auth')->name('assessed.table');
 //////////////////////////////////////
 // PENGOLAHAN DATA
 /////////////////////////////////////

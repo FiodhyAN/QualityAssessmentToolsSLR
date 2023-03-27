@@ -23,6 +23,7 @@
                                 <th></th>
                                 <th></th>
                                 <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -162,6 +163,12 @@
                             return '<span style="white-space:normal">' + data + "</span>";
                         }
                     },
+                    {
+                        title: 'Reviewer',
+                        data: 'reviewer',
+                        name: 'reviewer',
+                        className: 'text-center',
+                    }
                 ],
                 rowCallback: function(row, data, dataIndex) {
                     var rowId = data['id'];

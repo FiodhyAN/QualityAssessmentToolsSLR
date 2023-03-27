@@ -10,6 +10,7 @@ use App\Imports\ArticleImport;
 use App\Models\ArticleUser;
 use App\Models\ArticleUserQuestionaire;
 use App\Models\Project;
+use App\Models\Questionaire;
 use App\Models\User;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
@@ -37,6 +38,7 @@ class ArticleController extends Controller
                 return $article->authors;
             })
             ->addColumn('action', function (Article $article) use ($id) {
+                // $btn = '<a href="/articleScore"><button type="button" class="btn btn-warning text-white btn-sm me-2"><ion-icon name="stats-chart-outline"></ion-icon> Score</button>';
                 $btn = '<button type="button" class="btn btn-warning text-white btn-sm me-2 aksi scoreArticle" id="scoreArticle" data-bs-toggle="modal" data-bs-target="#modalScore" data-id="' . $article->id . '" data-title="' . $article->title . '"><ion-icon name="stats-chart-outline"></ion-icon> Score</button>';
                 $btn .= '<a href="/dashboard/admin/article/' . $article->id . '/edit?pid=' . $id . '"><button type="button" class="btn btn-primary btn-sm aksi"><ion-icon name="create-outline"></ion-icon> Edit</button></a>';
                 $btn .= '<button type="button" class="btn btn-danger btn-sm ms-2 aksi deleteArticle" data-id="' . $article->id . '"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
@@ -49,10 +51,6 @@ class ArticleController extends Controller
     public function assignmentTable($id)
     {
         $this->authorize('admin');
-        // $project_limit = Project::select('limit_reviewer')->where('id', $id)->first();
-        // $user_project = ProjectUser::where('project_id', $id)->where('user_role', 'reviewer')->count();
-
-        // if ($user_project == $project_limit->limit_reviewer) {
         $users = User::with(['article_user' => function ($query) use ($id) {
                     $query->whereHas('article', function ($query) use ($id) {
                         $query->where('project_id', $id);
@@ -60,14 +58,6 @@ class ArticleController extends Controller
                 }])->where('id', '!=', auth()->user()->id)->where('is_superadmin', false)->whereHas('project_user', function ($query) use ($id) {
                     $query->where('project_id', $id);
                 })->get();
-        // }
-        // else {
-        //     $users = User::with(['article_user' => function($query) use ($id) {
-        //         $query->with('article')->whereHas('article', function($query) use ($id) {
-        //             $query->where('project_id', $id);
-        //         });
-        //     }])->where('id', '!=', auth()->user()->id)->where('is_superadmin', false)->get();
-        // }
 
         return DataTables::of($users)
             ->addIndexColumn()
@@ -290,5 +280,16 @@ class ArticleController extends Controller
     {
         $this->authorize('admin');
         return response()->download(public_path('articles/TemplateSLR.xlsx'));
+    }
+
+    public function articleScore(Request $request)
+    {
+        $this->authorize('admin');
+        $score = Questionaire::with(['article_user_questionaire' => function($query) use ($request){
+            $query->with(['articleUser' => function($query) use ($request){
+                $query->with('user')->where('article_id', $request->article_id);
+            }]);
+        }])->get();
+        return $score;
     }
 }
