@@ -1,7 +1,7 @@
-@extends('pengolahan_data_slr.template')
-@section('main')
+@extends('layouts.main')
+@section('container')
 <div class="container">
-    <!-- <h1 class="text-center">Tabel Perhitungan</h1>
+    <h1 class="text-center">Tabel Perhitungan</h1>
     <div class="table-responsive">
     <table class="table">
             <thead>
@@ -32,7 +32,7 @@
                 @endforeach
             </tbody>
         </table>
-    </div> -->
+    </div>
     <h1 class="text-center mt-5">Tabel Ranking Penulis</h1>
     <table class="table">
         <thead>
