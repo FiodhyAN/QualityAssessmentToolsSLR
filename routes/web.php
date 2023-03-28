@@ -77,6 +77,8 @@ Route::get('/assessmentTable', [AssessmentController::class, 'assessmentTable'])
 Route::post('/dashboard/reviewer/assessment/store', [AssessmentController::class, 'store'])->middleware('auth')->name('assessment.store');
 Route::get('/dashboard/reviewer/assessed', [AssessmentController::class, 'assessedIndex'])->middleware('auth');
 Route::get('/assessedTable', [AssessmentController::class, 'assessedTable'])->middleware('auth')->name('assessed.table');
+Route::get('/findProject', [AssessmentController::class, 'findProject'])->middleware('auth');
+Route::get('/reviewerScore', [AssessmentController::class, 'scoreReviewer'])->middleware('auth')->name('reviewer.score');
 //////////////////////////////////////
 // PENGOLAHAN DATA
 /////////////////////////////////////

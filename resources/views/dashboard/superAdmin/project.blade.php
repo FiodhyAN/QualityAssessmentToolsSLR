@@ -19,7 +19,7 @@
                             </div>
                         </div>
                         <div class="col mb-3">
-                            <label class="form-label">Limit Max Reviewer</label>
+                            <label class="form-label">Limit Min Reviewer</label>
                             <input id="limitReviewer-input" type="number"
                                 class="form-control @error('limit') is-invalid @enderror" name="limit"
                                 placeholder="Enter Max Reviewer..." autocomplete="off" value="{{ old('limit') }}" required>
@@ -331,12 +331,13 @@
                 dropdownParent: $('#modalEdit .modal-content')
             });
             $('.reviewerProject-input').select2({
+                theme: 'bootstrap4',
                 dropdownParent: $('#exampleVerticallycenteredModal .modal-content'),
                 closeOnSelect: false,
                 allowClear: true,
                 placeholder: 'Select Reviewer',
                 tags: true,
-                tokenSeparators: [',', ' ']
+                tokenSeparators: [',', ' '],
             });
             $('.reviewerProject-edit').select2({
                 dropdownParent: $('#modalEdit .modal-content'),

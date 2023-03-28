@@ -130,8 +130,6 @@
 @endsection
 @section('script')
     <script>
-        // get data title from scoreArticle button
-
         $('#form_import_excel').on('submit', function(e) {
             e.preventDefault();
             console.log('test');

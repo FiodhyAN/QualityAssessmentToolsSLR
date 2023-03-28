@@ -4,12 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Article;
-use App\Models\ProjectUser;
 use Yajra\DataTables\DataTables;
 use App\Imports\ArticleImport;
 use App\Models\ArticleUser;
 use App\Models\ArticleUserQuestionaire;
-use App\Models\Project;
 use App\Models\Questionaire;
 use App\Models\User;
 use Illuminate\Support\Facades\File;
@@ -38,7 +36,6 @@ class ArticleController extends Controller
                 return $article->authors;
             })
             ->addColumn('action', function (Article $article) use ($id) {
-                // $btn = '<a href="/articleScore"><button type="button" class="btn btn-warning text-white btn-sm me-2"><ion-icon name="stats-chart-outline"></ion-icon> Score</button>';
                 $btn = '<button type="button" class="btn btn-warning text-white btn-sm me-2 aksi scoreArticle" id="scoreArticle" data-bs-toggle="modal" data-bs-target="#modalScore" data-id="' . $article->id . '" data-title="' . $article->title . '"><ion-icon name="stats-chart-outline"></ion-icon> Score</button>';
                 $btn .= '<a href="/dashboard/admin/article/' . $article->id . '/edit?pid=' . $id . '"><button type="button" class="btn btn-primary btn-sm aksi"><ion-icon name="create-outline"></ion-icon> Edit</button></a>';
                 $btn .= '<button type="button" class="btn btn-danger btn-sm ms-2 aksi deleteArticle" data-id="' . $article->id . '"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
@@ -93,26 +90,23 @@ class ArticleController extends Controller
                     $assessed = '';
                     foreach ($user->article_user as $value) {
                         if ($value->is_assessed == true) {
-                            $assessed .= '<span class="badge bg-success">Assessed</span><br>';
+                            $assessed .= '<span class="badge alert-success">Assessed</span><br>';
                         } else {
-                            $assessed .= '<span class="badge bg-danger">Not Assessed</span><br>';
+                            $assessed .= '<span class="badge alert-danger">Not Assessed</span><br>';
                         }
                     }
                     return $assessed;
                 }
             })
             ->addColumn('action', function (User $user) use ($id) {
-                $btn = '<a
-                href="/dashboard/admin/assign?pid=' . $id . '&uid=' . $user->id . '"><button
-                    type="button" class="btn btn-sm btn-success px-5"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round"
-                        class="feather feather-user-check">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="8.5" cy="7" r="4"></circle>
-                        <polyline points="17 11 19 13 23 9"></polyline>
-                    </svg> Assign</button></a>';
+                $btn = '<a href="/dashboard/admin/assign?pid=' . $id . '&uid=' . $user->id . '">
+                            <button type="button" class="btn btn-sm btn-success px-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <polyline points="17 11 19 13 23 9"></polyline>
+                            </svg> Assign</button>
+                        </a>';
                 return $btn;
             })
             ->rawColumns(['id_no', 'title', 'assessed', 'action'])

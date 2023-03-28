@@ -87,7 +87,19 @@
 
 
     <div class="card">
+
         <div class="card-body">
+            <div class="row mb-4">
+                <div class="d-flex justify-content-end div_select">
+                    <select class="select_project" name="project">
+                        <option disabled selected>-- Select Project --</option>
+                        <option value="all">All Project</option>
+                        @foreach ($projects as $project)
+                            <option value="{{ $project->id }}">{{ $project->project_name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table id="assessment_table" class="table table-striped table-bordered" style="width:100%">
                     <thead>
@@ -110,9 +122,15 @@
 @endsection
 @section('script')
     <script>
+        $(document).ready(function() {
+            $('.select_project').select2({
+                width: '50%',
+            });
+        })
         var table = $('#assessment_table').DataTable({
             processing: true,
             serverSide: true,
+            destroy: true,
             ajax: '{{ route('assessment.table') }}',
             columns: [{
                     data: 'no',
@@ -153,6 +171,62 @@
                 },
             ]
         });
+
+
+
+        $('.select_project').on('change', function() {
+            var project_id = $(this).val();
+
+            $('#assessment_table').DataTable().destroy();
+            $('#assessment_table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ route('assessment.table') }}',
+                    data: {
+                        project_id: project_id
+                    }
+                },
+                columns: [{
+                        data: 'no',
+                        name: 'no',
+                    },
+                    {
+                        data: 'title',
+                        name: 'title',
+                        render: function(data, type, row) {
+                            return '<span style="white-space: normal;">' + data + '</span>"';
+                        }
+                    },
+                    {
+                        data: 'project_name',
+                        name: 'project_name'
+                    },
+                    {
+                        data: 'year',
+                        name: 'year'
+                    },
+                    {
+                        data: 'publication',
+                        name: 'publication',
+                        render: function(data, type, row) {
+                            return '<span style="white-space: normal;">' + data + '</span>"';
+                        }
+                    },
+                    {
+                        data: 'authors',
+                        name: 'authors',
+                        render: function(data, type, row) {
+                            return '<span style="white-space: normal;">' + data + '</span>"';
+                        }
+                    },
+                    {
+                        data: 'action',
+                        name: 'action'
+                    },
+                ]
+            });
+        })
 
 
         $('#exampleModal').on('show.bs.modal', function(event) {
