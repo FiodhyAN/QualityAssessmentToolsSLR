@@ -31,7 +31,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table id="article_table" class="table table-striped table-bordered" style="width:100%">
+                <table id="article_table" class="table table-striped table-bordered">
                     <thead>
                         <tr>
                             <th></th>
@@ -80,7 +80,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="table-responsive">
-                        <table id="score_table" class="table table-striped table-bordered" style="width:100%">
+                        <table id="score_table" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -180,6 +180,7 @@
                 }
             });
         });
+
         // Datatable
         var table = $('#article_table').DataTable({
             serverSide: true,
@@ -229,8 +230,15 @@
                     orderable: false,
                     searchable: false,
                 },
-            ]
-        }).on('click', '.deleteArticle', function(e) {
+            ],
+            columnDefs: [{
+                targets: [0, 1, 2, 3, 4, 5],
+                className: 'text-center'
+            }],
+        });
+
+
+        table.on('click', '.deleteArticle', function(e) {
             e.preventDefault();
             var id = $(this).data('id');
             Swal.fire({

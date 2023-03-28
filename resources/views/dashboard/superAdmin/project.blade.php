@@ -340,6 +340,7 @@
                 tokenSeparators: [',', ' '],
             });
             $('.reviewerProject-edit').select2({
+                theme: 'bootstrap4',
                 dropdownParent: $('#modalEdit .modal-content'),
                 closeOnSelect: false,
                 allowClear: true,

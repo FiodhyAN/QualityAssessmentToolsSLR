@@ -96,7 +96,12 @@ class AssessmentController extends Controller
     public function assessedIndex()
     {
         $this->authorize('reviewer');
-        $questionaires = Questionaire::all();
+        $questionaires = Questionaire::with(['article_user_questionaire' => function($query){
+            $query->with(['articleUser' => function($query) {
+                $query->where('user_id', auth()->user()->id);
+            }]);
+        }])->get();
+        return $questionaires;
         $projects = Project::select('id','project_name')->whereHas('project_user', function($query) {
             $query->where('user_id', auth()->user()->id);
         })->get();

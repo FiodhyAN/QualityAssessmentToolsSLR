@@ -3,6 +3,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/formpart.css') }}">
 @endsection
 @section('container')
+    {{-- Modal for Score Button --}}
     <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -229,6 +230,7 @@
         })
 
 
+        // Modal Assess
         $('#exampleModal').on('show.bs.modal', function(event) {
             var id = $(event.relatedTarget).data('article_id');
             var no = $(event.relatedTarget).data('article_no');
