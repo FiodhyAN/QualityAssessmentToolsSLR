@@ -31,7 +31,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table id="article_table" class="table table-striped table-bordered">
+                <table id="article_table" class="table table-striped table-bordered" width="100%">
                     <thead>
                         <tr>
                             <th></th>
@@ -286,13 +286,9 @@
         });
 
         table.on('click', '.scoreArticle', function() {
-            // var button = $(event.relatedTarget)
             var title = $(this).data('title');
             $('.modal-title-score').text('Score For ' + title)
-
-            // Score Data
             var article_id = $(this).data('id');
-            // console.log(id);
             $.ajax({
                 url: '{{ route('article.score') }}',
                 type: 'GET',

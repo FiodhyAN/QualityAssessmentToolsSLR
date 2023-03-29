@@ -79,6 +79,8 @@ Route::get('/dashboard/reviewer/assessed', [AssessmentController::class, 'assess
 Route::get('/assessedTable', [AssessmentController::class, 'assessedTable'])->middleware('auth')->name('assessed.table');
 Route::get('/findProject', [AssessmentController::class, 'findProject'])->middleware('auth');
 Route::get('/reviewerScore', [AssessmentController::class, 'scoreReviewer'])->middleware('auth')->name('reviewer.score');
+Route::get('/editScore', [AssessmentController::class, 'editScore'])->middleware('auth')->name('reviewer.editScore');
+Route::post('/dashboard/reviewer/assessment/update', [AssessmentController::class, 'updateScore'])->middleware('auth')->name('reviewer.updateScore');
 //////////////////////////////////////
 // PENGOLAHAN DATA
 /////////////////////////////////////

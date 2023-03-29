@@ -72,6 +72,7 @@ class AssessmentController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorize('reviewer');
         $answer = $request->toArray();
         $article_user = ArticleUser::where('article_id', $answer['article_id'])->where('user_id', auth()->user()->id)->first();
 
@@ -97,11 +98,10 @@ class AssessmentController extends Controller
     {
         $this->authorize('reviewer');
         $questionaires = Questionaire::with(['article_user_questionaire' => function($query){
-            $query->with(['articleUser' => function($query) {
-                $query->where('user_id', auth()->user()->id);
-            }]);
+            $query->whereHas('articleUser', function($query) {
+                $query->where('user_id', auth()->user()->id)->where('article_id', '2');
+            });
         }])->get();
-        return $questionaires;
         $projects = Project::select('id','project_name')->whereHas('project_user', function($query) {
             $query->where('user_id', auth()->user()->id);
         })->get();
@@ -152,7 +152,7 @@ class AssessmentController extends Controller
             })
             ->addColumn('action', function(ArticleUser $article){
                 $btn = '<button type="button" class="btn btn-warning text-white btn-sm me-2 aksi scoreArticle" id="scoreArticle" data-bs-toggle="modal" data-bs-target="#modalScore" data-id="' . $article->article->id . '" data-title="' . $article->article->title . '"><ion-icon name="stats-chart-outline"></ion-icon> Result</button>';
-                $btn .= '<button class="btn btn-primary btn-sm" id="btn_assessment" data-bs-toggle="modal" data-bs-target="#exampleModal" data-article_id="'.$article->article->id.'" data-article_no="'.$article->article->no.'"><ion-icon name="create-outline"></ion-icon> Edit</button>';
+                $btn .= '<button class="btn btn-primary btn-sm" id="btn_edit_assessment" data-bs-toggle="modal" data-bs-target="#exampleModal" data-article_id="'.$article->article->id.'" data-article_no="'.$article->article->no.'"><ion-icon name="create-outline"></ion-icon> Edit</button>';
                 return $btn;
             })->rawColumns(['action'])
             ->toJson();
@@ -168,5 +168,34 @@ class AssessmentController extends Controller
         }])->get();
 
         return $score;
+    }
+
+    public function editScore(Request $request)
+    {
+        $questionaires = Questionaire::with(['article_user_questionaire' => function($query) use ($request){
+            $query->whereHas('articleUser', function($query) use ($request){
+                $query->where('user_id', auth()->user()->id)->where('article_id', $request->article_id);
+            });
+        }])->get();
+
+        return $questionaires;
+    }
+
+    public function updateScore(Request $request)
+    {
+        $this->authorize('reviewer');
+        $answer = $request->toArray();
+        $article_user = ArticleUser::where('article_id', $answer['article_id'])->where('user_id', auth()->user()->id)->first();
+
+        foreach($answer['questionaire_id'] as $key => $value) {
+            $questionaire_answer = intval($answer['QA'.$value]);
+            ArticleUserQuestionaire::where('article_user_id', $article_user->id)->where('questionaire_id', $value)->update([
+                'score' => $questionaire_answer,
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Assessment has been updated',
+        ], 200);
     }
 }

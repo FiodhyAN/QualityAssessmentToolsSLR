@@ -85,7 +85,7 @@
                             style="width: 0%"></div>
                     </div>
                     <div id="qbox-container">
-                        <form action="/dashboard/reviewer/assessment/store" class="needs-validation assessment_form"
+                        <form action="/dashboard/reviewer/assessment/update" class="needs-validation assessment_form"
                             id="form-wrapper" method="post" name="form-wrapper" novalidate>
                             @csrf
                             <input type="hidden" name="article_id" id="article_id">
@@ -140,7 +140,7 @@
                             <div id="q-box__buttons">
                                 <button id="prev-btn" type="button">Previous</button>
                                 <button id="next-btn" type="button">Next</button>
-                                <button id="submit-btn" type="submit">Submit</button>
+                                <button id="submit-btn" type="submit">Save Changes</button>
                             </div>
                         </form>
                     </div>
@@ -280,10 +280,6 @@
                         var net_answer = value.net_answer;
                         var neg_answer = value.neg_answer;
                         var answer = '';
-                        // var sum = 0;
-                        // var name = '';
-                        // var score = '';
-                        // // console.log(value.article_user_questionaire[0].article_user.user.name);
                         $.each(value.article_user_questionaire, function(key, value){
                             if (value.article_user == null) {
                                 answer += '';
@@ -313,6 +309,39 @@
                     console.log(error);
                 }
             })
+        });
+
+        table.on('click', '#btn_edit_assessment', function(){
+            let article_id = $(this).data('article_id');
+
+            $.ajax({
+                url: '{{ route('reviewer.editScore') }}',
+                method: "GET",
+                data: {
+                    article_id: article_id
+                },
+                success: function(data){
+                    console.log(data);
+                    for (let index = 0; index < data.length; index++) {
+                        no = index + 1;
+                        if (data[index].article_user_questionaire[0].score == 1) {
+                            $('#q_' + no + '_pos').prop('checked', true);
+                            $('#summary' + no).text('Answer: ' + data[index].pos_answer);
+                        }
+                        else if(data[index].article_user_questionaire[0].score == 0) {
+                            $('#q_' + no + '_net').prop('checked', true);
+                            $('#summary' + no).text('Answer: ' + data[index].net_answer);
+                        }
+                        else if(data[index].article_user_questionaire[0].score == -1) {
+                            $('#q_' + no + '_neg').prop('checked', true);
+                            $('#summary' + no).text('Answer: ' + data[index].neg_answer);
+                        }
+                    }
+                },
+                error: function(error){
+                    console.log(error);
+                }
+            });
         });
 
         // Modal Edit
@@ -418,12 +447,12 @@
             step[current_step].classList.remove('d-none');
             nextBtn.classList.remove('d-none');
             nextBtn.classList.add('d-inline-block');
-            // for each step beside the first one hide it
+
             for (let i = 1; i < stepCount + 1; i++) {
                 step[i].classList.add('d-none');
                 step[i].classList.remove('d-block');
             }
-            // remove all checked radio button
+
             let radioBtns = document.querySelectorAll('input[type="radio"]');
             radioBtns.forEach((radioBtn) => {
                 radioBtn.checked = false;
@@ -434,5 +463,49 @@
                 nextBtn.classList.add('d-inline-block');
             }
         });
+
+        for (let i = 1; i <= stepCount; i++) {
+            $('#q_' + i + '_pos').on('click', function() {
+                // get the text of the label
+                let label = $(this).parent().text();
+                $('#summary' + i + '').text('Answer: ' + label);
+            });
+            $('#q_' + i + '_net').on('click', function() {
+                let label = $(this).parent().text();
+                $('#summary' + i + '').text('Answer: ' + label);
+            });
+            $('#q_' + i + '_neg').on('click', function() {
+                let label = $(this).parent().text();
+                $('#summary' + i + '').text('Answer: ' + label);
+            });
+        }
+
+        $('.assessment_form').on('submit', function(e){
+            e.preventDefault();
+            let formData = new FormData(this);
+
+            $.ajax({
+                url: '{{ route('reviewer.updateScore') }}',
+                type: "POST",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(data){
+                    $('#exampleModal').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Assessment submitted successfully!',
+                        showConfirmButton: true,
+                    }).then(isConfirmed => {
+                        table.ajax.reload();
+                    });
+                },
+                error: function(error){
+                    console.log(error);
+                }
+            });
+        })
     </script>
 @endsection
