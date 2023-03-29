@@ -81,7 +81,7 @@
       @endcan
       @can('admin')
         <li>
-          <a href="javascript:;">
+          <a href="/dashboard/admin/summary">
             <div class="parent-icon">
               <ion-icon name="stats-chart-sharp"></ion-icon>
             </div>

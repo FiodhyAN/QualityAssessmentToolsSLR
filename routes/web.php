@@ -9,6 +9,7 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AssignReviewerController;
 use App\Http\Controllers\AssessmentController;
 use App\Http\Controllers\DataProcessingController;
+use App\Http\Controllers\SummaryController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
@@ -70,6 +71,9 @@ Route::get('/assignedTable', [AssignReviewerController::class, 'articleAssignTab
 Route::get('/notAssignedTable', [AssignReviewerController::class, 'articleNotAssignTable'])->middleware('auth')->name('notAssigned.table');
 Route::post('/dashboard/admin/assign/store', [AssignReviewerController::class, 'assignArticle'])->middleware('auth')->name('assign.store');
 Route::post('/dashboard/admin/assign/delete', [AssignReviewerController::class, 'deleteAssignArticle'])->middleware('auth')->name('assign.remove');
+//Summary
+Route::get('/dashboard/admin/summary', [SummaryController::class, 'projectIndex'])->middleware('auth');
+Route::get('/dashboard/admin/projectSummary', [SummaryController::class, 'projectSummary'])->middleware('auth')->name('project.summary');
 
 //Reviewer
 Route::get('/dashboard/reviewer/assessment', [AssessmentController::class, 'index'])->middleware('auth');

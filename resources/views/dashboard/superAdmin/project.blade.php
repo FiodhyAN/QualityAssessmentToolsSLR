@@ -146,8 +146,8 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
-                            <th></th>
+                            <th style="text-align: left !important"></th>
+                            <th style="text-align: left !important"></th>
                         </tr>
                     </thead>
                 </table>
@@ -194,14 +194,16 @@
                 {
                     title: 'Reviewer',
                     data: 'reviewer',
-                    name: 'reviewer'
+                    name: 'reviewer',
+                    className: 'text-center'
                 },
                 {
                     title: 'Action',
                     data: 'action',
                     name: 'action',
                     orderable: false,
-                    searchable: false
+                    searchable: false,
+                    className: 'text-center'
                 }
             ],
         }).on('click', '.aksi', function(e) {
