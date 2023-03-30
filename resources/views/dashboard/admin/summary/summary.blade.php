@@ -60,6 +60,25 @@
             </div>
         </div>
     </div>
+
+    <h6 class="mb-0 text-uppercase">Score Per Reviewer</h6>
+    <hr />
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+                    <div id="bar_chart_user"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+                    <div id="column_chart_user"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('script')
     <script>
@@ -67,6 +86,10 @@
             $('#article_not_assessed').DataTable();
         });
 
+        var question_name = {!! json_encode($question_name) !!};
+        var user_name = {!! json_encode($user_name) !!};
+
+        // question name to array
         // Bar Chart Question
         var options = {
             series: [{
@@ -77,7 +100,7 @@
                 data: [5, 3, 3, 3, 4]
             }, {
                 name: 'Negative',
-                data: [2, 2, 9, 3, 1]
+                data: [2, 2, 9, 3, 1],
             }],
             chart: {
                 type: 'bar',
@@ -108,7 +131,7 @@
                 text: 'Bar Chart'
             },
             xaxis: {
-                categories: ['QA1', 'QA2', 'QA3', 'QA4', 'QA5'],
+                categories: question_name,
                 labels: {
                     formatter: function(val) {
                         return val
@@ -125,6 +148,9 @@
                     formatter: function(val) {
                         return val
                     }
+                },
+                marker: {
+                    fillColors: ['#008FFB', '#00E396', '#FF0000']
                 }
             },
             fill: {
@@ -134,7 +160,10 @@
             legend: {
                 position: 'top',
                 horizontalAlign: 'left',
-                offsetX: 40
+                offsetX: 40,
+                markers: {
+                    fillColors: ['#008FFB', '#00E396', '#FF0000']
+                }
             }
         };
 
@@ -144,18 +173,18 @@
         // Column Chart Question
         var options = {
             series: [{
-                name: 'Net Profit',
-                data: [44, 55, 57, 56, 61, 58, 63, 60, 66]
+                name: 'Positive',
+                data: [44, 55, 57, 56, 61]
             }, {
-                name: 'Revenue',
-                data: [76, 85, 101, 98, 87, 105, 91, 114, 94]
+                name: 'Neutral',
+                data: [76, 85, 101, 98, 87]
             }, {
-                name: 'Free Cash Flow',
-                data: [35, 41, 36, 26, 45, 48, 52, 53, 41]
+                name: 'Negative',
+                data: [35, 41, 36, 26, 45]
             }],
             chart: {
                 type: 'bar',
-                height: 350
+                height: 350,
             },
             plotOptions: {
                 bar: {
@@ -176,26 +205,182 @@
                 colors: ['transparent']
             },
             xaxis: {
-                categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                categories: question_name,
             },
             yaxis: {
                 title: {
-                    text: '$ (thousands)'
+                    text: undefined
                 }
             },
             fill: {
-                opacity: 1
+                opacity: 1,
+                colors: ['#008FFB', '#00E396', '#FF0000']
             },
             tooltip: {
                 y: {
                     formatter: function(val) {
-                        return "$ " + val + " thousands"
+                        return val
                     }
+                },
+                marker: {
+                    fillColors: ['#008FFB', '#00E396', '#FF0000']
+                }
+            },
+            legend: {
+                markers: {
+                    fillColors: ['#008FFB', '#00E396', '#FF0000']
                 }
             }
         };
 
         var chart = new ApexCharts(document.querySelector("#column_chart_question"), options);
+        chart.render();
+
+
+        // Bar Chart User
+        var options = {
+            series: [{
+                name: 'Positive',
+                data: [4, 5, 4]
+            }, {
+                name: 'Neutral',
+                data: [5, 3, 3]
+            }, {
+                name: 'Negative',
+                data: [2, 2, 9],
+            }],
+            chart: {
+                type: 'bar',
+                height: 350,
+                stacked: true,
+                stackType: '100%'
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    dataLabels: {
+                        total: {
+                            enabled: true,
+                            offsetX: 0,
+                            style: {
+                                fontSize: '13px',
+                                fontWeight: 900
+                            }
+                        }
+                    }
+                },
+            },
+            stroke: {
+                width: 1,
+                colors: ['#fff']
+            },
+            title: {
+                text: 'Bar Chart'
+            },
+            xaxis: {
+                categories: user_name,
+                labels: {
+                    formatter: function(val) {
+                        return val
+                    }
+                }
+            },
+            yaxis: {
+                title: {
+                    text: undefined
+                },
+            },
+            tooltip: {
+                y: {
+                    formatter: function(val) {
+                        return val
+                    }
+                },
+                marker: {
+                    fillColors: ['#008FFB', '#00E396', '#FF0000']
+                }
+            },
+            fill: {
+                opacity: 1,
+                colors: ['#008FFB', '#00E396', '#FF0000']
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'left',
+                offsetX: 40,
+                markers: {
+                    fillColors: ['#008FFB', '#00E396', '#FF0000']
+                }
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#bar_chart_user"), options);
+        chart.render();
+
+        // Column Chart User
+        var options = {
+            series: [{
+                name: 'Positive',
+                data: [44, 55, 57]
+            }, {
+                name: 'Neutral',
+                data: [76, 85, 101]
+            }, {
+                name: 'Negative',
+                data: [35, 41, 36]
+            }],
+            chart: {
+                type: 'bar',
+                height: 350,
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '55%',
+                    endingShape: 'rounded'
+                },
+            },
+            dataLabels: {
+                enabled: false
+            },
+            title: {
+                text: 'Column Chart'
+            },
+            stroke: {
+                show: true,
+                width: 2,
+                colors: ['transparent']
+            },
+            xaxis: {
+                categories: user_name,
+            },
+            yaxis: {
+                title: {
+                    text: undefined
+                }
+            },
+            fill: {
+                opacity: 1,
+                colors: ['#008FFB', '#00E396', '#FF0000']
+            },
+            tooltip: {
+                y: {
+                    formatter: function(val) {
+                        return val
+                    }
+                },
+                marker: {
+                    fillColors: ['#008FFB', '#00E396', '#FF0000']
+                }
+            },
+            legend: {
+                markers: {
+                    fillColors: ['#008FFB', '#00E396', '#FF0000']
+                }
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#column_chart_user"), options);
         chart.render();
     </script>
 @endsection

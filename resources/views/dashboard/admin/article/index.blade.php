@@ -189,6 +189,10 @@
                 url: '{{ route('article.table', $project->project->id) }}',
                 type: 'GET',
             },
+            // change processing icon
+            language: {
+                processing: '<div class="spinner-border text-primary" role="status"> <span class="visually-hidden">Loading...</span></div> '
+            },
             columns: [{
                     title: 'ID - No',
                     data: 'no',
@@ -339,6 +343,9 @@
             //no column sorting and searching false
             serverSide: true,
             processing: true,
+            language: {
+                processing: '<div class="spinner-border text-primary" role="status"> <span class="visually-hidden">Loading...</span></div> '
+            },
             ajax: {
                 url: '{{ route('assignment.table', $project->project->id) }}',
                 type: 'GET',

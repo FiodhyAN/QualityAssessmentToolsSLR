@@ -170,6 +170,9 @@
             aaSorting: [],
             processing: true,
             serverSide: true,
+            language: {
+                processing: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>'
+            },
             ajax: {
                 url: '{!! URL::to('projectTable') !!}',
                 type: 'GET',

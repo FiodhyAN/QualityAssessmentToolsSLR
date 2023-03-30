@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Models\ArticleUserQuestionaire;
 use App\Models\Project;
 use App\Models\ProjectUser;
+use App\Models\Questionaire;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class SummaryController extends Controller
@@ -22,6 +25,21 @@ class SummaryController extends Controller
         }])->where('project_id', request()->pid)->whereHas('article_user', function($query){
             $query->where('is_assessed', false);
         })->get();
-        return view('dashboard.admin.summary.summary', compact('articles'));
+
+        // variable for chart
+        $question_name = Questionaire::select('name')->pluck('name')->toArray();
+        $user_name = User::select('name')->whereHas('project_user', function($query){
+            $query->where('project_id', request()->pid)->where('user_role', 'reviewer');
+        })->pluck('name')->toArray();
+
+        $pos_answer = ArticleUserQuestionaire::with('questionaire')->whereHas('articleUser', function($query){
+            $query->whereHas('article', function($query){
+                $query->where('project_id', request()->pid);
+            });
+        })->where('score', 1)->get();
+
+        return $pos_answer;
+
+        return view('dashboard.admin.summary.summary', compact('articles', 'question_name', 'user_name'));
     }
 }
