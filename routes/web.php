@@ -97,3 +97,5 @@ Route::get('/gambar-graph', [DataProcessingController::class, 'gambar_graph'])->
 Route::get('/my-image', [DataProcessingController::class, 'my_image'])->middleware('auth');
 Route::get('/data/rank', [DataProcessingController::class, 'data_rank'])->middleware('auth');
 Route::get('/data/graph', [DataProcessingController::class, 'data_graph'])->middleware('auth');
+Route::get('/metadata', [DataProcessingController::class, 'meta_data'])->middleware('auth');
+Route::post('/proses-metadata', [DataProcessingController::class, 'proses_meta_data'])->middleware('auth');

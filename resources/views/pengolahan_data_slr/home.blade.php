@@ -11,7 +11,7 @@
 <div class="row">
     <div class="col-md-6">
     <h1 class="text-center mt-5">Graph Penulis</h1>
-        <div class="container">
+        <div class="container text-center">
         <!-- HTML -->
             <a data-fancybox="gallery" href="{{$src}}">
             <img class="img-fluid" src="{{$src}}" alt="Gambar 1"  id="my-image"/>
