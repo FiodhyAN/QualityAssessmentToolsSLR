@@ -198,7 +198,9 @@
                     title: 'Reviewer',
                     data: 'reviewer',
                     name: 'reviewer',
-                    className: 'text-center'
+                    render: function(data, type, row) {
+                        return '<span style="white-space:normal">' + data + "</span>";
+                    }
                 },
                 {
                     title: 'Action',

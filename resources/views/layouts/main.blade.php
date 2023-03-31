@@ -125,6 +125,12 @@
   </div>
   <!--end wrapper-->
 
+  {{-- <footer class="footer">
+    <div class="footer-text">
+      Copyright © 2023. All right reserved.
+    </div>
+  </footer> --}}
+
 
   <!-- JS Files-->
   <script src="/assets/js/jquery.min.js"></script>
@@ -189,6 +195,7 @@
   <script type="text/javascript" src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.12/js/dataTables.checkboxes.min.js"></script>
   <script src="/assets/plugins/apexcharts-bundle/js/apexcharts.min.js"></script>
   <script src="/assets/plugins/apexcharts-bundle/js/apex-custom.js"></script>
+  <script src="/assets/plugins/chartjs/chart.min.js"></script>
   @yield('script')
 
 

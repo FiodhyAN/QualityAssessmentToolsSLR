@@ -29,9 +29,9 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $article->id }} - {{ $article->no }}</td>
                                 <td>{{ $article->title }}</td>
-                                <td class="text-center">
+                                <td>
                                     @foreach ($article->article_user as $user)
-                                        <span class="badge alert-primary">{{ $user->user->name }}</span><br>
+                                        <span style="white-space: normal" class="badge alert-primary">{{ $user->user->name }}</span>
                                     @endforeach
                                 </td>
                             </tr>

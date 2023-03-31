@@ -50,7 +50,7 @@ class ProjectController extends Controller
                 $reviewer = '';
                 foreach ($project->project_user as $pu) {
                     if ($pu->user_role == 'reviewer') {
-                        $reviewer .= '<span class="badge bg-primary">'.$pu->user->name.'</span><br>';
+                        $reviewer .= '<span class="badge alert-primary">'.$pu->user->name.'</span> ';
                     }
                 }
                 return $reviewer;
