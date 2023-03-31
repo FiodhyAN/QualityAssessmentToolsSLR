@@ -16,7 +16,7 @@ class AssessmentController extends Controller
         $this->authorize('reviewer');
         $questionaires = Questionaire::all();
         $projects = Project::select('id','project_name')->whereHas('project_user', function($query) {
-            $query->where('user_id', auth()->user()->id);
+            $query->where('user_id', auth()->user()->id)->where('user_role', 'reviewer');
         })->get();
         return view('dashboard.reviewer.assessment', compact('questionaires', 'projects'));
     }
@@ -99,11 +99,11 @@ class AssessmentController extends Controller
         $this->authorize('reviewer');
         $questionaires = Questionaire::with(['article_user_questionaire' => function($query){
             $query->whereHas('articleUser', function($query) {
-                $query->where('user_id', auth()->user()->id)->where('article_id', '2');
+                $query->where('user_id', auth()->user()->id);
             });
         }])->get();
         $projects = Project::select('id','project_name')->whereHas('project_user', function($query) {
-            $query->where('user_id', auth()->user()->id);
+            $query->where('user_id', auth()->user()->id)->where('user_role', 'reviewer');
         })->get();
         return view('dashboard.reviewer.assessed', compact('questionaires', 'projects'));
     }

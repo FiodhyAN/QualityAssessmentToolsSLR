@@ -123,15 +123,25 @@
                                 <div class="step">
                                     <div class="mt-1">
                                         <div class="closing-text">
-                                            <h4>Assessment Selesai! Apakah Anda Yakin dengan Penilaian Anda?</h4>
-                                            @foreach ($questionaires as $item)
-                                                <ul>
-                                                    <li>
-                                                        <p>{{ $item->question }}</p>
-                                                        <p id="summary{{ $loop->iteration }}"></p>
-                                                    </li>
-                                                </ul>
-                                            @endforeach
+                                            <h4>Assessment Selesai! Apakah Anda Yakin Ingin Mengubah Penilaian Anda?</h4>
+                                            <table class="table table-striped table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>No</th>
+                                                        <th>Question</th>
+                                                        <th>Answer</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($questionaires as $item)
+                                                        <tr>
+                                                            <td>{{ $loop->iteration }}</td>
+                                                            <td>{{ $item->question }}</td>
+                                                            <td id="summary{{ $loop->iteration }}"></td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
                                             <p>Click tombol submit untuk melanjutkan.</p>
                                         </div>
                                     </div>
@@ -329,15 +339,15 @@
                         no = index + 1;
                         if (data[index].article_user_questionaire[0].score == 1) {
                             $('#q_' + no + '_pos').prop('checked', true);
-                            $('#summary' + no).text('Answer: ' + data[index].pos_answer);
+                            $('#summary' + no).text(data[index].pos_answer);
                         }
                         else if(data[index].article_user_questionaire[0].score == 0) {
                             $('#q_' + no + '_net').prop('checked', true);
-                            $('#summary' + no).text('Answer: ' + data[index].net_answer);
+                            $('#summary' + no).text(data[index].net_answer);
                         }
                         else if(data[index].article_user_questionaire[0].score == -1) {
                             $('#q_' + no + '_neg').prop('checked', true);
-                            $('#summary' + no).text('Answer: ' + data[index].neg_answer);
+                            $('#summary' + no).text(data[index].neg_answer);
                         }
                     }
                 },
@@ -471,15 +481,15 @@
             $('#q_' + i + '_pos').on('click', function() {
                 // get the text of the label
                 let label = $(this).parent().text();
-                $('#summary' + i + '').text('Answer: ' + label);
+                $('#summary' + i + '').text(label);
             });
             $('#q_' + i + '_net').on('click', function() {
                 let label = $(this).parent().text();
-                $('#summary' + i + '').text('Answer: ' + label);
+                $('#summary' + i + '').text(label);
             });
             $('#q_' + i + '_neg').on('click', function() {
                 let label = $(this).parent().text();
-                $('#summary' + i + '').text('Answer: ' + label);
+                $('#summary' + i + '').text(label);
             });
         }
 

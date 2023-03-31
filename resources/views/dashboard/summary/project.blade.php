@@ -19,10 +19,20 @@
                         @foreach ($projects as $project)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $project->project->project_name }}</td>
-                                <td>
-                                    <a href="/dashboard/admin/projectSummary?pid={{ $project->project_id }}" class="btn btn-secondary"><ion-icon name="bar-chart-outline"></ion-icon> Summary</a>
-                                </td>
+                                @if (auth()->user()->is_admin == true)
+                                    <td>{{ $project->project->project_name }}</td>
+                                @else
+                                    <td>{{ $project->project_name }}</td>
+                                @endif
+                                @if (auth()->user()->is_admin == true)
+                                    <td>
+                                        <a href="/dashboard/projectSummary?pid={{ $project->project_id }}" class="btn btn-secondary"><ion-icon name="bar-chart-outline"></ion-icon> Summary</a>
+                                    </td>
+                                @else
+                                    <td>
+                                        <a href="/dashboard/projectSummary?pid={{ $project->id }}" class="btn btn-secondary"><ion-icon name="bar-chart-outline"></ion-icon> Summary</a>
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>

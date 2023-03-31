@@ -71,9 +71,10 @@ Route::get('/assignedTable', [AssignReviewerController::class, 'articleAssignTab
 Route::get('/notAssignedTable', [AssignReviewerController::class, 'articleNotAssignTable'])->middleware('auth')->name('notAssigned.table');
 Route::post('/dashboard/admin/assign/store', [AssignReviewerController::class, 'assignArticle'])->middleware('auth')->name('assign.store');
 Route::post('/dashboard/admin/assign/delete', [AssignReviewerController::class, 'deleteAssignArticle'])->middleware('auth')->name('assign.remove');
+
 //Summary
-Route::get('/dashboard/admin/summary', [SummaryController::class, 'projectIndex'])->middleware('auth');
-Route::get('/dashboard/admin/projectSummary', [SummaryController::class, 'projectSummary'])->middleware('auth')->name('project.summary');
+Route::get('/dashboard/summary', [SummaryController::class, 'projectIndex'])->middleware('auth');
+Route::get('/dashboard/projectSummary', [SummaryController::class, 'projectSummary'])->middleware('auth')->name('project.summary');
 
 //Reviewer
 Route::get('/dashboard/reviewer/assessment', [AssessmentController::class, 'index'])->middleware('auth');
@@ -81,7 +82,6 @@ Route::get('/assessmentTable', [AssessmentController::class, 'assessmentTable'])
 Route::post('/dashboard/reviewer/assessment/store', [AssessmentController::class, 'store'])->middleware('auth')->name('assessment.store');
 Route::get('/dashboard/reviewer/assessed', [AssessmentController::class, 'assessedIndex'])->middleware('auth');
 Route::get('/assessedTable', [AssessmentController::class, 'assessedTable'])->middleware('auth')->name('assessed.table');
-Route::get('/findProject', [AssessmentController::class, 'findProject'])->middleware('auth');
 Route::get('/reviewerScore', [AssessmentController::class, 'scoreReviewer'])->middleware('auth')->name('reviewer.score');
 Route::get('/editScore', [AssessmentController::class, 'editScore'])->middleware('auth')->name('reviewer.editScore');
 Route::post('/dashboard/reviewer/assessment/update', [AssessmentController::class, 'updateScore'])->middleware('auth')->name('reviewer.updateScore');

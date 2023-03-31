@@ -37,5 +37,8 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('reviewer', function (User $user) {
             return $user->is_reviewer;
         });
+        Gate::define('projectSummary', function (User $user) {
+            return $user->is_superAdmin || $user->is_admin;
+        });
     }
 }

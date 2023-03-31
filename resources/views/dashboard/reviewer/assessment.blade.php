@@ -76,14 +76,6 @@
                                                     @endforeach
                                                 </tbody>
                                             </table>
-                                            {{-- @foreach ($questionaires as $item)
-                                                <ul>
-                                                    <li>
-                                                        <p>{{ $item->question }}</p>
-                                                        <p id="summary{{ $loop->iteration }}"></p>
-                                                    </li>
-                                                </ul>
-                                            @endforeach --}}
                                             <p>Click tombol submit untuk melanjutkan.</p>
                                         </div>
                                     </div>

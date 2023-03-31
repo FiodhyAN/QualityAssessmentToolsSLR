@@ -4,7 +4,7 @@
     <h1>Project Summary</h1>
     <hr>
 
-    <a href="/dashboard/admin/summary"><button type="button" class="btn btn-secondary mb-2">
+    <a href="/dashboard/summary"><button type="button" class="btn btn-secondary mb-2">
             <ion-icon name="arrow-back"></ion-icon> Back to Project
         </button></a>
 
@@ -87,20 +87,27 @@
         });
 
         var question_name = {!! json_encode($question_name) !!};
+        var pos_answer_question = {!! json_encode($pos_answer_question) !!};
+        var net_answer_question = {!! json_encode($net_answer_question) !!};
+        var neg_answer_question = {!! json_encode($neg_answer_question) !!};
+
         var user_name = {!! json_encode($user_name) !!};
+        var pos_answer_user = {!! json_encode($pos_answer_user) !!};
+        var net_answer_user = {!! json_encode($net_answer_user) !!};
+        var neg_answer_user = {!! json_encode($neg_answer_user) !!};
 
         // question name to array
         // Bar Chart Question
         var options = {
             series: [{
                 name: 'Positive',
-                data: [4, 5, 4, 10, 4]
+                data: pos_answer_question
             }, {
                 name: 'Neutral',
-                data: [5, 3, 3, 3, 4]
+                data: net_answer_question
             }, {
                 name: 'Negative',
-                data: [2, 2, 9, 3, 1],
+                data: neg_answer_question
             }],
             chart: {
                 type: 'bar',
@@ -174,13 +181,13 @@
         var options = {
             series: [{
                 name: 'Positive',
-                data: [44, 55, 57, 56, 61]
+                data: pos_answer_question
             }, {
                 name: 'Neutral',
-                data: [76, 85, 101, 98, 87]
+                data: net_answer_question
             }, {
                 name: 'Negative',
-                data: [35, 41, 36, 26, 45]
+                data: neg_answer_question
             }],
             chart: {
                 type: 'bar',
@@ -241,13 +248,13 @@
         var options = {
             series: [{
                 name: 'Positive',
-                data: [4, 5, 4]
+                data: pos_answer_user
             }, {
                 name: 'Neutral',
-                data: [5, 3, 3]
+                data: net_answer_user
             }, {
                 name: 'Negative',
-                data: [2, 2, 9],
+                data: neg_answer_user
             }],
             chart: {
                 type: 'bar',
@@ -321,13 +328,13 @@
         var options = {
             series: [{
                 name: 'Positive',
-                data: [44, 55, 57]
+                data: pos_answer_user
             }, {
                 name: 'Neutral',
-                data: [76, 85, 101]
+                data: net_answer_user
             }, {
                 name: 'Negative',
-                data: [35, 41, 36]
+                data: neg_answer_user
             }],
             chart: {
                 type: 'bar',
