@@ -71,19 +71,25 @@ def getData(data=None):
 def getArticleIdAuthorReferencesAndAuthor(table):
     pairs=[]
     authors=[]
+    articles=[]
     for i in table:
         row=[]
         row.append(i[0])
+        articles.append(i[0])
+
         row.append(i[4])
         for penulis in i[4]:
             authors.append(penulis)
         try:
             row.append(i[5])
+            for article in i[5]:
+                articles.append(article)
         except:
             row.append([])
         pairs.append(row)
     authors = sorted(set(authors))
-    return pairs,authors
+    articles = sorted(set(articles))
+    return pairs,authors,articles
 
 def author_matrixs(authors):
     author_matrix=[]
@@ -95,33 +101,41 @@ def author_matrixs(authors):
             author_matrix.append(row)
     return author_matrix
 
-def getTable2Data(pairs,search_matrix):
+def getTable2Data(pairs,search_matrix,type):
     author_matrixs=[]
     for i in search_matrix:
         author_matrixs.append([i[0],i[1],0])
 
     print("getTable2Data")
-    for i in pairs:
-        penulisList=i[1]
-        authorList=i[2]
-        for author in authorList:
-            # try:
-                row_author=[]
-                for row in pairs:
-                    if author == row[0]:
-                        for author2 in row[1]:
-                            row_author.append(author2)
-                        # skip karena sudah ketemu
-                        break;
+    if type=="author":
+        for i in pairs:
+            penulisList=i[1]
+            authorList=i[2]
+            for author in authorList:
+                # try:
+                    row_author=[]
+                    for row in pairs:
+                        if author == row[0]:
+                            for author2 in row[1]:
+                                row_author.append(author2)
+                            # skip karena sudah ketemu
+                            break;
 
-                for author in penulisList:
-                    for row in row_author:
-                        if author != row:
-                            index=search_matrix.index([author, row])
-                            author_matrixs[index][2]+=1
-                print("\n")
-            # except:
-            #     pass
+                    for author in penulisList:
+                        for row in row_author:
+                            if author != row:
+                                index=search_matrix.index([author, row])
+                                author_matrixs[index][2]+=1
+                    print("\n")
+    elif  type=="article":
+        for i in pairs:
+            penulisList=i[0]
+            authorList=i[2]
+            author=penulisList
+            for author_reference in authorList:
+                index=search_matrix.index([author, author_reference])
+                print("index:"+str(index))
+                author_matrixs[index][2]+=1
 
     return author_matrixs
 
@@ -323,9 +337,9 @@ def rank(pretable3,author,name):
 
 
 
-@app.route('/data/<name>', methods=['GET', 'POST'])
+@app.route('/data/<type>/<name>', methods=['GET', 'POST'])
 
-def data(name):
+def data(type,name):
     if request.method == 'POST' or request.method == 'GET':
         start_time = time.time()
         if request.method == 'POST':
@@ -337,10 +351,11 @@ def data(name):
         title=[ 'Article-ID', 'Terms in Title and Keywords', 'Terms Found in Abstracts','Publication Year','Authors','References']
         print(title)
         print(tabulate(table))
-        
+    
         
     # pair ArticleId,Author,& References & author
-        pairs,authors=getArticleIdAuthorReferencesAndAuthor(table)
+        pairs,authors,articles=getArticleIdAuthorReferencesAndAuthor(table)
+        
         # for i in pairs:
         #     print(i)
         #     print("\n")
@@ -348,24 +363,28 @@ def data(name):
         #     print(y)
         #     print("\n")
         
-    # pasangan yang memungkinkan antara 2 penulis
-        author_matrix=author_matrixs(authors) 
-
+        # pasangan yang memungkinkan antara 2 penulis
+        if type == "article":
+            input_author_article=articles
+        elif type == "author":
+            input_author_article=authors
+        author_matrix=author_matrixs(input_author_article) 
 
     # ambil data untuk tabel 2(step 1)
-        author_matrix_and_relation=getTable2Data(pairs,author_matrix)
+        author_matrix_and_relation=getTable2Data(pairs,author_matrix,type)
+        
         # for x in author_matrix_and_relation:
         #     print(x)
         # return author_matrix_and_relation
 
     # errornyadisini
-        table2,raw_table2=makeTable2(author_matrix_and_relation,authors)
+        table2,raw_table2=makeTable2(author_matrix_and_relation, input_author_article)
         # add total coloum & row in table 2
-        raw_table2WithRowCol=addTable2TotalRowAndColoumn(raw_table2,authors)
+        raw_table2WithRowCol=addTable2TotalRowAndColoumn(raw_table2,input_author_article)
         # makeNewAdjMatrix
-        newAdjMatrixs=makeNewAdjMatrix(raw_table2WithRowCol,len(authors))
+        newAdjMatrixs=makeNewAdjMatrix(raw_table2WithRowCol,len(input_author_article))
         # rank author
-        table,author_rank=rank(newAdjMatrixs,authors,name)
+        table,author_rank=rank(newAdjMatrixs,input_author_article,name)
 
         try:
             outer_author= request.get_json()["outer"]
@@ -376,7 +395,7 @@ def data(name):
 
         if name == "graph":
         # Make Term Graph
-            output=makeTermGraph(table2,authors,author_matrix_and_relation,author_rank,outer_author,top_author_rank)
+            output=makeTermGraph(table2,input_author_article,author_matrix_and_relation,author_rank,outer_author,top_author_rank)
             output.seek(0)
             import base64
             my_base64_jpgData = base64.b64encode(output.read())
@@ -391,7 +410,7 @@ def data(name):
                 print("Waktu eksekusi program: {:.2f} detik".format(total_time))
                 return my_base64_jpgData
         elif name == "rank":
-            tmp= [authors,[table,author_rank]]
+            tmp= [input_author_article,[table,author_rank]]
             end_time = time.time()
             total_time = end_time - start_time
             print("Waktu eksekusi program: {:.2f} detik".format(total_time))

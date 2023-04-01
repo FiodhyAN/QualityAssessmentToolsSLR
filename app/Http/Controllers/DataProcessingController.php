@@ -90,13 +90,13 @@ class DataProcessingController extends Controller
     }
 
 
-    public function data_rank() {
+    public function data_rank($id) {
         $sum_top_author=10;
         $result = $this->getData();
         // transporse table
         // https://stackoverflow.com/questions/6297591/how-to-invert-transpose-the-rows-and-columns-of-an-html-table
         set_time_limit(6000);
-        $response = Http::timeout(6000)->post('http://127.0.0.1:5000/data/rank', [
+        $response = Http::timeout(6000)->post('http://127.0.0.1:5000/data/'.$id.'/rank', [
             'data' => 
                 $result
                 // [  
@@ -131,11 +131,11 @@ class DataProcessingController extends Controller
     
     }
 
-    public function data_graph() {
+    public function data_graph($id) {
         $sum_top_author=10;
         $result = $this->getData();
         set_time_limit(6000);
-        $response =  Http::timeout(6000)->post('http://127.0.0.1:5000/data/graph', [
+        $response =  Http::timeout(6000)->post('http://127.0.0.1:5000/data/'.$id.'/graph', [
             'data' => 
             $result
             // [  
@@ -172,7 +172,7 @@ class DataProcessingController extends Controller
         // transporse table
         // https://stackoverflow.com/questions/6297591/how-to-invert-transpose-the-rows-and-columns-of-an-html-table
         set_time_limit(6000);
-        $response = Http::timeout(6000)->post('http://127.0.0.1:5000/data/rank', 
+        $response = Http::timeout(6000)->post('http://127.0.0.1:5000/data/author/rank', 
             [
                 'data' => $result
                 ,'outer'=>$author['outer-author']
@@ -198,7 +198,7 @@ class DataProcessingController extends Controller
         $author_ranks = array_slice($author_ranks, 0, $sum_top_author);
 
 
-        $response =  Http::timeout(6000)->post('http://127.0.0.1:5000/data/graph', [
+        $response =  Http::timeout(6000)->post('http://127.0.0.1:5000/data/author/graph', [
             'data' => 
             $result
             // [  
