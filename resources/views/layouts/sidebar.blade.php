@@ -78,7 +78,7 @@
                     <div class="menu-title">Assessed Article</div>
                 </a>
             </li>
-
+            <!-- izin nambahin 2 fitur -->
             <li>
                 <a href="/metadata/author">
                     <div class="parent-icon">
