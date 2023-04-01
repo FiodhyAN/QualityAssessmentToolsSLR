@@ -93,7 +93,7 @@
             <div class="card radius-10 w-100">
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-3">
-                        <h6 class="mb-0">Assessed Status</h6>
+                        <h6 class="mb-0">Assessment Status</h6>
                     </div>
                     <div class="chart-container1">
                         <canvas id="chartStatistic"></canvas>
@@ -122,11 +122,11 @@
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         Not Assessed
-                        <span class="badge bg-info rounded-pill">{{ $article_not_assessed }}</span>
+                        <span class="badge bg-danger rounded-pill">{{ $article_not_assessed }}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         Not Assign
-                        <span class="badge bg-danger rounded-pill">{{ $article_not_assign }}</span>
+                        <span class="badge bg-warning rounded-pill">{{ $article_not_assign }}</span>
                     </li>
                 </ul>
             </div>
@@ -223,8 +223,8 @@
                     data: [assessed, not_assessed, not_assign],
                     backgroundColor: [
                         '#42ba96',
-                        '#5bc0de',
-                        '#df4759'
+                        '#df4759',
+                        '#f0ad4e'
                     ],
                     borderWidth: 1
                 }]

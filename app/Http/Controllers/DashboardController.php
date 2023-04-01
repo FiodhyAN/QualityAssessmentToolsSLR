@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\ArticleUser;
 use App\Models\Project;
+use App\Models\ProjectUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -21,25 +22,28 @@ class DashboardController extends Controller
             $total_article = count(Article::all());
 
             $data_project_assessed = Project::with(['article' => function($query){
-                $query->with('article_user')->whereHas('article_user', function($query){
+                $query->select('project_id', 'id')->whereHas('article_user', function($query){
                     $query->where('is_assessed', true);
-                });
+                })->withCount(['article_user' => function($query){
+                    $query->where('is_assessed', true);
+                }]);
             }])->get();
-            return $data_project_assessed;
-            $project_assessed = [];
-            foreach ($data_project_assessed as $key => $value) {
-                $project_assessed[$key] = $value->article->count();
-            }
+            $project_assessed = $data_project_assessed->map(function($project) {
+                $articleUserCountSum = $project->article->sum('article_user_count');
+                return $articleUserCountSum;
+            });
 
             $data_project_not_assessed = Project::with(['article' => function($query){
-                $query->whereHas('article_user', function($query){
+                $query->select('project_id', 'id')->whereHas('article_user', function($query){
                     $query->where('is_assessed', false);
-                });
+                })->withCount(['article_user' => function($query){
+                    $query->where('is_assessed', false);
+                }]);
             }])->get();
-            $project_not_assessed = [];
-            foreach ($data_project_not_assessed as $key => $value) {
-                $project_not_assessed[$key] = $value->article->count();
-            }
+            $project_not_assessed = $data_project_not_assessed->map(function($project) {
+                $articleUserCountSum = $project->article->sum('article_user_count');
+                return $articleUserCountSum;
+            });
 
             return view('dashboard.superAdmin.index', [
                 'total_user' => $total_user,
@@ -54,7 +58,79 @@ class DashboardController extends Controller
             ]);
         }
         elseif (auth()->user()->is_admin) {
-            return view('dashboard.admin.index');
+            // card data
+            $project_admin = ProjectUser::where('user_id', auth()->user()->id)->where('user_role', 'admin')->count();
+            $project_assign = ProjectUser::where('user_id', auth()->user()->id)->count();
+            $total_article = Article::whereHas('project', function($query){
+                $query->whereHas('project_user', function($query){
+                    $query->where('user_id', auth()->user()->id)->where('user_role', 'admin');
+                });
+            })->count();
+            $assign_article = Article::whereHas('project', function($query){
+                $query->whereHas('project_user', function($query){
+                    $query->where('user_id', auth()->user()->id)->where('user_role', 'admin');
+                });
+            })->whereHas('article_user')->count();
+            $project_name = Project::whereHas('project_user', function($query){
+                $query->where('user_id', auth()->user()->id);
+            })->pluck('project_name');
+
+            // chart data
+            $data_project_assessed = Project::whereHas('project_user', function($query){
+                $query->where('user_id', auth()->user()->id)->where('user_role', 'admin');
+            })->with(['article' => function($query){
+                $query->select('project_id', 'id')->whereHas('article_user', function($query){
+                    $query->where('is_assessed', true);
+                })->withCount(['article_user' => function($query){
+                    $query->where('is_assessed', true);
+                }]);
+            }])->get();
+            $project_assessed = $data_project_assessed->map(function($project) {
+                $articleUserCountSum = $project->article->sum('article_user_count');
+                return $articleUserCountSum;
+            });
+
+            $data_project_not_assessed = Project::whereHas('project_user', function($query){
+                $query->where('user_id', auth()->user()->id)->where('user_role', 'admin');
+            })->with(['article' => function($query){
+                $query->select('project_id', 'id')->whereHas('article_user', function($query){
+                    $query->where('is_assessed', false);
+                })->withCount(['article_user' => function($query){
+                    $query->where('is_assessed', false);
+                }]);
+            }])->get();
+            $project_not_assessed = $data_project_not_assessed->map(function($project) {
+                $articleUserCountSum = $project->article->sum('article_user_count');
+                return $articleUserCountSum;
+            });
+
+            $total_article_assessed = Article::whereHas('project', function($query){
+                $query->whereHas('project_user', function($query){
+                    $query->where('user_id', auth()->user()->id)->where('user_role', 'admin');
+                });
+            })->whereHas('article_user', function($query){
+                $query->where('is_assessed', true);
+            })->count();
+            $total_article_not_assessed = Article::whereHas('project', function($query){
+                $query->whereHas('project_user', function($query){
+                    $query->where('user_id', auth()->user()->id)->where('user_role', 'admin');
+                });
+            })->whereHas('article_user', function($query){
+                $query->where('is_assessed', false);
+            })->count();
+
+            return view('dashboard.admin.index', [
+                'project_admin' => $project_admin,
+                'project_assign' => $project_assign,
+                'total_article' => $total_article,
+                'assign_article' => $assign_article,
+                'project_name' => $project_name,
+                'project_assessed' => $project_assessed,
+                'project_not_assessed' => $project_not_assessed,
+                'article_not_assign' => $total_article - $assign_article,
+                'article_assessed' => $total_article_assessed,
+                'article_not_assessed' => $total_article_not_assessed
+            ]);
         }
         else {
             return view('dashboard.reviewer.index');
