@@ -64,9 +64,9 @@ class DataProcessingController extends Controller
     }
 
 
-    public function getData(){
+    public function getData($projects){
         $articles = DB::table('articles')
-                    ->select('no', 'keywords', 'abstracts', 'year', 'authors', 'citing_new')
+                    ->select('no', 'keywords', 'abstracts', 'year', 'authors', 'citing_new')->where('project_id', '=', $projects)
                     ->get();
     
         $data = json_decode($articles, true);
@@ -93,7 +93,7 @@ class DataProcessingController extends Controller
 
     public function data_rank($id) {
         $sum_top_author=10;
-        $result = $this->getData();
+        $result = $this->getData(1);
         // transporse table
         // https://stackoverflow.com/questions/6297591/how-to-invert-transpose-the-rows-and-columns-of-an-html-table
         set_time_limit(6000);
@@ -134,7 +134,7 @@ class DataProcessingController extends Controller
 
     public function data_graph($id) {
         $sum_top_author=10;
-        $result = $this->getData();
+        $result = $this->getData(1);
         set_time_limit(6000);
         $response =  Http::timeout(6000)->post('http://127.0.0.1:5000/data/'.$id.'/graph', [
             'data' => 
@@ -176,9 +176,8 @@ class DataProcessingController extends Controller
             $author['outer-author']=true;
         }
 
-
         $sum_top_author=(int)$author['top-author'];
-        $result = $this->getData();
+        $result = $this->getData($author['project']);
         // transporse table
         // https://stackoverflow.com/questions/6297591/how-to-invert-transpose-the-rows-and-columns-of-an-html-table
         set_time_limit(6000);
