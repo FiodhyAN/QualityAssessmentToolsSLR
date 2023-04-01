@@ -133,6 +133,8 @@ def getTable2Data(pairs,search_matrix,type):
             authorList=i[2]
             author=penulisList
             for author_reference in authorList:
+                if len(author) <=1 or  len(author_reference) <=1:
+                    continue
                 index=search_matrix.index([author, author_reference])
                 print("index:"+str(index))
                 author_matrixs[index][2]+=1

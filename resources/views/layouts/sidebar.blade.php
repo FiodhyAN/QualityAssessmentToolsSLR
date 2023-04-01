@@ -78,6 +78,24 @@
                     <div class="menu-title">Assessed Article</div>
                 </a>
             </li>
+
+            <li>
+                <a href="/metadata/author">
+                    <div class="parent-icon">
+                        <ion-icon name="analytics"></ion-icon>
+                    </div>
+                    <div class="menu-title">Author Relationship</div>
+                </a>
+            </li>
+
+            <li>
+                <a href="/metadata/article">
+                    <div class="parent-icon">
+                        <ion-icon name="analytics" style="background-color: black;color: white;"></ion-icon>
+                    </div>
+                    <div class="menu-title">Article Relationship</div>
+                </a>
+            </li>
         @endcan
         @can('admin')
             <li>
