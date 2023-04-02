@@ -4,11 +4,11 @@
     <h1>Project Summary</h1>
     <hr>
 
-    <a href="/dashboard/summary"><button type="button" class="btn btn-secondary mb-2">
+    <a href="/dashboard/summary"><button type="button" class="btn btn-secondary mb-4">
             <ion-icon name="arrow-back"></ion-icon> Back to Project
         </button></a>
 
-    <div class="card">
+    {{-- <div class="card">
         <div class="card-body">
             <div class="card-title">
                 <h5>Article Not Assessed</h5>
@@ -40,7 +40,7 @@
                 </table>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <h6 class="mb-0 text-uppercase">Score Per Question</h6>
     <hr />

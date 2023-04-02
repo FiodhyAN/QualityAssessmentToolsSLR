@@ -71,6 +71,7 @@ Route::get('/assignedTable', [AssignReviewerController::class, 'articleAssignTab
 Route::get('/notAssignedTable', [AssignReviewerController::class, 'articleNotAssignTable'])->middleware('auth')->name('notAssigned.table');
 Route::post('/dashboard/admin/assign/store', [AssignReviewerController::class, 'assignArticle'])->middleware('auth')->name('assign.store');
 Route::post('/dashboard/admin/assign/delete', [AssignReviewerController::class, 'deleteAssignArticle'])->middleware('auth')->name('assign.remove');
+Route::get('/dashboard/admin/articleStatus', [ProjectAdminController::class, 'articleStatus'])->middleware('auth')->name('article.status');
 
 //Summary
 Route::get('/dashboard/summary', [SummaryController::class, 'projectIndex'])->middleware('auth');

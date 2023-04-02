@@ -38,14 +38,6 @@
                     <div class="menu-title">Project Management</div>
                 </a>
             </li>
-            <li>
-                <a href="/dashboard/summary">
-                    <div class="parent-icon">
-                        <ion-icon name="stats-chart-sharp"></ion-icon>
-                    </div>
-                    <div class="menu-title">Summary</div>
-                </a>
-            </li>
         @endcan
         @can('admin')
             <li class="menu-label">Admin Projek</li>
@@ -63,50 +55,71 @@
                 <li class="menu-label">Assessor</li>
             @endif
             <li>
-                <a href="/dashboard/reviewer/assessment">
+                <a class="has-arrow" href="#">
                     <div class="parent-icon">
                         <ion-icon name="newspaper-sharp"></ion-icon>
                     </div>
-                    <div class="menu-title">Article Assessment</div>
+                    <div class="menu-title">Quality Assessment</div>
                 </a>
-            </li>
-            <li>
-                <a href="/dashboard/reviewer/assessed">
-                    <div class="parent-icon">
-                        <ion-icon name="checkbox"></ion-icon>
-                    </div>
-                    <div class="menu-title">Assessed Article</div>
-                </a>
+                <ul>
+                    <li>
+                        <a href="/dashboard/reviewer/assessment">
+                            <div class="parent-icon">
+                                <ion-icon name="close-circle"></ion-icon>
+                            </div>
+                            <div class="menu-title">Article Not Complete</div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/dashboard/reviewer/assessed">
+                            <div class="parent-icon">
+                                <ion-icon name="checkmark-circle"></ion-icon>
+                            </div>
+                            <div class="menu-title">Article Completed</div>
+                        </a>
+                    </li>
+                </ul>
             </li>
             <!-- izin nambahin 2 fitur -->
-            <li>
-                <a href="/metadata/author">
-                    <div class="parent-icon">
-                        <ion-icon name="analytics"></ion-icon>
-                    </div>
-                    <div class="menu-title">Author Relationship</div>
-                </a>
-            </li>
-
-            <li>
-                <a href="/metadata/article">
-                    <div class="parent-icon">
-                        <ion-icon name="analytics" style="background-color: black;color: white;"></ion-icon>
-                    </div>
-                    <div class="menu-title">Article Relationship</div>
-                </a>
-            </li>
+            
         @endcan
-        @can('admin')
+        @can('projectSummary')
             <li>
-                <a href="/dashboard/summary">
+                <a class="has-arrow" href="#">
                     <div class="parent-icon">
                         <ion-icon name="stats-chart-sharp"></ion-icon>
                     </div>
                     <div class="menu-title">Summary</div>
                 </a>
+                <ul>
+                    <li>
+                        <a href="/metadata/author">
+                            <div class="parent-icon">
+                                <ion-icon name="people"></ion-icon>
+                            </div>
+                            <div class="menu-title">Author Summary</div>
+                        </a>
+                    </li>
+        
+                    <li>
+                        <a href="/metadata/article">
+                            <div class="parent-icon">
+                                <ion-icon name="book"></ion-icon>
+                            </div>
+                            <div class="menu-title">Article Summary</div>
+                        </a>
+                    </li>
+        
+                    <li>
+                        <a href="/dashboard/summary">
+                            <div class="parent-icon">
+                                <ion-icon name="pie-chart"></ion-icon>
+                            </div>
+                            <div class="menu-title">Project Summary</div>
+                        </a>
+                    </li>
+                </ul>
             </li>
         @endcan
-    </ul>
     <!--end navigation-->
 </aside>

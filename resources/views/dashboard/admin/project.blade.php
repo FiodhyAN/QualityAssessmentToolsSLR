@@ -22,6 +22,7 @@
                                 <td>{{ $project->project->project_name }}</td>
                                 <td>
                                     <a href="/dashboard/admin/project/{{ $project->project_id }}" class="btn btn-secondary"><ion-icon name="search"></ion-icon> Detail</a>
+                                    <a href="/dashboard/admin/articleStatus?pid={{ $project->project_id }}" class="btn btn-primary"><ion-icon name="bookmarks"></ion-icon> Article Status</a>
                                 </td>
                             </tr>
                         @endforeach

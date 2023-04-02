@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
 use App\Models\ProjectUser;
 
 class ProjectAdminController extends Controller
@@ -22,5 +23,15 @@ class ProjectAdminController extends Controller
         ]);
     }
 
-    
+    public function articleStatus()
+    {
+        $this->authorize('admin');
+        $articles = Article::with(['project', 'article_user' => function($query){
+            $query->with('user');
+        }])->where('project_id', request()->pid)->get();
+        
+        return view('dashboard.admin.status', [
+            'articles' => $articles,
+        ]);
+    }
 }
