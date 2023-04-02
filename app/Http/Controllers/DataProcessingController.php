@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use App\Models\Project;
 
 class DataProcessingController extends Controller
 {
@@ -63,9 +64,9 @@ class DataProcessingController extends Controller
     }
 
 
-    public function getData(){
+    public function getData($projects){
         $articles = DB::table('articles')
-                    ->select('no', 'keywords', 'abstracts', 'year', 'authors', 'citing_new')
+                    ->select('no', 'keywords', 'abstracts', 'year', 'authors', 'citing_new')->where('project_id', '=', $projects)
                     ->get();
     
         $data = json_decode($articles, true);
@@ -92,7 +93,7 @@ class DataProcessingController extends Controller
 
     public function data_rank($id) {
         $sum_top_author=10;
-        $result = $this->getData();
+        $result = $this->getData(1);
         // transporse table
         // https://stackoverflow.com/questions/6297591/how-to-invert-transpose-the-rows-and-columns-of-an-html-table
         set_time_limit(6000);
@@ -133,7 +134,7 @@ class DataProcessingController extends Controller
 
     public function data_graph($id) {
         $sum_top_author=10;
-        $result = $this->getData();
+        $result = $this->getData(1);
         set_time_limit(6000);
         $response =  Http::timeout(6000)->post('http://127.0.0.1:5000/data/'.$id.'/graph', [
             'data' => 
@@ -153,11 +154,20 @@ class DataProcessingController extends Controller
     
     }
 
-    public function meta_data(){
-        return view('pengolahan_data_slr.metadata',['src' => "",'author_ranks'=>[]]);
+    public function meta_data($id){
+        $this->authorize('reviewer');
+        $projects = Project::select('id','project_name')->whereHas('project_user', function($query) {
+            $query->where('user_id', auth()->user()->id)->where('user_role', 'reviewer');
+        })->get();
+        return view('pengolahan_data_slr.metadata',['src' => "",'author_ranks'=>[],'type'=>$id,'projects'=>$projects]);
     }
 
-    public function proses_meta_data(Request $request){
+    public function proses_meta_data(Request $request,$id){
+        $this->authorize('reviewer');
+        $projects = Project::select('id','project_name')->whereHas('project_user', function($query) {
+            $query->where('user_id', auth()->user()->id)->where('user_role', 'reviewer');
+        })->get();
+
         $author = $request->toArray();
         if($author['outer-author']=='0'){
             $author['outer-author']=false;
@@ -166,13 +176,12 @@ class DataProcessingController extends Controller
             $author['outer-author']=true;
         }
 
-
         $sum_top_author=(int)$author['top-author'];
-        $result = $this->getData();
+        $result = $this->getData($author['project']);
         // transporse table
         // https://stackoverflow.com/questions/6297591/how-to-invert-transpose-the-rows-and-columns-of-an-html-table
         set_time_limit(6000);
-        $response = Http::timeout(6000)->post('http://127.0.0.1:5000/data/author/rank', 
+        $response = Http::timeout(6000)->post('http://127.0.0.1:5000/data/'.$id.'/rank', 
             [
                 'data' => $result
                 ,'outer'=>$author['outer-author']
@@ -198,7 +207,7 @@ class DataProcessingController extends Controller
         $author_ranks = array_slice($author_ranks, 0, $sum_top_author);
 
 
-        $response =  Http::timeout(6000)->post('http://127.0.0.1:5000/data/author/graph', [
+        $response =  Http::timeout(6000)->post('http://127.0.0.1:5000/data/'.$id.'/graph', [
             'data' => 
             $result
             // [  
@@ -212,8 +221,9 @@ class DataProcessingController extends Controller
             ,'outer'=>true
             ,'author-rank'=>$sum_top_author
         ]);
-        return view('pengolahan_data_slr.metadata',  ['src' => "data:image/png;base64, $response",'author_ranks' => $author_ranks]);
-    
+        return view('pengolahan_data_slr.metadata', ['src' => "data:image/png;base64, $response",'author_ranks' => $author_ranks,'type'=>$id,'projects'=>$projects]);
+        // return redirect('/metadata/'.$id)->with(['src' => "data:image/png;base64, $response",'author_ranks' => $author_ranks,'type'=>$id,'projects'=>$projects]);
+        
     }
 
 }
