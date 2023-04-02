@@ -31,8 +31,8 @@
             <div class="col-md-4">
                 <select class="form-select" aria-label="Default select example" id="outer-author" name="outer-author">
                     <option disabled selected>-- Select {{$type}} display --</option>
-                    <option value="1">Show</option>
-                    <option value="0">Hide</option>
+                    <option value="1">All {{$type}}</option>
+                    <option value="0">Relation only</option>
                 </select>
             </div>
         </div>
@@ -62,7 +62,7 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Author</th>
+                        <th>{{$type}}</th>
                         <th>Rank</th>
                     </tr>
                 </thead>
