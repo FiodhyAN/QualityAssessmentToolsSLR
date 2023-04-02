@@ -28,8 +28,7 @@
                         </div>
                         <div class="col mb-3">
                             <label class="form-label">Project Admin</label>
-                            <select id="adminProject-input" class="select_user" name="admin_project">
-                                <option disabled selected>-- Select User --</option>
+                            <select id="adminProject-input" class="select_user" name="admin_project[]" multiple="multiple">
                                 @foreach ($users as $user)
                                     <option value="{{ $user->id }}"
                                         {{ old('admin_project') == $user->id ? 'selected' : '' }}>{{ $user->name }}
@@ -192,7 +191,10 @@
                 {
                     title: 'Project Admin',
                     data: 'admin_project',
-                    name: 'admin_project'
+                    name: 'admin_project',
+                    render: function(data, type, row) {
+                        return '<span style="white-space:normal">' + data + "</span>";
+                    }
                 },
                 {
                     title: 'Reviewer',
@@ -332,7 +334,13 @@
     <script>
         $(document).ready(function() {
             $('.select_user').select2({
-                dropdownParent: $('#exampleVerticallycenteredModal .modal-content')
+                theme: 'bootstrap4',
+                dropdownParent: $('#exampleVerticallycenteredModal .modal-content'),
+                closeOnSelect: false,
+                allowClear: true,
+                placeholder: 'Select Admin Project',
+                tags: true,
+                tokenSeparators: [',', ' '],
             });
             $('.select_edit_user').select2({
                 dropdownParent: $('#modalEdit .modal-content')
@@ -365,13 +373,13 @@
                 url: '{!! URL::to('findReviewer') !!}',
                 type: 'GET',
                 data: {
-                    'user_id': user_id
+                    'user_id': JSON.stringify(user_id)
                 },
                 dataType: 'json',
                 success: function(data) {
+                    console.log(data);
                     var html = '';
                     var old_reviewer = $('.reviewerProject-input').val();
-                    console.log(old_reviewer);
                     for (var i = 0; i < data.length; i++) {
                         if (old_reviewer == data[i].id) {
                             html += '<option value="' + data[i].id + '" selected>' + data[i].name +

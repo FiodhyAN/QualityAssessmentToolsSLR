@@ -41,7 +41,7 @@ class ProjectController extends Controller
                 $name = '';
                 foreach ($project->project_user as $pu) {
                     if ($pu->user_role == 'admin') {
-                        $name = $pu->user->name;
+                        $name .= '<span class="badge alert-success">'.$pu->user->name.'</span> '; 
                     }
                 }
                 return $name;
@@ -60,7 +60,7 @@ class ProjectController extends Controller
                 $btn .= '<button type="button" class="btn btn-danger btn-sm ms-2 aksi deleteProject" data-id="'.$row->id.'"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
                 return $btn;
             })
-            ->rawColumns(['action', 'reviewer'])
+            ->rawColumns(['action', 'reviewer', 'admin_project'])
             ->toJson();
     }
 
@@ -76,11 +76,16 @@ class ProjectController extends Controller
             'project_name' => $request->project_name,
             'limit_reviewer' => $request->limit,
         ]);
-        ProjectUser::create([
-            'project_id' => $project->id,
-            'user_id' => $request->admin_project,
-            'user_role' => 'admin',
-        ]);
+        foreach ($request->admin_project as $admin) {
+            ProjectUser::create([
+                'project_id' => $project->id,
+                'user_id' => $admin,
+                'user_role' => 'admin',
+            ]);
+            User::where('id', $admin)->update([
+                'is_admin' => true,
+            ]);
+        }
         foreach ($request->reviewer as $reviewer) {
             ProjectUser::create([
                 'project_id' => $project->id,
@@ -88,12 +93,6 @@ class ProjectController extends Controller
                 'user_role' => 'reviewer',
             ]);
         }
-        User::where('id', $request->admin_project)->update([
-            'is_admin' => true,
-        ]);
-
-        // return ->with('success', 'Project Created Successfully');
-        // return json_encode(['success' => 'Project Created Successfully']);
     }
 
     public function update(Request $request)
@@ -225,7 +224,8 @@ class ProjectController extends Controller
     public function findReviewer(Request $request)
     {
         $this->authorize('superadmin');
-        $user = User::where('id', '!=', $request->user_id)->where('is_superadmin', '!=', true)->where('id', '!=', auth()->user()->id)->get();
+        $array = json_decode($request->user_id);
+        $user = User::whereNotIn('id', $array)->where('is_superadmin', '!=', true)->where('id', '!=', auth()->user()->id)->get();
         return $user->toJson();
     }
 
