@@ -42,7 +42,7 @@
             <input type="hidden" name="user_id" value="{{ $user_id }}">
             <input type="hidden" name="project_id" value="{{ $project_id }}">
             <div class="col mb-3 mt-3 ms-3">
-                <button disabled type="submit" class="btn btn-danger" id="delete_btn"><ion-icon name="trash"></ion-icon> Delete Article</button>
+                <button disabled type="submit" class="btn btn-danger" id="delete_btn"><ion-icon name="trash"></ion-icon> Unassign Article</button>
             </div>
             <div class="card-body">
                 <div class="table-responsive">

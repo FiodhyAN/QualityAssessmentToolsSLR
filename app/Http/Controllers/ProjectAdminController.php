@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\ProjectUser;
+use Illuminate\Http\Request;
 
 class ProjectAdminController extends Controller
 {
@@ -33,5 +34,32 @@ class ProjectAdminController extends Controller
         return view('dashboard.admin.status', [
             'articles' => $articles,
         ]);
+    }
+
+    public function findStatus(Request $request)
+    {
+        $this->authorize('admin');
+        if ($request->status == 'all') {
+            return Article::with(['project', 'article_user' => function($query){
+                $query->with('user');
+            }])->where('project_id', $request->project_id)->get();
+        }
+        elseif ($request->status == 'assessed') {
+            return Article::with(['project', 'article_user' => function($query){
+                $query->with('user')->where('is_assessed', true);
+            }])->whereHas('article_user', function($query){
+                $query->where('is_assessed', true);
+            })->where('project_id', $request->project_id)->get();
+        }
+        elseif ($request->status == 'not_assessed') {
+            return Article::with(['project', 'article_user' => function($query){
+                $query->with('user')->where('is_assessed', false);
+            }])->whereHas('article_user', function($query){
+                $query->where('is_assessed', false);
+            })->where('project_id', $request->project_id)->get();
+        }
+        else {
+            return Article::doesntHave('article_user')->with('article_user')->where('project_id', $request->project_id)->get();
+        }
     }
 }

@@ -29,6 +29,7 @@
                             <th>ID - No</th>
                             <th>Article</th>
                             <th>Users</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,7 +44,20 @@
                                     @else    
                                         @foreach ($article->article_user as $user)
                                             <span style="white-space: normal"
-                                                class="badge alert-primary">{{ $user->user->name }}</span>
+                                                class="badge alert-primary">{{ $user->user->name }}</span><br>
+                                        @endforeach
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($article->article_user->count() == 0)
+                                        <span class="badge alert-danger">Not Assign</span>
+                                    @else
+                                        @foreach ($article->article_user as $user)
+                                            @if ($user->is_assessed == true)
+                                                <span class="badge alert-success">Assessed</span><br>
+                                            @else
+                                                <span class="badge alert-warning">Not Assessed</span><br>
+                                            @endif
                                         @endforeach
                                     @endif
                                 </td>
@@ -57,7 +71,7 @@
 @endsection
 @section('script')
 <script>
-    $('#article_status_table').DataTable();
+    var table = $('#article_status_table').DataTable();
     $('.select_status').select2({
         width: '15%',
         // turn off the searching
@@ -65,8 +79,33 @@
         minimumResultsForSearch: Infinity,
     });
 
-    $('.select-status').on('change', function(){
+    $('.select_status').on('change', function(){
+        var status = $(this).val();
+        var project_id = {{ request()->pid }};
+        console.log(project_id);
+        console.log(status);
 
+        $.ajax({
+            url: '{{ route('find.status') }}',
+            method: 'GET',
+            data: {
+                status: status,
+                project_id: project_id
+            },
+            success: function(data){
+                table.clear().draw();
+                let no = 1;
+                for (let index = 0; index < data.length; index++) {
+                    table.row.add([
+                        no,
+                        data[index].id + ' - ' + data[index].no,
+                        data[index].title,
+                        data[index].article_user.length == 0 ? '<span class="badge alert-danger">Not Assign</span>' : data[index].article_user.map(user => '<span style="white-space: normal" class="badge alert-primary">' + user.user.name + '</span><br>').join(''),
+                        data[index].article_user.length == 0 ? '<span class="badge alert-danger">Not Assign</span>' : data[index].article_user.map(user => user.is_assessed == true ? '<span class="badge alert-success">Assessed</span><br>' : '<span class="badge alert-warning">Not Assessed</span><br>').join('')
+                    ]).draw();
+                }
+            }
+        })
     })
 </script>
 @endsection
