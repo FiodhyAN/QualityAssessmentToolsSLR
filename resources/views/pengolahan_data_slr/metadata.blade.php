@@ -2,12 +2,13 @@
 @section('container')
 <div class="container">
     <!-- CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" />
 
     <!-- JavaScript -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
-    
+
     <h1 class="text-center mb-5">{{$type}} relationships and popularity</h1>
     <form class="form-body row g-3" action="/proses-metadata/{{$type}}" method="POST">
         @csrf
@@ -15,8 +16,9 @@
             <div class="col-md-4">
                 <select class="form-select" name="project">
                     <option disabled selected>-- Select Project --</option>
+                    <option value="1">1</option>
                     @foreach ($projects as $project)
-                        <option value="{{ $project->id }}">{{ $project->project_name }}</option>
+                    <option value="{{ $project->id }}">{{ $project->project_name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -40,18 +42,18 @@
     </form>
     <div class="row">
         <div class="col-md-6">
-        <h1 class="text-center mt-5">{{$type}} graph</h1>
+            <h1 class="text-center mt-5">{{$type}} graph</h1>
             <div class="container text-center">
-            <!-- HTML -->
+                <!-- HTML -->
                 <a data-fancybox="gallery" href="{{$src}}">
-                <img class="img-fluid" src="{{$src}}" alt="Gambar 1"  id="my-image"/>
+                    <img class="img-fluid" src="{{$src}}" alt="Gambar 1" id="my-image" />
                 </a>
 
                 <script>
-                    document.getElementById('my-image').onerror = function() {
-                        this.onerror = null;
-                        this.src = 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831';
-                    };
+                document.getElementById('my-image').onerror = function() {
+                    this.onerror = null;
+                    this.src = 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831';
+                };
                 </script>
 
             </div>
@@ -67,13 +69,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for($i = 0; $i < 20 && $i < count($author_ranks); $i++)
-                    <tr>
+                    @for($i = 0; $i < 20 && $i < count($author_ranks); $i++) <tr>
                         <th scope="row">{{$i+1}}</th>
                         <td>{{ $author_ranks[$i][0] }}</td>
                         <td>{{ $author_ranks[$i][1] }}</td>
-                    </tr>
-                    @endfor
+                        </tr>
+                        @endfor
                 </tbody>
             </table>
         </div>
