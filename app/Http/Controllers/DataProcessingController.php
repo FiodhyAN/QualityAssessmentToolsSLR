@@ -212,12 +212,12 @@ class DataProcessingController extends Controller
         // Combine the authors and ranks into an array of arrays
         $author_ranks = array();
         for ($i = 0; $i < count($authors); $i++) {
-            $author_ranks[] = array($authors[$i], $ranks[$i]);
+            $author_ranks[] = array($i, $authors[$i], $ranks[$i]);
         }
 
         // Sort the author-rank pairs based on the rank (ascending order)
         usort($author_ranks, function ($a, $b) {
-            return $a[1] - $b[1];
+            return $a[2] - $b[2];
         });
         //dapatkan data top 10 
         $author_ranks = array_slice($author_ranks, 0, $sum_top_author);

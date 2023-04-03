@@ -260,6 +260,12 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
             my_node_colors.append('red')
             labels[author] = author
 
+    # default=125
+    total_author = len(G.nodes)
+
+    subplot_size = total_author/5
+    k = subplot_size/60
+
     fig, ax = plt.subplots(figsize=(25, 25))
     # decrease k parameter to increase spacing between nodes
     pos = nx.spring_layout(G, seed=7, k=0.4)
