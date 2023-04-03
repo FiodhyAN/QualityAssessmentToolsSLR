@@ -18,22 +18,22 @@ class ArticleController extends Controller
     public function articleTable($id)
     {
         $this->authorize('admin');
-        $articles = Article::where('project_id', $id)->get();
+        $articles = Article::select('id', 'no', 'title', 'year', 'publication', 'authors')->where('project_id', $id)->get();
         return DataTables::of($articles)
             ->addColumn('no', function (Article $article) {
                 return $article->id . ' - ' . $article->no;
             })
             ->addColumn('title', function (Article $article) {
-                return $article->title;
+                return '<span style="white-space:normal">'.$article->title.'</span>';
             })
             ->addColumn('year', function (Article $article) {
                 return $article->year;
             })
             ->addColumn('publication', function (Article $article) {
-                return $article->publication;
+                return '<span style="white-space:normal">'.$article->publication.'</span>';
             })
             ->addColumn('authors', function (Article $article) {
-                return $article->authors;
+                return '<span style="white-space:normal">'.$article->authors.'</span>';
             })
             ->addColumn('action', function (Article $article) use ($id) {
                 $btn = '<button type="button" class="btn btn-warning text-white btn-sm me-2 aksi scoreArticle" id="scoreArticle" data-bs-toggle="modal" data-bs-target="#modalScore" data-id="' . $article->id . '" data-title="' . $article->title . '"><ion-icon name="stats-chart-outline"></ion-icon> Score</button>';
@@ -41,7 +41,7 @@ class ArticleController extends Controller
                 $btn .= '<button type="button" class="btn btn-danger btn-sm ms-2 aksi deleteArticle" data-id="' . $article->id . '"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
                 return $btn;
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['no','title', 'publication', 'authors', 'action'])
             ->toJson();
     }
 

@@ -37,7 +37,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $article->id }} - {{ $article->no }}</td>
-                                <td>{{ $article->title }}</td>
+                                <td><span style="white-space: normal;">{{ $article->title }}</span></td>
                                 <td>
                                     @if ($article->article_user->count() == 0)
                                         <span class="badge alert-danger">Not Assign</span>

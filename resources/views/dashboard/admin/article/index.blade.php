@@ -202,9 +202,9 @@
                     title: 'Title',
                     data: 'title',
                     name: 'title',
-                    render: function(data, type, row) {
-                        return '<span style="white-space:normal">' + data + "</span>";
-                    }
+                    // render: function(data, type, row) {
+                    //     return '<span style="white-space:normal">' + data + "</span>";
+                    // }
                 },
                 {
                     title: 'Year',
@@ -215,17 +215,17 @@
                     title: 'Publication',
                     data: 'publication',
                     name: 'publication',
-                    render: function(data, type, row) {
-                        return '<span style="white-space:normal">' + data + "</span>";
-                    }
+                    // render: function(data, type, row) {
+                    //     return '<span style="white-space:normal">' + data + "</span>";
+                    // }
                 },
                 {
                     title: 'Authors',
                     data: 'authors',
                     name: 'authors',
-                    render: function(data, type, row) {
-                        return '<span style="white-space:normal">' + data + "</span>";
-                    }
+                    // render: function(data, type, row) {
+                    //     return '<span style="white-space:normal">' + data + "</span>";
+                    // }
                 },
                 {
                     title: 'Action',
@@ -239,6 +239,8 @@
                 targets: [0, 1, 2, 3, 4, 5],
                 className: 'text-center'
             }],
+        }).on('init.dt', function(){
+            $('#article_table').wrap('<div class="dataTables_scroll" />')
         });
 
 
@@ -387,6 +389,8 @@
                     $(row).find('td:eq(2)').addClass('text-center');
                 }
             }
+        }).on('init.dt', function(){
+            $('#assessment_table').wrap('<div class="dataTables_scroll" />')
         });
     </script>
 @endsection
