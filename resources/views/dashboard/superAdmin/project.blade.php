@@ -1,5 +1,6 @@
 @extends('layouts.main')
 @section('container')
+{{-- Modal for add --}}
     <div class="modal fade" id="exampleVerticallycenteredModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -54,6 +55,7 @@
         </div>
     </div>
 
+    {{-- Modal For Edit --}}
     <div class="modal fade" id="modalEdit" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -88,7 +90,7 @@
                         </div>
                         <div class="col mb-3">
                             <label class="form-label">Project Admin</label>
-                            <select class="select_edit_user" name="admin_project" id="admin">
+                            <select class="select_edit_user" name="admin_project[]" id="admin" multiple="multiple">
                             </select>
                             @error('admin_project')
                                 <div class="invalid-feedback d-block">
@@ -277,16 +279,14 @@
                         
                         for (var i = 0; i < data.length; i++) {
                             if (data[i].user_role == 'admin') {
-                                role = 'Admin Project';
                                 user = data[i].user_id;
                                 admin += '<option value="' + data[i].user_id + '" selected>' + data[i].user
-                                    .name + ' (' + role + ')' + '</option>';
+                                    .name + '</option>';
                             } else {
-                                role = 'Reviewer'
                                 reviewer += '<option value="' + data[i].user_id + '" selected>' + data[
                                     i].user.name + '</option>';
                                 admin += '<option value="' + data[i].user_id + '">' + data[i].user
-                                    .name + ' (' + role + ')' + '</option>';
+                                    .name + '</option>';
                             }
                         }
                         $('.select_edit_user').html(admin);
@@ -304,7 +304,7 @@
                         url: '{!! URL::to('findEditReviewer') !!}',
                         type: 'GET',
                         data: {
-                            'user_id': id,
+                            'user_id': JSON.stringify(id),
                             'project_id': project_id
                         },
                         dataType: 'json',
@@ -343,7 +343,13 @@
                 tokenSeparators: [',', ' '],
             });
             $('.select_edit_user').select2({
-                dropdownParent: $('#modalEdit .modal-content')
+                theme: 'bootstrap4',
+                dropdownParent: $('#modalEdit .modal-content'),
+                closeOnSelect: false,
+                allowClear: true,
+                placeholder: 'Select Admin Project',
+                tags: true,
+                tokenSeparators: [',', ' '],
             });
             $('.reviewerProject-input').select2({
                 theme: 'bootstrap4',

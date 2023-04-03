@@ -232,7 +232,8 @@ class ProjectController extends Controller
     public function findEditReviewer(Request $request)
     {
         $this->authorize('superadmin');
-        $user = User::where('id', '!=', $request->user_id)->where('is_superadmin', '!=', true)->where('id', '!=', auth()->user()->id)->with('project_user', function($query) use ($request){
+        $array = json_decode($request->user_id);
+        $user = User::whereNotIn('id', $array)->where('is_superadmin', '!=', true)->where('id', '!=', auth()->user()->id)->with('project_user', function($query) use ($request){
             $query->where('project_id', $request->project_id);
         })->get();
         return $user->toJson();

@@ -1499,5 +1499,11 @@ ul.categories-list li {
     .login-cover-wrapper {
         width: auto;
         height: auto;
-    }
+    }    
+}
+
+.dataTables_scroll
+{
+    overflow:auto !important;
+    max-height: 50vh;
 }
