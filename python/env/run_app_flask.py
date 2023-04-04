@@ -211,6 +211,9 @@ def get_no_outer_author(authors, author_rank, exist_authors):
 
 def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     # acuan
+    search_author = []
+    for i in authors:
+        search_author.append(i)
 
     # nilai author tanpa hubungan ex:0.123
     rank_outer_author = author_rank[len(author_rank)-1]
@@ -242,23 +245,23 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
         size = author_rank[authors.index(author)]
         if size > rank_outer_author:
             # jika iya nilainya *300
-            my_node_sizes.append(size * 300)
+            my_node_sizes.append(size * 800)
             if author in top_authors:
                 my_node_colors.append('purple')
             else:
                 my_node_colors.append('blue')
         else:
             # jika tidak dirujuk nilainya 10
-            my_node_sizes.append(8)
+            my_node_sizes.append(1000)
             my_node_colors.append('red')
-        labels[author] = author
+        labels[author] = str(search_author.index(author))
 
     if outer_author == True:
         for author, size in zip(outer_authors, outer_author_rank):
             G.add_node(author)
-            my_node_sizes.append(8)
+            my_node_sizes.append(100)
             my_node_colors.append('red')
-            labels[author] = author
+            labels[author] = str(search_author.index(author))
 
     # default=125
     total_author = len(G.nodes)
