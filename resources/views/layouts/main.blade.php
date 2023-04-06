@@ -195,7 +195,6 @@
   {{-- datatable checkbox --}}
   <script type="text/javascript" src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.12/js/dataTables.checkboxes.min.js"></script>
   <script src="/assets/plugins/apexcharts-bundle/js/apexcharts.min.js"></script>
-  <script src="/assets/plugins/apexcharts-bundle/js/apex-custom.js"></script>
   <script src="/assets/plugins/chartjs/chart.min.js"></script>
   @yield('script')
 

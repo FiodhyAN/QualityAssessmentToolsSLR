@@ -108,12 +108,14 @@ class ProjectController extends Controller
             'limit_reviewer' => $request->limit,
         ]);
         if ($request->old_admin != $request->admin_project) {
-            ProjectUser::where('project_id', $request->project_id)->where('user_id', $request->admin_project)->update([
-                'user_role' => 'admin',
-            ]);
-            User::where('id', $request->admin_project)->update([
-                'is_admin' => true,
-            ]);
+            foreach ($request->admin_project as $key => $value) {
+                ProjectUser::where('project_id', $request->project_id)->where('user_id', $value)->update([
+                    'user_role' => 'admin',
+                ]);
+                User::where('id', $value)->update([
+                    'is_admin' => true,
+                ]);
+            }
         }
         
         $project_user = ProjectUser::where('project_id', $request->project_id)->where('user_role', 'reviewer')->get();

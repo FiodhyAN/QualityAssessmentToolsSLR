@@ -175,12 +175,13 @@
                 ],
                 rowCallback: function(row, data, dataIndex) {
                     var rowId = data['id'];
-                    console.log(rowId);
                     if ($.inArray(rowId, rows_selected) !== -1) {
                         $(row).find('input[type="checkbox"]').prop('checked', true);
                         $(row).addClass('selected');
                     }
                 },
+            }).on('init.dt', function() {
+                $('#notAssignTable').wrap('<div class="dataTables_scroll" />');
             });
 
             $('#notAssignTable tbody').on('click', '.cb_child', function(e){
@@ -287,7 +288,6 @@
                         })
                     }
                 });
-                console.log(rows_selected);
             });
         // })
 
@@ -329,7 +329,7 @@
                 processing: true,
                 serverSide: true,
                 language: {
-                    processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
+                    processing: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div> '
                 },
                 order: [
                     [1, 'asc']
@@ -400,6 +400,8 @@
                         $(row).addClass('selected');
                     }
                 },
+            }).on('init.dt', function() {
+                $('#AssignTable').wrap('<div class="dataTables_scroll" />');
             });
 
             $('#AssignTable tbody').on('click', '.cb_child_assign', function(e){

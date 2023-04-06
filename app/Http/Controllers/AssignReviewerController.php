@@ -56,8 +56,15 @@ class AssignReviewerController extends Controller
             ->addColumn('reviewer', function(Article $article) use ($request){
                 $article_count_user = Article::with('article_user')->where('project_id', $request->project_id)->where('id', $article->id)->first();
                 $count = count($article_count_user->article_user);
-                return $count.'/'.$article->project->limit_reviewer;
-            })
+                
+                $limit = $article->project->limit_reviewer;
+                $background_class = ($count < $limit) ? 'alert-danger' : ($count == $limit ? 'alert-success' : 'alert-warning');
+                
+                $count_text = "{$count}/{$limit}";
+                $count_html = "<span class=\"badge {$background_class}\">{$count_text}</span>";
+                
+                return $count_html;
+            })->rawColumns(['reviewer'])
             ->toJson();
     }
 
@@ -66,7 +73,7 @@ class AssignReviewerController extends Controller
         $this->authorize('admin');
         $data = ArticleUser::with(['article' => function($query) use ($request){
             $query->where('project_id', $request->project_id);
-        }])->where('user_id', $request->user_id)->get();
+        }])->where('user_id', $request->user_id)->where('is_assessed', false)->get();
         $articles = [];
         foreach ($data as $key => $value) {
             if ($value->article != null) {
