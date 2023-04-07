@@ -566,6 +566,9 @@ def data(type, name):
             # make my_base64_jpgData to be string
             my_base64_jpgData=my_base64_jpgData.decode("utf-8")
             tmp = [input_author_article, [table, author_rank],my_base64_jpgData]
+            end_time = time.time()
+            total_time = end_time - start_time
+            print("Waktu eksekusi program: {:.2f} detik".format(total_time))
             return tmp
             
             
