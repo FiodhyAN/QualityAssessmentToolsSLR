@@ -470,11 +470,8 @@ def rank(pretable3, author, name):
 
     json_data = json.dumps({"author": author, "ranks": rank})
     # query_rank("project 1",json_data)
-
-    if name == "graph":
-        return table4, rowbaru
-    elif name == "rank":
-        return table4, rank
+    return table4, rank,rowbaru
+    
 
 
 @app.route('/data/<type>/<name>', methods=['GET', 'POST'])
@@ -526,7 +523,7 @@ def data(type, name):
         newAdjMatrixs = makeNewAdjMatrix(
             raw_table2WithRowCol, len(input_author_article))
         # rank author
-        table, author_rank = rank(newAdjMatrixs, input_author_article, name)
+        table, author_rank,last_author_rank = rank(newAdjMatrixs, input_author_article, name)
 
         try:
             outer_author = request.get_json()["outer"]
@@ -538,9 +535,8 @@ def data(type, name):
         if name == "graph":
             # Make Term Graph
             output = makeTermGraph(
-                input_author_article, author_matrix_and_relation, author_rank, outer_author, top_author_rank)
+                input_author_article, author_matrix_and_relation, last_author_rank, outer_author, top_author_rank)
             output.seek(0)
-            import base64
             my_base64_jpgData = base64.b64encode(output.read())
             if request.method == 'GET':
                 end_time = time.time()
@@ -560,6 +556,20 @@ def data(type, name):
             total_time = end_time - start_time
             print("Waktu eksekusi program: {:.2f} detik".format(total_time))
             return tmp
+        
+        elif name == "rankgraph":
+            # Make Term Graph
+            output = makeTermGraph(
+                input_author_article, author_matrix_and_relation, last_author_rank, outer_author, top_author_rank)
+            output.seek(0)
+            my_base64_jpgData = base64.b64encode(output.read())
+            # make my_base64_jpgData to be string
+            my_base64_jpgData=my_base64_jpgData.decode("utf-8")
+            tmp = [input_author_article, [table, author_rank],my_base64_jpgData]
+            return tmp
+            
+            
+
 
 
 if __name__ == "__main__":

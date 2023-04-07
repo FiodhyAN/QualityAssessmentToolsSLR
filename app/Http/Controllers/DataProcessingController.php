@@ -195,7 +195,7 @@ class DataProcessingController extends Controller
         // https://stackoverflow.com/questions/6297591/how-to-invert-transpose-the-rows-and-columns-of-an-html-table
         set_time_limit(6000);
         $response = Http::timeout(6000)->post(
-            'http://127.0.0.1:5000/data/' . $id . '/rank',
+            'http://127.0.0.1:5000/data/' . $id . '/rankgraph',
             [
                 'data' => $result
                 ,
@@ -208,6 +208,10 @@ class DataProcessingController extends Controller
         // return json_decode($response);
         $authors = $response[0];
         $ranks = $response[1][1];
+        $image = $response[2];
+        // decode $image utf-8
+        $image = utf8_decode($image);
+        
 
         // Combine the authors and ranks into an array of arrays
         $author_ranks = array();
@@ -221,25 +225,7 @@ class DataProcessingController extends Controller
         });
         //dapatkan data top 10 
         $author_ranks = array_slice($author_ranks, 0, $sum_top_author);
-
-
-        $response = Http::timeout(6000)->post('http://127.0.0.1:5000/data/' . $id . '/graph', [
-            'data' =>
-            $result
-            // [  
-            //     [ "a1", ['a','b','c'],   ['a','b','c','k','l']    ,'1993',['p1','p2']                                              ]
-            //     , [ "a2", ['c','d','e'],   ['a','c','d','e','m','n'],'1993',['p1','p3']                                              ]
-            //     , [ "a3", ['f','g','h'],   ['c','d','f','g','h','o'],'1993',['p2','p4','p5']                                         ]
-            //     , [ "a4", ['i','j'],       ['c','d','p','q']        ,'1994',['p3','p6']      ,['a1','a2']                            ]
-            //     , [ "a5", ['dj','dk'],     ['a','dj','dk','m','r']  ,'1994',['p1','p7']      ,['a1','a2','a3']                       ]
-            //     , [ "a6", ['d','ac','ad'], ['d','ac','ad','s','t']  ,'1994',['p8','p9']      ,['a1','a3']                            ]
-            // ]
-            ,
-            'outer' => $author['outer-author']
-            ,
-            'author-rank' => $sum_top_author
-        ]);
-        return view('pengolahan_data_slr.metadata', ['src' => "data:image/png;base64, $response", 'author_ranks' => $author_ranks, 'type' => $id, 'projects' => $projects]);
+        return view('pengolahan_data_slr.metadata', ['src' => "data:image/png;base64, $image", 'author_ranks' => $author_ranks, 'type' => $id, 'projects' => $projects]);
         // return redirect('/metadata/'.$id)->with(['src' => "data:image/png;base64, $response",'author_ranks' => $author_ranks,'type'=>$id,'projects'=>$projects]);
 
     }
