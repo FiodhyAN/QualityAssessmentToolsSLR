@@ -569,7 +569,8 @@ def data(type, name):
             end_time = time.time()
             total_time = end_time - start_time
             print("Waktu eksekusi program: {:.2f} detik".format(total_time))
-            return tmp
+            my_json = json.dumps(tmp)
+            return my_json
             
             
 
