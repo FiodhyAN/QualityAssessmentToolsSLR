@@ -169,17 +169,21 @@ class DataProcessingController extends Controller
     public function meta_data($id)
     {
         $this->authorize('reviewer');
-        $projects = Project::select('id', 'project_name')->whereHas('project_user', function ($query) {
-            $query->where('user_id', auth()->user()->id)->where('user_role', 'reviewer');
+        $projects = Project::select('id','project_name')->whereHas('project_user', function($query) {
+            $query->where('user_id', auth()->user()->id);
+        // ->where('user_role', 'reviewer');
         })->get();
-        return view('pengolahan_data_slr.metadata', ['src' => "", 'author_ranks' => [], 'type' => $id, 'projects' => $projects,'display' => 'none']);
+        $name=$id;
+        $name[0]=strtoupper($name[0]);
+        return view('pengolahan_data_slr.metadata', ['src' => "", 'author_ranks' => [], 'type' => $name, 'url'=>$id , 'projects' => $projects,'display' => 'none']);
     }
 
     public function proses_meta_data(Request $request, $id)
     {
         $this->authorize('reviewer');
-        $projects = Project::select('id', 'project_name')->whereHas('project_user', function ($query) {
-            $query->where('user_id', auth()->user()->id)->where('user_role', 'reviewer');
+        $projects = Project::select('id','project_name')->whereHas('project_user', function($query) {
+            $query->where('user_id', auth()->user()->id);
+        // ->where('user_role', 'reviewer');
         })->get();
 
         $author = $request->toArray();
@@ -195,8 +199,8 @@ class DataProcessingController extends Controller
         // https://stackoverflow.com/questions/6297591/how-to-invert-transpose-the-rows-and-columns-of-an-html-table
         set_time_limit(6000);
         $response = Http::timeout(6000)->post(
-            // 'http://127.0.0.1:5000/data/' . $id . '/rankgraph',
-            'https://lokerkita640.pythonanywhere.com//data/' . $id . '/rankgraph',
+            'http://127.0.0.1:5000/data/' . $id . '/rankgraph',
+            // 'https://lokerkita640.pythonanywhere.com//data/' . $id . '/rankgraph',
             [
                 'data' => $result
                 ,
@@ -226,7 +230,9 @@ class DataProcessingController extends Controller
         });
         //dapatkan data top 10 
         $author_ranks = array_slice($author_ranks, 0, $sum_top_author);
-        return view('pengolahan_data_slr.metadata', ['src' => "data:image/png;base64, $image", 'author_ranks' => $author_ranks, 'type' => $id, 'projects' => $projects,'display' => 'block']);
+        $name=$id;
+        $name[0]=strtoupper($name[0]);
+        return view('pengolahan_data_slr.metadata', ['src' => "data:image/png;base64, $image", 'author_ranks' => $author_ranks, 'type' => $name, 'url'=>$id ,'projects' => $projects,'display' => 'block']);
         // return redirect('/metadata/'.$id)->with(['src' => "data:image/png;base64, $response",'author_ranks' => $author_ranks,'type'=>$id,'projects'=>$projects]);
 
     }
