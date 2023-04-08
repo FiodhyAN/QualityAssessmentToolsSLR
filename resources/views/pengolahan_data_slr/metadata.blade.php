@@ -53,10 +53,13 @@
                 </a>
 
                 <script>
-                document.getElementById('my-image').onerror = function() {
-                    this.onerror = null;
-                    this.src = 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831';
-                };
+
+                var myImage = document.getElementById('my-image');
+                myImage.onerror = function() {
+                    myImage.onerror = null;
+                    myImage.src = 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831';
+                }
+ 
 
                 function download_image() {
                     fetch(
@@ -122,7 +125,7 @@
                     document.body.removeChild(a);
                 }
                 </script>
-                <div class="btn btn-primary" onclick="download_image()">Download</div>
+                <div class="btn btn-primary mt-5" onclick="download_image()" style="display:{{$display}}" id="download-1">Download</div>
             </div>
         </div>
         <div class="col-md-6">
@@ -144,7 +147,7 @@
                         @endfor
                 </tbody>
             </table>
-            <div class="btn btn-primary" onclick="exportToExcel()">Download</div>
+            <div class="btn btn-primary mt-5" onclick="exportToExcel()" style="display:{{$display}}"  id="download-2">Download</div>
         </div>
     </div>
 </div>

@@ -172,7 +172,7 @@ class DataProcessingController extends Controller
         $projects = Project::select('id', 'project_name')->whereHas('project_user', function ($query) {
             $query->where('user_id', auth()->user()->id)->where('user_role', 'reviewer');
         })->get();
-        return view('pengolahan_data_slr.metadata', ['src' => "", 'author_ranks' => [], 'type' => $id, 'projects' => $projects]);
+        return view('pengolahan_data_slr.metadata', ['src' => "", 'author_ranks' => [], 'type' => $id, 'projects' => $projects,'display' => 'none']);
     }
 
     public function proses_meta_data(Request $request, $id)
@@ -225,7 +225,7 @@ class DataProcessingController extends Controller
         });
         //dapatkan data top 10 
         $author_ranks = array_slice($author_ranks, 0, $sum_top_author);
-        return view('pengolahan_data_slr.metadata', ['src' => "data:image/png;base64, $image", 'author_ranks' => $author_ranks, 'type' => $id, 'projects' => $projects]);
+        return view('pengolahan_data_slr.metadata', ['src' => "data:image/png;base64, $image", 'author_ranks' => $author_ranks, 'type' => $id, 'projects' => $projects,'display' => 'block']);
         // return redirect('/metadata/'.$id)->with(['src' => "data:image/png;base64, $response",'author_ranks' => $author_ranks,'type'=>$id,'projects'=>$projects]);
 
     }
