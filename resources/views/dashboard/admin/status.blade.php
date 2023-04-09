@@ -29,7 +29,6 @@
                             <th>ID - No</th>
                             <th>Article</th>
                             <th>User Status</th>
-                            {{-- <th>Status</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -42,40 +41,49 @@
                                     @if ($article->article_user->count() == 0)
                                         <span class="d-flex justify-content-center badge alert-danger">Not Assign</span>
                                     @else
-                                        <a href="javascript:;" class="d-flex justify-content-center badge alert-primary" data-bs-toggle="tooltip"
-                                            data-bs-placement="bottom" title="" data-bs-original-title="View detail"
-                                            aria-label="Views">
+                                        <a href="javascript:;" id="user_status"
+                                            class="d-flex justify-content-center badge alert-primary" data-bs-toggle="modal"
+                                            data-bs-target="#userModal"
+                                            data-id_no="{{ $article->id }} - {{ $article->no }}"
+                                            data-id="{{ $article->id }}">
                                             <ion-icon name="eye-sharp"></ion-icon> Show
                                         </a>
                                     @endif
                                 </td>
-                                {{-- <td>
-                                    @if ($article->article_user->count() == 0)
-                                        <span class="badge alert-danger">Not Assign</span>
-                                    @else    
-                                        @foreach ($article->article_user as $user)
-                                            <span style="white-space: normal"
-                                                class="badge alert-primary">{{ $user->user->name }}</span><br>
-                                        @endforeach
-                                    @endif
-                                </td>
-                                <td>
-                                    @if ($article->article_user->count() == 0)
-                                        <span class="badge alert-danger">Not Assign</span>
-                                    @else
-                                        @foreach ($article->article_user as $user)
-                                            @if ($user->is_assessed == true)
-                                                <span class="badge alert-success">Assessed</span><br>
-                                            @else
-                                                <span class="badge alert-warning">Not Assessed</span><br>
-                                            @endif
-                                        @endforeach
-                                    @endif
-                                </td> --}}
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    {{-- User Modal --}}
+    <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>User</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTable">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
@@ -114,6 +122,39 @@
                             '<span class="badge alert-danger d-flex justify-content-center">Not Assign</span>' :
                             '<a href="javascript:;" class="d-flex justify-content-center badge alert-primary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="" data-bs-original-title="View detail" aria-label="Views"><ion-icon name="eye-sharp"></ion-icon> Show</a>'
                         ]).draw();
+                        no++;
+                    }
+                }
+            })
+        })
+
+        table.on('click', '#user_status', function() {
+            var id_no = $(this).data('id_no');
+            var article_id = $(this).data('id');
+            var project_id = {{ request()->pid }};
+
+            $('.modal-title').text('User Status Article ' + id_no);
+
+            $.ajax({
+                url: '{{ route('find.userArticle') }}',
+                type: 'GET',
+                data: {
+                    article_id: article_id,
+                    project_id: project_id
+                },
+                success: function(data) {
+                    $('#userTable').empty();
+                    let no = 1;
+                    for (let index = 0; index < data.length; index++) {
+                        $('#userTable').append(
+                            '<tr>' +
+                            '<td>' + no + '</td>' +
+                            '<td>' + data[index].user.name + '</td>' +
+                            '<td>' + (data[index].is_assessed == true ?
+                                '<span class="badge alert-success">Assessed</span>' :
+                                '<span class="badge alert-warning">Not Assessed</span>') + '</td>' +
+                            '</tr>'
+                        );
                         no++;
                     }
                 }

@@ -73,6 +73,7 @@ Route::post('/dashboard/admin/assign/store', [AssignReviewerController::class, '
 Route::post('/dashboard/admin/assign/delete', [AssignReviewerController::class, 'deleteAssignArticle'])->middleware('auth')->name('assign.remove');
 Route::get('/dashboard/admin/articleStatus', [ProjectAdminController::class, 'articleStatus'])->middleware('auth')->name('article.status');
 Route::get('/findStatus', [ProjectAdminController::class, 'findStatus'])->middleware('auth')->name('find.status');
+Route::get('/findUserArticle', [ProjectAdminController::class, 'findUserArticle'])->middleware('auth')->name('find.userArticle');
 
 //Summary
 Route::get('/dashboard/summary', [SummaryController::class, 'projectIndex'])->middleware('auth');

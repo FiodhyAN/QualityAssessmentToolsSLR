@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Models\ArticleUser;
 use App\Models\ProjectUser;
 use Illuminate\Http\Request;
 
@@ -61,5 +62,15 @@ class ProjectAdminController extends Controller
         else {
             return Article::doesntHave('article_user')->with('article_user')->where('project_id', $request->project_id)->get();
         }
+    }
+
+    public function findUserArticle(Request $request)
+    {
+        $this->authorize('admin');
+        $user = ArticleUser::with('user')->whereHas('article', function($query) use ($request){
+            $query->where('project_id', $request->project_id);
+        })->where('article_id', $request->article_id)->get();
+
+        return $user;
     }
 }
