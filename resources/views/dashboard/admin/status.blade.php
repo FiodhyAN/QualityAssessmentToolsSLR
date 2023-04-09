@@ -28,8 +28,8 @@
                             <th>No</th>
                             <th>ID - No</th>
                             <th>Article</th>
-                            <th>Users</th>
-                            <th>Status</th>
+                            <th>User Status</th>
+                            {{-- <th>Status</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -39,6 +39,17 @@
                                 <td>{{ $article->id }} - {{ $article->no }}</td>
                                 <td><span style="white-space: normal;">{{ $article->title }}</span></td>
                                 <td>
+                                    @if ($article->article_user->count() == 0)
+                                        <span class="d-flex justify-content-center badge alert-danger">Not Assign</span>
+                                    @else
+                                        <a href="javascript:;" class="d-flex justify-content-center badge alert-primary" data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom" title="" data-bs-original-title="View detail"
+                                            aria-label="Views">
+                                            <ion-icon name="eye-sharp"></ion-icon> Show
+                                        </a>
+                                    @endif
+                                </td>
+                                {{-- <td>
                                     @if ($article->article_user->count() == 0)
                                         <span class="badge alert-danger">Not Assign</span>
                                     @else    
@@ -60,7 +71,7 @@
                                             @endif
                                         @endforeach
                                     @endif
-                                </td>
+                                </td> --}}
                             </tr>
                         @endforeach
                     </tbody>
@@ -70,42 +81,43 @@
     </div>
 @endsection
 @section('script')
-<script>
-    var table = $('#article_status_table').DataTable();
-    $('.select_status').select2({
-        width: '15%',
-        // turn off the searching
-        placeholder: 'Choose Status',
-        minimumResultsForSearch: Infinity,
-    });
+    <script>
+        var table = $('#article_status_table').DataTable();
+        $('.select_status').select2({
+            width: '15%',
+            // turn off the searching
+            placeholder: 'Choose Status',
+            minimumResultsForSearch: Infinity,
+        });
 
-    $('.select_status').on('change', function(){
-        var status = $(this).val();
-        var project_id = {{ request()->pid }};
-        console.log(project_id);
-        console.log(status);
+        $('.select_status').on('change', function() {
+            var status = $(this).val();
+            var project_id = {{ request()->pid }};
 
-        $.ajax({
-            url: '{{ route('find.status') }}',
-            method: 'GET',
-            data: {
-                status: status,
-                project_id: project_id
-            },
-            success: function(data){
-                table.clear().draw();
-                let no = 1;
-                for (let index = 0; index < data.length; index++) {
-                    table.row.add([
-                        no,
-                        data[index].id + ' - ' + data[index].no,
-                        data[index].title,
-                        data[index].article_user.length == 0 ? '<span class="badge alert-danger">Not Assign</span>' : data[index].article_user.map(user => '<span style="white-space: normal" class="badge alert-primary">' + user.user.name + '</span><br>').join(''),
-                        data[index].article_user.length == 0 ? '<span class="badge alert-danger">Not Assign</span>' : data[index].article_user.map(user => user.is_assessed == true ? '<span class="badge alert-success">Assessed</span><br>' : '<span class="badge alert-warning">Not Assessed</span><br>').join('')
-                    ]).draw();
+            $.ajax({
+                url: '{{ route('find.status') }}',
+                method: 'GET',
+                data: {
+                    status: status,
+                    project_id: project_id
+                },
+                success: function(data) {
+                    table.clear().draw();
+                    let no = 1;
+                    for (let index = 0; index < data.length; index++) {
+                        table.row.add([
+                            no,
+                            data[index].id + ' - ' + data[index].no,
+                            '<span style="white-space: normal;">' + data[index].title +
+                            '</span>',
+                            data[index].article_user.length == 0 ?
+                            '<span class="badge alert-danger d-flex justify-content-center">Not Assign</span>' :
+                            '<a href="javascript:;" class="d-flex justify-content-center badge alert-primary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="" data-bs-original-title="View detail" aria-label="Views"><ion-icon name="eye-sharp"></ion-icon> Show</a>'
+                        ]).draw();
+                        no++;
+                    }
                 }
-            }
+            })
         })
-    })
-</script>
+    </script>
 @endsection

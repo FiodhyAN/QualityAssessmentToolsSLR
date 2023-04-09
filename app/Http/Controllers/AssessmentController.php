@@ -24,7 +24,6 @@ class AssessmentController extends Controller
     public function assessmentTable(Request $request)
     {
         $this->authorize('reviewer');
-        // return dd($request->all());
         $articles = [];
         if ($request->has('project_id') && $request->project_id != 'all') {
             $data = ArticleUser::with(['article' => function($query) use ($request) {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\ArticleUser;
 use App\Models\ArticleUserQuestionaire;
+use App\Models\Project;
 use App\Models\ProjectUser;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -16,26 +17,45 @@ class AssignReviewerController extends Controller
         $this->authorize('admin');
         return view('dashboard.admin.article.assign', [
             'project_id' => request()->pid,
-            'user_id' => request()->uid
+            'user_id' => request()->uid,
         ]);
-
-        
     }
 
     public function articleNotAssignTable(Request $request)
     {
-        $data = Article::with(['article_user' => function($query) use ($request) {
-            $query->where('user_id', $request->user_id);
-        }, 'project'])->where('project_id', $request->project_id)->get();
-        $article = [];
-        foreach ($data as $key => $value) {
-            if (count($value->article_user) == 0) {
-                $article[] = $value;
+        $this->authorize('admin');
+        if ($request->has('count_reviewer')) {
+            $data = Article::whereDoesntHave('article_user', function($query) use ($request){
+                $query->where('user_id', $request->user_id);
+            })->with(['article_user', 'project'])->withCount('article_user')->where('project_id', $request->project_id)->get();
+
+            if ($request->count_reviewer == 'less') {
+                $article = $data->filter(function($item){
+                    return $item->article_user_count < $item->project->limit_reviewer;
+                });
+            }
+            elseif ($request->count_reviewer == 'fits') {
+                $article = $data->filter(function($item){
+                    return $item->article_user_count == $item->project->limit_reviewer;
+                });
+            }
+            elseif ($request->count_reviewer == 'more') {
+                $article = $data->filter(function($item){
+                    return $item->article_user_count > $item->project->limit_reviewer;
+                });
+            }
+            else {
+                $article = $data;
             }
         }
+        else {
+            $article = Article::whereDoesntHave('article_user', function($query) use ($request){
+                $query->where('user_id', $request->user_id);
+            })->with(['article_user', 'project'])->withCount('article_user')->where('project_id', $request->project_id)->get();
+        }
+
         return DataTables::of($article)
             ->addColumn('action', function(Article $article){
-                //add checkbox
                 return '<input type="checkbox" name="article_id[]" class="cb_child" value="'.$article->id.'">';
             })->rawColumns(['action'])
             ->addColumn('no', function(Article $article){
@@ -53,16 +73,10 @@ class AssignReviewerController extends Controller
             ->addColumn('authors', function(Article $article){
                 return $article->authors;
             })
-            ->addColumn('reviewer', function(Article $article) use ($request){
-                $article_count_user = Article::with('article_user')->where('project_id', $request->project_id)->where('id', $article->id)->first();
-                $count = count($article_count_user->article_user);
-                
-                $limit = $article->project->limit_reviewer;
-                $background_class = ($count < $limit) ? 'alert-danger' : ($count == $limit ? 'alert-success' : 'alert-warning');
-                
-                $count_text = "{$count}/{$limit}";
+            ->addColumn('reviewer', function(Article $article){
+                $background_class = ($article->article_user_count < $article->project->limit_reviewer) ? 'alert-danger' : ($article->article_user_count == $article->project->limit_reviewer ? 'alert-success' : 'alert-warning');
+                $count_text = "{$article->article_user_count}/{$article->project->limit_reviewer}";
                 $count_html = "<span class=\"badge {$background_class}\">{$count_text}</span>";
-                
                 return $count_html;
             })->rawColumns(['reviewer'])
             ->toJson();
@@ -82,7 +96,6 @@ class AssignReviewerController extends Controller
         }
         return DataTables::of($articles)
             ->addColumn('action', function(Article $article){
-                //add checkbox
                 return '<input type="checkbox" name="article_id[]" class="cb_child_assign" value="'.$article->id.'">';
             })->rawColumns(['action'])
             ->addColumn('no', function(Article $article){
@@ -101,7 +114,6 @@ class AssignReviewerController extends Controller
                 return $article->authors;
             })
             ->addColumn('action', function(Article $article){
-                //add checkbox
                 return '<input type="checkbox" name="article_id[]" value="'.$article->id.'">';
             })
             ->rawColumns(['action'])
