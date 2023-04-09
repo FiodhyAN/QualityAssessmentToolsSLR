@@ -13,12 +13,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.6.2/fetch.min.js"></script>
 
     <h1 class="text-center mb-5">{{$type}} Relationships and Popularity</h1>
-    <form class="form-body row g-3" action="/proses-metadata/{{$url}}" method="POST">
+    <form class="form-body row g-3" action="/proses-metadata/{{$url}}" method="POST" onsubmit="return validateForm()">
         @csrf
         <div class="row">
             <div class="col-md-4">
-                <select class="form-select" name="project">
-                    <option disabled selected>-- Select Project --</option>
+                <select class="form-select" name="project" id="project">
+                    <option value="empty-field" disabled selected>-- Select Project --</option>
                     @foreach ($projects as $project)
                     <option value="{{ $project->id }}">{{ $project->project_name }}</option>
                     @endforeach
@@ -26,7 +26,7 @@
             </div>
             <div class="col-md-4">
                 <select class="form-select" aria-label="Default select example" id="top-author" name="top-author">
-                    <option disabled selected>-- Select Top {{$type}} --</option>
+                    <option value="empty-field" disabled selected>-- Select Top {{$type}} --</option>
                     <option value="5">5</option>
                     <option value="10">10</option>
                     <option value="20">20</option>
@@ -34,7 +34,7 @@
             </div>
             <div class="col-md-4">
                 <select class="form-select" aria-label="Default select example" id="outer-author" name="outer-author">
-                    <option disabled selected>-- Select {{$type}} Display --</option>
+                    <option value="empty-field" disabled selected>-- Select {{$type}} Display --</option>
                     <option value="1">All {{$type}}</option>
                     <option value="0">Relation only</option>
                 </select>
@@ -51,83 +51,6 @@
                 <a data-fancybox="gallery" href="{{$src}}">
                     <img class="img-fluid" src="{{$src}}" alt="Gambar 1" id="my-image" />
                 </a>
-
-                <script>
-
-                var myImage = document.getElementById('my-image');
-                myImage.onerror = function() {
-                    myImage.onerror = null;
-                    myImage.src = 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831';
-                }
- 
-
-                function download_image() {
-                    fetch(
-                            '{{$src}}')
-                        .then(response => response.blob())
-                        .then(blob => {
-                            var url = window.URL.createObjectURL(blob);
-                            var a = document.createElement('a');
-                            a.href = url;
-                            a.download = 'term graph {{$type}}.png';
-                            document.body.appendChild(a);
-                            a.click();
-                            setTimeout(function() {
-                                document.body.removeChild(a);
-                                window.URL.revokeObjectURL(url);
-                            }, 0);
-                        });
-                }
-
-                function exportToExcel() {
-                    var table = document.getElementById("my-table");
-                    var html = table.outerHTML;
-                    var csv = [];
-
-                    // Mendapatkan baris header
-                    var headerRow = table.rows[0];
-                    var headerCells = headerRow.cells;
-                    var headerLength = headerCells.length;
-                    var rowDataHeader = [];
-                    for (var i = 0; i < headerLength; i++) {
-                        var cell = headerCells[i];
-                        var text = cell.textContent.replace(/\u200B/g, ""); // menghapus karakter khusus
-                        rowDataHeader.push('"' + text + '"');
-                    }
-                    csv.push(rowDataHeader.join(","));
-
-                    // Mendapatkan setiap baris dan sel pada tabel
-                    var rows = table.rows;
-                    var rowsLength = rows.length;
-                    for (var i = 1; i < rowsLength; i++) {
-                        var cells = rows[i].cells;
-                        var cellsLength = cells.length;
-                        var rowData = [];
-
-                        // Mengambil isi tiap sel pada baris
-                        for (var j = 0; j < cellsLength; j++) {
-                            var cell = cells[j];
-                            var text = cell.textContent.replace(/\u200B/g, ""); // menghapus karakter khusus
-                            rowData.push('"' + text + '"');
-                        }
-
-                        // Menggabungkan isi setiap sel dalam satu baris
-                        csv.push(rowData.join(","));
-                    }
-
-                    // Menggabungkan data menjadi satu string CSV
-                    var csvString = csv.join("\n");
-
-                    // Membuat tautan untuk mengunduh file
-                    var a = document.createElement("a");
-                    a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvString);
-                    var totalauthor=rows.length-1;
-                    a.download = "top-"+totalauthor+"-rank-author.csv";
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                }
-                </script>
                 <div class="btn btn-primary mt-5" onclick="download_image()" style="display:{{$display}}" id="download-1">Download</div>
             </div>
         </div>
@@ -154,4 +77,89 @@
         </div>
     </div>
 </div>
+
+<script>
+    var myImage = document.getElementById('my-image');
+    myImage.onerror = function() {
+        myImage.onerror = null;
+        myImage.src = 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831';
+    }
+    function download_image() {
+        fetch(
+                '{{$src}}')
+            .then(response => response.blob())
+            .then(blob => {
+                var url = window.URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'term graph {{$type}}.png';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(function() {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                }, 0);
+            });
+    }
+
+    function exportToExcel() {
+        var table = document.getElementById("my-table");
+        var html = table.outerHTML;
+        var csv = [];
+
+        // Mendapatkan baris header
+        var headerRow = table.rows[0];
+        var headerCells = headerRow.cells;
+        var headerLength = headerCells.length;
+        var rowDataHeader = [];
+        for (var i = 0; i < headerLength; i++) {
+            var cell = headerCells[i];
+            var text = cell.textContent.replace(/\u200B/g, ""); // menghapus karakter khusus
+            rowDataHeader.push('"' + text + '"');
+        }
+        csv.push(rowDataHeader.join(","));
+
+        // Mendapatkan setiap baris dan sel pada tabel
+        var rows = table.rows;
+        var rowsLength = rows.length;
+        for (var i = 1; i < rowsLength; i++) {
+            var cells = rows[i].cells;
+            var cellsLength = cells.length;
+            var rowData = [];
+
+            // Mengambil isi tiap sel pada baris
+            for (var j = 0; j < cellsLength; j++) {
+                var cell = cells[j];
+                var text = cell.textContent.replace(/\u200B/g, ""); // menghapus karakter khusus
+                rowData.push('"' + text + '"');
+            }
+
+            // Menggabungkan isi setiap sel dalam satu baris
+            csv.push(rowData.join(","));
+        }
+
+        // Menggabungkan data menjadi satu string CSV
+        var csvString = csv.join("\n");
+
+        // Membuat tautan untuk mengunduh file
+        var a = document.createElement("a");
+        a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvString);
+        var totalauthor=rows.length-1;
+        a.download = "top-"+totalauthor+"-rank-author.csv";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    function validateForm() {
+        var project = document.getElementById("project").value;
+        var top_author = document.getElementById("top-author").value;
+        var outer_author = document.getElementById("outer-author").value;
+        if (project == "empty-field" || top_author == "empty-field" || outer_author == "empty-field") {
+            alert("Please select an option in all fields.");
+            return false;
+        }
+    }
+
+</script>
 @endsection
