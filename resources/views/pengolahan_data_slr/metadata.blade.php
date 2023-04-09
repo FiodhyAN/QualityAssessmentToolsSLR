@@ -12,14 +12,13 @@
     <!-- menggunakan CDN untuk fetch -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.6.2/fetch.min.js"></script>
 
-    <h1 class="text-center mb-5">{{$type}} relationships and popularity</h1>
-    <form class="form-body row g-3" action="/proses-metadata/{{$type}}" method="POST">
+    <h1 class="text-center mb-5">{{$type}} Relationships and Popularity</h1>
+    <form class="form-body row g-3" action="/proses-metadata/{{$url}}" method="POST">
         @csrf
         <div class="row">
             <div class="col-md-4">
                 <select class="form-select" name="project">
                     <option disabled selected>-- Select Project --</option>
-                    <option value="1">1</option>
                     @foreach ($projects as $project)
                     <option value="{{ $project->id }}">{{ $project->project_name }}</option>
                     @endforeach
@@ -35,7 +34,7 @@
             </div>
             <div class="col-md-4">
                 <select class="form-select" aria-label="Default select example" id="outer-author" name="outer-author">
-                    <option disabled selected>-- Select {{$type}} display --</option>
+                    <option disabled selected>-- Select {{$type}} Display --</option>
                     <option value="1">All {{$type}}</option>
                     <option value="0">Relation only</option>
                 </select>
@@ -43,10 +42,11 @@
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
-    <div class="row">
+    <div class="row mt-5">
         <div class="col-md-6">
-            <h1 class="text-center mt-5">{{$type}} graph</h1>
-            <div class="container text-center">
+            
+            <h1 class="text-center m-5">{{$type}} Graph</h1>
+            <div class="container text-center mb-5">
                 <!-- HTML -->
                 <a data-fancybox="gallery" href="{{$src}}">
                     <img class="img-fluid" src="{{$src}}" alt="Gambar 1" id="my-image" />
@@ -88,11 +88,13 @@
                     var headerRow = table.rows[0];
                     var headerCells = headerRow.cells;
                     var headerLength = headerCells.length;
+                    var rowDataHeader = [];
                     for (var i = 0; i < headerLength; i++) {
                         var cell = headerCells[i];
                         var text = cell.textContent.replace(/\u200B/g, ""); // menghapus karakter khusus
-                        csv.push('"' + text + '"');
+                        rowDataHeader.push('"' + text + '"');
                     }
+                    csv.push(rowDataHeader.join(","));
 
                     // Mendapatkan setiap baris dan sel pada tabel
                     var rows = table.rows;
@@ -119,7 +121,8 @@
                     // Membuat tautan untuk mengunduh file
                     var a = document.createElement("a");
                     a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csvString);
-                    a.download = "my-table.csv";
+                    var totalauthor=rows.length-1;
+                    a.download = "top-"+totalauthor+"-rank-author.csv";
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
@@ -129,7 +132,7 @@
             </div>
         </div>
         <div class="col-md-6">
-            <h1 class="text-center mt-5">{{$type}} rank table</h1>
+            <h1 class="text-center mt-5">{{$type}} Rank Table</h1>
             <table class="table" id="my-table">
                 <thead>
                     <tr>

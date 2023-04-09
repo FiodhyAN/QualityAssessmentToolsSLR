@@ -3,19 +3,11 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import json
 from flask_mysqldb import MySQL
-from matplotlib.pylab import *
 import base64
 import time
-from flask import Flask, render_template, redirect, url_for, request
-from flask import make_response
+from flask import Flask, request,Response
 from flask_cors import CORS
-
-
 import io
-import random
-from flask import Response
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
 import matplotlib
 from tabulate import tabulate
 matplotlib.use('Agg')
@@ -471,7 +463,6 @@ def rank(pretable3, author, name):
     json_data = json.dumps({"author": author, "ranks": rank})
     # query_rank("project 1",json_data)
     return table4, rank,rowbaru
-    
 
 
 @app.route('/data/<type>/<name>', methods=['GET', 'POST'])
@@ -571,10 +562,6 @@ def data(type, name):
             print("Waktu eksekusi program: {:.2f} detik".format(total_time))
             my_json = json.dumps(tmp)
             return my_json
-            
-            
-
-
 
 if __name__ == "__main__":
     app.run(debug=True)
