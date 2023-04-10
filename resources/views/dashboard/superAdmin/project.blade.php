@@ -478,43 +478,62 @@
                 contentType: false,
                 cache: false,
                 processData: false,
+                dataType: 'json',
                 success: function(data) {
+                    console.log(data);
+                    Swal.close()
+                    if (data.error != null || data.error != undefined) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: data.error,
+                            showConfirmButton: true,
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Project has been updated',
+                            showConfirmButton: true,
+                            timer: 5000
+                        }).then(isConfirmed => {
+                            table.ajax.reload();
+                            //reset the select option
+                            //reload the multi select
+                            $('.reviewerProject-edit').select2('close');
+                        });
+                    }
+                },
+                error: function(data) {    
+                    console.log(data);
                     Swal.close()
                     Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: 'Project has been updated',
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
                         showConfirmButton: true,
-                        timer: 5000
-                    }).then(isConfirmed => {
-                        table.ajax.reload();
-                        //reset the select option
-                        //reload the multi select
-                        $('.reviewerProject-edit').select2('close');
                     });
-                },
-                error: function(data) {
-                    console.log(data);
-                    if (data.responseJSON.errors.admin_project) {
-                        $('#adminProject-input-edit').addClass('is-invalid')
-                        $('#adminProject-feedback-edit').text(data.responseJSON.errors.admin_project[0])
-                    } else {
-                        $('#adminProject-input-edit').removeClass('is-invalid')
-                    }
+                    // if (data.errors.admin_project) {
+                    //     $('#adminProject-input-edit').addClass('is-invalid')
+                    //     $('#adminProject-feedback-edit').text(data.errors.admin_project[0])
+                    // } else {
+                    //     $('#adminProject-input-edit').removeClass('is-invalid')
+                    // }
 
-                    if (data.responseJSON.errors.project_name) {
-                        $('#projectName-input-edit').addClass('is-invalid')
-                        $('#projectName-feedback-edit').text(data.responseJSON.errors.project_name[0])
-                    } else {
-                        $('#projectName-input-edit').removeClass('is-invalid')
-                    }
+                    // if (data.errors.project_name) {
+                    //     $('#projectName-input-edit').addClass('is-invalid')
+                    //     $('#projectName-feedback-edit').text(data.errors.project_name[0])
+                    // } else {
+                    //     $('#projectName-input-edit').removeClass('is-invalid')
+                    // }
 
-                    if (data.responseJSON.errors.limit) {
-                        $('#limitReviewer-input-edit').addClass('is-invalid')
-                        $('#limitReviewer-feedback-edit').text(data.responseJSON.errors.limit[0])
-                    } else {
-                        $('#limitReviewer-input-edit').removeClass('is-invalid')
-                    }
+                    // if (data.errors.limit) {
+                    //     $('#limitReviewer-input-edit').addClass('is-invalid')
+                    //     $('#limitReviewer-feedback-edit').text(data.errors.limit[0])
+                    // } else {
+                    //     $('#limitReviewer-input-edit').removeClass('is-invalid')
+                    // }
                 }
             })
         })

@@ -107,25 +107,43 @@ class ProjectController extends Controller
             'project_name' => $request->project_name,
             'limit_reviewer' => $request->limit,
         ]);
+
         if ($request->old_admin != $request->admin_project) {
             foreach ($request->admin_project as $key => $value) {
+                $article_user = ArticleUser::with('user')->where('user_id', $value)->whereHas('article', function($query) use ($request){
+                    $query->where('project_id', $request->project_id);
+                })->first();
+
+                if ($article_user) {
+                    if ($article_user->is_assessed == true) {
+                        $error = $article_user->user->name.' cannot be made admin because it has already done an assessment';
+                        return json_encode(['error' => $error]);
+                    }
+                    else {
+                        ArticleUser::where('user_id', $value)->whereHas('article', function($query) use ($request){
+                            $query->where('project_id', $request->project_id);
+                        })->delete();
+                    }
+                }
+                
+
                 ProjectUser::where('project_id', $request->project_id)->where('user_id', $value)->update([
                     'user_role' => 'admin',
                 ]);
                 User::where('id', $value)->update([
                     'is_admin' => true,
                 ]);
+
             }
         }
         
         $project_user = ProjectUser::where('project_id', $request->project_id)->where('user_role', 'reviewer')->get();
-        // return $project_user;
         $reviewer_array = [];
         if($request->has('reviewer')){
             $reviewer_array = $request->reviewer;
         }
         foreach ($project_user as $pu) {
-            if (!in_array($pu->user_id, $reviewer_array) && $pu->user_id != $request->admin_project) {
+            if (!in_array($pu->user_id, $reviewer_array) && !in_array($pu->user_id, $request->admin_project)) {
                 ProjectUser::where('project_id', $request->project_id)->where('user_id', $pu->user_id)->delete();
                 $article_user = ArticleUser::whereHas('article', function($query) use ($request){
                     $query->where('project_id', $request->project_id);
@@ -172,7 +190,7 @@ class ProjectController extends Controller
                 'is_admin' => true,
             ]);
         }
-        // return redirect()->back()->with('success', 'Project Updated Successfully');
+        return redirect()->back()->with('success', 'Project Updated Successfully');
     }
 
     public function delete(Request $request)
