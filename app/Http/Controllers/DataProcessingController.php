@@ -185,6 +185,7 @@ class DataProcessingController extends Controller
             $query->where('user_id', auth()->user()->id);
         // ->where('user_role', 'reviewer');
         })->get();
+        
 
         $author = $request->toArray();
         if ($author['outer-author'] == '0') {
