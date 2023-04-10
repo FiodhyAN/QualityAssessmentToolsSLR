@@ -53,7 +53,7 @@ class ArticleController extends Controller
                         $query->where('project_id', $id);
                     });
                 }])->where('id', '!=', auth()->user()->id)->where('is_superadmin', false)->whereHas('project_user', function ($query) use ($id) {
-                    $query->where('project_id', $id);
+                    $query->where('project_id', $id)->where('user_role', 'reviewer');
                 })->get();
 
         return DataTables::of($users)
@@ -100,12 +100,16 @@ class ArticleController extends Controller
             })
             ->addColumn('action', function (User $user) use ($id) {
                 $btn = '<a href="/dashboard/admin/assign?pid=' . $id . '&uid=' . $user->id . '">
-                            <button type="button" class="btn btn-sm btn-success px-5">
+                            <button type="button" class="btn btn-sm btn-success">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check">
                             <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                             <circle cx="8.5" cy="7" r="4"></circle>
                             <polyline points="17 11 19 13 23 9"></polyline>
                             </svg> Assign</button>
+                        </a>';
+                $btn .= '<a href="javascript:;"
+                            <button type="button" class="btn btn-sm btn-primary">
+                            <ion-icon name="eye-sharp"></ion-icon> Show Article</button>
                         </a>';
                 return $btn;
             })
@@ -251,7 +255,10 @@ class ArticleController extends Controller
         $article = Article::find($request->id);
         $articleUser = ArticleUser::where('article_id', $request->id)->get();
         foreach ($articleUser as $au) {
-            ArticleUserQuestionaire::where('article_user_id', $au->id)->delete();
+            if($au->is_assessed == true)
+            {
+                return json_encode(['error' => 'Article has been assessed, cannot be deleted!']);
+            }
         }
         ArticleUser::where('article_id', $request->id)->delete();
         return $article->delete();

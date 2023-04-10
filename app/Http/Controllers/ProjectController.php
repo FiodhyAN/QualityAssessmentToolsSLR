@@ -110,13 +110,13 @@ class ProjectController extends Controller
 
         if ($request->old_admin != $request->admin_project) {
             foreach ($request->admin_project as $key => $value) {
-                $article_user = ArticleUser::with('user')->where('user_id', $value)->whereHas('article', function($query) use ($request){
+                $article_user_admin = ArticleUser::with('user')->where('user_id', $value)->whereHas('article', function($query) use ($request){
                     $query->where('project_id', $request->project_id);
                 })->first();
 
-                if ($article_user) {
-                    if ($article_user->is_assessed == true) {
-                        $error = $article_user->user->name.' cannot be made admin because it has already done an assessment';
+                if ($article_user_admin) {
+                    if ($article_user_admin->is_assessed == true) {
+                        $error = $article_user_admin->user->name.' cannot be made admin because it has already done an assessment';
                         return json_encode(['error' => $error]);
                     }
                     else {
@@ -125,7 +125,6 @@ class ProjectController extends Controller
                         })->delete();
                     }
                 }
-                
 
                 ProjectUser::where('project_id', $request->project_id)->where('user_id', $value)->update([
                     'user_role' => 'admin',
@@ -190,7 +189,7 @@ class ProjectController extends Controller
                 'is_admin' => true,
             ]);
         }
-        return redirect()->back()->with('success', 'Project Updated Successfully');
+        return json_encode(['success' => 'success']);
     }
 
     public function delete(Request $request)

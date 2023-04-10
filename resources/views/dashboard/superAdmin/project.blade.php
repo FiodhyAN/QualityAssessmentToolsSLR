@@ -488,6 +488,8 @@
                             title: 'Oops...',
                             text: data.error,
                             showConfirmButton: true,
+                        }).then(isConfirmed => {
+                            $('#modalEdit').modal('show');
                         });
                     }
                     else {
@@ -506,7 +508,7 @@
                     }
                 },
                 error: function(data) {    
-                    console.log(data);
+                    console.log(data.error);
                     Swal.close()
                     Swal.fire({
                         icon: 'error',

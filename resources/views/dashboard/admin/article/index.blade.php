@@ -267,15 +267,25 @@
                         dataType: 'json',
                         success: function(response) {
                             console.log(response);
-                            Swal.fire({
-                                title: 'Deleted!',
-                                text: 'Article has been deleted.',
-                                icon: 'success',
-                                confirmButtonText: 'OK'
-                            }).then(isConfirmed => {
-                                table.ajax.reload();
-                                assessment_table.ajax.reload();
-                            })
+                            if (response.error != null || response.error != undefined) {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: response.error,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    title: 'Deleted!',
+                                    text: 'Article has been deleted.',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then(isConfirmed => {
+                                    table.ajax.reload();
+                                    assessment_table.ajax.reload();
+                                })
+                            }
                         },
                         error: function(result) {
                             console.log(result);
