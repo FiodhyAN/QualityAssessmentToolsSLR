@@ -55,8 +55,12 @@ def query_rank(nama_project, json):
 def getData(data=None):
     if data == None:
         table = [
-            ["a1", ['a', 'b', 'c'],   ['a', 'b', 'c', 'k', 'l'], '1993', ['p1', 'p2']], ["a2", ['c', 'd', 'e'],   ['a', 'c', 'd', 'e', 'm', 'n'], '1993', ['p1', 'p3']], ["a3", ['f', 'g', 'h'],   ['c', 'd', 'f', 'g', 'h', 'o'], '1993', ['p2', 'p4', 'p5']], ["a4", [
-                'i', 'j'],       ['c', 'd', 'p', 'q'], '1994', ['p3', 'p6'], ['a1', 'a2']], ["a5", ['dj', 'dk'],     ['a', 'dj', 'dk', 'm', 'r'], '1994', ['p1', 'p7'], ['a1', 'a2', 'a3']], ["a6", ['d', 'ac', 'ad'], ['d', 'ac', 'ad', 's', 't'], '1994', ['p8', 'p9'], ['a1', 'a3']]
+            ["a1", ['a', 'b', 'c'],   ['a', 'b', 'c', 'k', 'l'], '1993', ['p1', 'p2'],'title of a1'], 
+            ["a2", ['c', 'd', 'e'],   ['a', 'c', 'd', 'e', 'm', 'n'], '1993', ['p1', 'p3'],'title of a2'],
+            ["a3", ['f', 'g', 'h'],   ['c', 'd', 'f', 'g', 'h', 'o'], '1993', ['p2', 'p4', 'p5'],'title of a3'], 
+            ["a4", ['i', 'j'],        ['c', 'd', 'p', 'q'], '1994', ['p3', 'p6'], ['a1', 'a2'], 'title of a4'], 
+            ["a5", ['dj', 'dk'],      ['a', 'dj', 'dk', 'm', 'r'], '1994', ['p1', 'p7'], ['a1', 'a2', 'a3'], 'title of a5'], 
+            ["a6", ['d', 'ac', 'ad'], ['d', 'ac', 'ad', 's', 't'], '1994', ['p8', 'p9'], ['a1', 'a3'], 'title of a6'],
         ]
     else:
         table = data
@@ -67,6 +71,8 @@ def getArticleIdAuthorReferencesAndAuthor(table):
     pairs = []
     authors = []
     articles = []
+    initial_articles_pair = []
+    title_articles_pair = []
     for i in table:
         row = []
         row.append(i[0])
@@ -82,9 +88,14 @@ def getArticleIdAuthorReferencesAndAuthor(table):
         except:
             row.append([])
         pairs.append(row)
+        initial_articles_pair.append(i[0])
+        try:
+            title_articles_pair.append(i[6])
+        except:
+            title_articles_pair.append(i[5])
     authors = sorted(set(authors))
     articles = sorted(set(articles))
-    return pairs, authors, articles
+    return pairs, authors, articles,initial_articles_pair ,title_articles_pair
 
 
 def author_matrixs(authors):
@@ -481,7 +492,7 @@ def data(type, name):
         print(tabulate(table))
 
     # pair ArticleId,Author,& References & author
-        pairs, authors, articles = getArticleIdAuthorReferencesAndAuthor(table)
+        pairs, authors, articles,initial_articles_pair ,title_articles_pair = getArticleIdAuthorReferencesAndAuthor(table)
 
         # for i in pairs:
         #     print(i)
@@ -542,13 +553,23 @@ def data(type, name):
                     "Waktu eksekusi program: {:.2f} detik".format(total_time))
                 return my_base64_jpgData
         elif name == "rank":
+            # if type == "article":
+            #     title_of_the_article = []
+            #     for i in input_author_article:
+            #         title_of_the_article.append(title_articles_pair[initial_articles_pair.index(i)])
             tmp = [input_author_article, [table, author_rank]]
+            # if type == "article":
+            #     tmp.append(title_of_the_article)
             end_time = time.time()
             total_time = end_time - start_time
             print("Waktu eksekusi program: {:.2f} detik".format(total_time))
             return tmp
         
         elif name == "rankgraph":
+            # if type == "article":
+            #     title_of_the_article = []
+            #     for i in input_author_article:
+            #         title_of_the_article.append(title_articles_pair[initial_articles_pair.index(i)])
             # Make Term Graph
             output = makeTermGraph(
                 input_author_article, author_matrix_and_relation, last_author_rank, outer_author, top_author_rank)
@@ -557,6 +578,8 @@ def data(type, name):
             # make my_base64_jpgData to be string
             my_base64_jpgData=my_base64_jpgData.decode("utf-8")
             tmp = [input_author_article, [table, author_rank],my_base64_jpgData]
+            # if type == "article":
+            #     tmp.append(title_of_the_article)            
             end_time = time.time()
             total_time = end_time - start_time
             print("Waktu eksekusi program: {:.2f} detik".format(total_time))
