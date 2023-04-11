@@ -130,7 +130,7 @@ class ArticleController extends Controller
                                 </svg> Assign</button>
                             </a>';
                     $btn .= '<a href="javascript:;"
-                                <button type="button" id="showArticle" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#articleModal" data-name="'.$user->name.'">
+                                <button type="button" id="showArticle" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#articleModal" data-name="'.$user->name.'" data-id="'.$user->id.'" data-project="'.$id.'">
                                 <ion-icon name="eye-sharp"></ion-icon> Show</button>
                             </a>';  
                 }
@@ -318,9 +318,13 @@ class ArticleController extends Controller
         return $score;
     }
 
-    public function findArticleUser(Request $request)
+    public function articleShow(Request $request)
     {
         $this->authorize('admin');
-        
+        $article = ArticleUser::where('user_id', $request->user_id)->whereHas('article', function($query) use ($request){
+            $query->where('project_id', $request->project_id);
+        })->with('article')->get();
+
+        return json_encode($article);
     }
 }
