@@ -74,7 +74,7 @@ class DataProcessingController extends Controller
     public function getData($projects)
     {
         $this->authorize('projectSummary');
-        $articles = Article::select('no', 'keywords', 'abstracts', 'year', 'authors', 'citing_new')->where('project_id', '=', $projects)
+        $articles = Article::select('no', 'keywords', 'abstracts', 'year', 'authors', 'citing_new','title')->where('project_id', '=', $projects)
             ->get();
 
         $data = json_decode($articles, true);
@@ -93,10 +93,10 @@ class DataProcessingController extends Controller
             $citingNew = preg_split('/\s*[,;\/]\s*/', $row['citing_new']);
             sort($citingNew, SORT_NUMERIC);
             $abstracts = $keywords;
-            $result[] = [$row['no'], $keywords, $abstracts, (string) $row['year'], $authors, $citingNew];
+            $result[] = [$row['no'], $keywords, $abstracts, (string) $row['year'], $authors, $citingNew,$row['title']];
 
         }
-        $result[] = ["dummywriter", [], [], [], ["dummywriter"]];
+        $result[] = ["dummywriter", [], [], [], ["dummywriter"],''];
         return $result;
     }
 
