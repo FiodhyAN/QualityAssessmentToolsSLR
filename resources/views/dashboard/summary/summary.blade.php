@@ -4,43 +4,10 @@
     <h1>Project Summary</h1>
     <hr>
 
-    <a href="/dashboard/summary"><button type="button" class="btn btn-secondary mb-4">
-            <ion-icon name="arrow-back"></ion-icon> Back to Project
-        </button></a>
-
-    {{-- <div class="card">
-        <div class="card-body">
-            <div class="card-title">
-                <h5>Article Not Assessed</h5>
-            </div>
-            <div class="table-responsive">
-                <table id="article_not_assessed" class="table table-striped table-bordered" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>ID - No</th>
-                            <th>Article</th>
-                            <th>Users</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($articles as $article)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $article->id }} - {{ $article->no }}</td>
-                                <td>{{ $article->title }}</td>
-                                <td>
-                                    @foreach ($article->article_user as $user)
-                                        <span style="white-space: normal" class="badge alert-primary">{{ $user->user->name }}</span>
-                                    @endforeach
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div> --}}
+    <div class="mb-4">
+        <select name="project_id" id="project_id" class="col-md-4">
+        </select>
+    </div>
 
     <h6 class="mb-0 text-uppercase">Score Per Question</h6>
     <hr />
@@ -83,7 +50,9 @@
 @section('script')
     <script>
         $(document).ready(function() {
-            $('#article_not_assessed').DataTable();
+            $('#project_id').select2({
+                placeholder: 'Choose Project',
+            });
         });
 
         var question_name = {!! json_encode($question_name) !!};

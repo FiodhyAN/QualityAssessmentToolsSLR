@@ -37,7 +37,7 @@ class ArticleController extends Controller
             })
             ->addColumn('action', function (Article $article) use ($id) {
                 $btn = '<button type="button" class="btn btn-warning text-white btn-sm me-2 aksi scoreArticle" id="scoreArticle" data-bs-toggle="modal" data-bs-target="#modalScore" data-id="' . $article->id . '" data-title="' . $article->title . '"><ion-icon name="stats-chart-outline"></ion-icon> Score</button>';
-                $btn .= '<a href="/dashboard/admin/article/' . $article->id . '/edit?pid=' . $id . '"><button type="button" class="btn btn-primary btn-sm aksi"><ion-icon name="create-outline"></ion-icon> Edit</button></a>';
+                $btn .= '<a href="/dashboard/admin/article/' . encrypt($article->id) . '/edit?pid=' . encrypt($id) . '"><button type="button" class="btn btn-primary btn-sm aksi"><ion-icon name="create-outline"></ion-icon> Edit</button></a>';
                 $btn .= '<button type="button" class="btn btn-danger btn-sm ms-2 aksi deleteArticle" data-id="' . $article->id . '"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
                 return $btn;
             })
@@ -108,7 +108,7 @@ class ArticleController extends Controller
             ->addColumn('action', function (User $user) use ($id) {
                 if (count($user->article_user) == 0 || $user->article_user[0]->article == null)
                 {
-                    $btn = '<a href="/dashboard/admin/assign?pid=' . $id . '&uid=' . $user->id . '">
+                    $btn = '<a href="/dashboard/admin/assign?pid=' . encrypt($id) . '&uid=' . encrypt($user->id) . '">
                                 <button type="button" class="btn btn-sm btn-success">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check">
                                 <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -121,7 +121,7 @@ class ArticleController extends Controller
                             </button>';  
                 }
                 else {
-                    $btn = '<a href="/dashboard/admin/assign?pid=' . $id . '&uid=' . $user->id . '">
+                    $btn = '<a href="/dashboard/admin/assign?pid=' . encrypt($id) . '&uid=' . encrypt($user->id) . '">
                                 <button type="button" class="btn btn-sm btn-success">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check">
                                 <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -145,7 +145,7 @@ class ArticleController extends Controller
     {
         $this->authorize('admin');
         return view('dashboard.admin.article.create', [
-            'project_id' => request()->id
+            'project_id' => decrypt(request()->id)
         ]);
     }
 
@@ -200,17 +200,17 @@ class ArticleController extends Controller
             'edatabase_2' => $request->edatabase2 ?? null,
             'project_id' => $request->project_id,
         ]);
-        return redirect()->route('project.show',  $request->project_id)->with('success', 'Article successfully added!');
+        return redirect()->route('project.show',  encrypt($request->project_id))->with('success', 'Article successfully added!');
     }
 
     public function edit($id)
     {
         $this->authorize('admin');
-        $article = Article::find($id);
+        $article = Article::find(decrypt($id));
         // return $article;
         return view('dashboard.admin.article.edit', [
             'article' => $article,
-            'project_id' => request()->pid
+            'project_id' => decrypt(request()->pid)
         ]);
     }
 
@@ -270,7 +270,7 @@ class ArticleController extends Controller
             'edatabase' => $request->edatabase ?? $article->edatabase,
             'edatabase_2' => $request->edatabase2 ?? $article->edatabase_2,
         ]);
-        return redirect()->route('project.show',  $article->project_id)->with('success', 'Article successfully updated!');
+        return redirect()->route('project.show',  encrypt($article->project_id))->with('success', 'Article successfully updated!');
     }
 
     public function delete(Request $request)

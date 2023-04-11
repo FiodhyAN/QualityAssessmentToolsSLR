@@ -19,7 +19,7 @@ class ProjectAdminController extends Controller
     public function show($id)
     {
         $this->authorize('admin');
-        $project = ProjectUser::with('project')->where('user_id', auth()->user()->id)->where('project_id', $id)->first();
+        $project = ProjectUser::with('project')->where('user_id', auth()->user()->id)->where('project_id', decrypt($id))->first();
         return view('dashboard.admin.article.index', [
             'project' => $project,
         ]);
@@ -30,7 +30,7 @@ class ProjectAdminController extends Controller
         $this->authorize('admin');
         $articles = Article::with(['project', 'article_user' => function($query){
             $query->with('user');
-        }])->where('project_id', request()->pid)->get();
+        }])->where('project_id', decrypt(request()->pid))->get();
         
         return view('dashboard.admin.status', [
             'articles' => $articles,

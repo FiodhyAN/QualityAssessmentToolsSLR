@@ -174,7 +174,7 @@ class DataProcessingController extends Controller
     public function meta_data($id)
     {
         $this->authorize('projectSummary');
-        if (auth()->user()->is_superadmin) {
+        if (auth()->user()->is_superAdmin) {
             $projects = Project::select('id','project_name')->get();
         }
         else {
@@ -190,7 +190,7 @@ class DataProcessingController extends Controller
     public function proses_meta_data(Request $request, $id)
     {
         $this->authorize('projectSummary');
-        if (auth()->user()->is_superadmin) {
+        if (auth()->user()->is_superAdmin) {
             $projects = Project::select('id','project_name')->get();
         }
         else {

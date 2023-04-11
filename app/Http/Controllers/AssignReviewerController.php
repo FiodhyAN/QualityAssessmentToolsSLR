@@ -16,8 +16,8 @@ class AssignReviewerController extends Controller
     {
         $this->authorize('admin');
         return view('dashboard.admin.article.assign', [
-            'project_id' => request()->pid,
-            'user_id' => request()->uid,
+            'project_id' => decrypt(request()->pid),
+            'user_id' => decrypt(request()->uid),
         ]);
     }
 
