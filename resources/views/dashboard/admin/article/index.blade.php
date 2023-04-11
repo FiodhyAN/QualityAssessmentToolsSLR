@@ -444,6 +444,34 @@
         assessment_table.on('click', '#showArticle', function(){
             var name = $(this).data('name');
             $('.article-modal-title').text(name + ' Assigned Article');
+            var user_id = $(this).data('user_id');
+            var project_id = $(this).data('project_id');
+
+            $.ajax({
+                url: '{{ route('article.show') }}',
+                type: 'GET',
+                data: {
+                    user_id: user_id,
+                    project_id: project_id
+                },
+                dataType: 'JSON',
+                success: function(data) {
+                    console.log(data);
+                    $('#articleData').empty();
+                    for (let index = 0; index < data.length; index++) {
+                        $('#articleData').append(
+                            '<tr>' +
+                                '<td>' + data[index].id + ' - ' + data[index].no + '</td>' +
+                                '<td style="white-space:normal;">' + data[index].title + '</td>' +
+                                '<td>' + (data[index].is_assessed == true ? 
+                                    '<span class="badge alert-success">Assessed</span>' :
+                                    '<span class="badge alert-danger">Not Assessed</span>') +
+                                '</td>' +
+                            '</tr>'
+                        );
+                    }
+                }
+            })
         })
     </script>
 @endsection
