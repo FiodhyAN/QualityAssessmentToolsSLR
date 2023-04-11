@@ -20,7 +20,7 @@
                 <select class="form-select" name="project" id="project">
                     <option value="empty-field" disabled selected>-- Select Project --</option>
                     @foreach ($projects as $project)
-                    <option value="{{ $project->id }}">{{ $project->project_name }}</option>
+                        <option value="{{ $project->id }}">{{ $project->project_name }}</option>
                     @endforeach
                 </select>
             </div>

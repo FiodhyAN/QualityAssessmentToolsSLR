@@ -57,9 +57,10 @@
                         <tr>
                             <th>No</th>
                             <th>Name</th>
-                            <th>ID - No</th>
+                            <th>Article Assigned</th>
+                            {{-- <th>ID - No</th>
                             <th>Article</th>
-                            <th>Assessed</th>
+                            <th>Assessed</th> --}}
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -127,6 +128,36 @@
             </div>
         </div>
     </div>
+
+    {{-- Modal for detail article --}}
+    <div class="modal fade" id="articleModal" tabindex="-1" aria-labelledby="articleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="article-modal-title" id="articleModalLabel"></h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="score_table" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>ID - No</th>
+                                <th>Title</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="articleData">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
 @endsection
 @section('script')
     <script>
@@ -371,18 +402,25 @@
                     name: 'name',
                 },
                 {
-                    data: 'id_no',
-                    name: 'id_no',
+                    data: 'article',
+                    name: 'article',
+                    render: function(data, type, row) {
+                        return '<div class="text-center">' + data + '</div>';
+                    }
                 },
-                {
-                    data: 'title',
-                    name: 'title',
-                },
-                {
-                    data: 'assessed',
-                    name: 'assessed',
-                    class: 'text-center',
-                },
+                // {
+                //     data: 'id_no',
+                //     name: 'id_no',
+                // },
+                // {
+                //     data: 'title',
+                //     name: 'title',
+                // },
+                // {
+                //     data: 'assessed',
+                //     name: 'assessed',
+                //     class: 'text-center',
+                // },
                 {
                     data: 'action',
                     name: 'action',
@@ -390,17 +428,22 @@
                     searchable: false,
                 }
             ],
-            rowCallback: function(row, data, index) {
-                if (data.id_no == false) {
-                    $(row).find('td:eq(2)').attr('colspan', '3');
-                    $(row).find('td:eq(2)').text('No Article Assigned');
-                    $(row).find('td:eq(3)').addClass('d-none');
-                    $(row).find('td:eq(4)').addClass('d-none');
-                    $(row).find('td:eq(2)').addClass('text-center');
-                }
-            }
+            // rowCallback: function(row, data, index) {
+            //     if (data.id_no == false) {
+            //         $(row).find('td:eq(2)').attr('colspan', '3');
+            //         $(row).find('td:eq(2)').text('No Article Assigned');
+            //         $(row).find('td:eq(3)').addClass('d-none');
+            //         $(row).find('td:eq(4)').addClass('d-none');
+            //         $(row).find('td:eq(2)').addClass('text-center');
+            //     }
+            // }
         }).on('init.dt', function(){
             $('#assessment_table').wrap('<div class="dataTables_scroll" />')
         });
+
+        assessment_table.on('click', '#showArticle', function(){
+            var name = $(this).data('name');
+            $('.article-modal-title').text(name + ' Assigned Article');
+        })
     </script>
 @endsection

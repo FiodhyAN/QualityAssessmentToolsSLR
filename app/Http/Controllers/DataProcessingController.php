@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Http\Response;
@@ -13,6 +14,7 @@ class DataProcessingController extends Controller
 {
     public function pengolahan_data()
     {
+        $this->authorize('projectSummary');
         $graph = DB::table('data_graph')
             ->select('base64code')
             ->get();
@@ -36,6 +38,7 @@ class DataProcessingController extends Controller
 
     public function gambar_graph()
     {
+        $this->authorize('projectSummary');
         $articles = DB::table('data_graph')
             ->select('base64code')
             ->get();
@@ -47,6 +50,7 @@ class DataProcessingController extends Controller
 
     public function my_image()
     {
+        $this->authorize('projectSummary');
         $articles = DB::table('graphimage')
             ->select('base64code')
             ->get();
@@ -69,8 +73,8 @@ class DataProcessingController extends Controller
 
     public function getData($projects)
     {
-        $articles = DB::table('articles')
-            ->select('no', 'keywords', 'abstracts', 'year', 'authors', 'citing_new')->where('project_id', '=', $projects)
+        $this->authorize('projectSummary');
+        $articles = Article::select('no', 'keywords', 'abstracts', 'year', 'authors', 'citing_new')->where('project_id', '=', $projects)
             ->get();
 
         $data = json_decode($articles, true);
@@ -99,6 +103,7 @@ class DataProcessingController extends Controller
 
     public function data_rank($id)
     {
+        $this->authorize('projectSummary');
         $sum_top_author = 10;
         $result = $this->getData(1);
         // transporse table
@@ -168,11 +173,15 @@ class DataProcessingController extends Controller
 
     public function meta_data($id)
     {
-        $this->authorize('reviewer');
-        $projects = Project::select('id','project_name')->whereHas('project_user', function($query) {
-            $query->where('user_id', auth()->user()->id);
-        // ->where('user_role', 'reviewer');
-        })->get();
+        $this->authorize('projectSummary');
+        if (auth()->user()->is_superadmin) {
+            $projects = Project::select('id','project_name')->get();
+        }
+        else {
+            $projects = Project::select('id','project_name')->whereHas('project_user', function($query) {
+                $query->where('user_id', auth()->user()->id);
+            })->get();
+        }
         $name=$id;
         $name[0]=strtoupper($name[0]);
         return view('pengolahan_data_slr.metadata', ['src' => "", 'author_ranks' => [], 'type' => $name, 'url'=>$id , 'projects' => $projects,'display' => 'none']);
@@ -180,11 +189,15 @@ class DataProcessingController extends Controller
 
     public function proses_meta_data(Request $request, $id)
     {
-        $this->authorize('reviewer');
-        $projects = Project::select('id','project_name')->whereHas('project_user', function($query) {
-            $query->where('user_id', auth()->user()->id);
-        // ->where('user_role', 'reviewer');
-        })->get();
+        $this->authorize('projectSummary');
+        if (auth()->user()->is_superadmin) {
+            $projects = Project::select('id','project_name')->get();
+        }
+        else {
+            $projects = Project::select('id','project_name')->whereHas('project_user', function($query) {
+                $query->where('user_id', auth()->user()->id);
+            })->get();
+        }
         
 
         $author = $request->toArray();

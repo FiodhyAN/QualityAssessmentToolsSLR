@@ -120,7 +120,13 @@
                             '</span>',
                             data[index].article_user.length == 0 ?
                             '<span class="badge alert-danger d-flex justify-content-center">Not Assign</span>' :
-                            '<a href="javascript:;" class="d-flex justify-content-center badge alert-primary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="" data-bs-original-title="View detail" aria-label="Views"><ion-icon name="eye-sharp"></ion-icon> Show</a>'
+                            '<a href="javascript:;" id="user_status"\
+                                class="d-flex justify-content-center badge alert-primary" data-bs-toggle="modal"\
+                                data-bs-target="#userModal"\
+                                data-id_no="' + data[index].id + ' - ' + data[index].no + '"\
+                                data-id="' + data[index].id + '">\
+                                <ion-icon name="eye-sharp"></ion-icon> Show\
+                            </a>'
                         ]).draw();
                         no++;
                     }

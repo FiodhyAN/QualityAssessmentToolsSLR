@@ -61,59 +61,83 @@ class ArticleController extends Controller
             ->addColumn('name', function (User $user) {
                 return $user->name;
             })
-            ->addColumn('id_no', function (User $user) {
-                if (count($user->article_user) == 0 || $user->article_user[0]->article == null) {
-                    return false;
+            ->addColumn('article', function (User $user) {
+                if(count($user->article_user) == 0 || $user->article_user[0]->article == null){
+                    return '<span class="badge alert-danger text">No Article Assigned</span>';
                 } else {
-                    $id_no = '';
-                    foreach ($user->article_user as $value) {
-                        $id_no .= $value->article->id . ' - ' . $value->article->no . '<br>';
-                    }
-                    return $id_no;
+                    return '<span class="badge alert-primary">'.count($user->article_user).' Article(s) Assigned</span>';
                 }
             })
-            ->addColumn('title', function (User $user) {
-                if (count($user->article_user) == 0 || $user->article_user[0]->article == null) {
-                    return false;
-                } else {
-                    $title = '';
-                    foreach ($user->article_user as $value) {
-                        $title .= $value->article->title . '<br>';
-                    }
-                    return $title;
-                }
-            })
-            ->addColumn('assessed', function (User $user) {
-                if (count($user->article_user) == 0 || $user->article_user[0]->article == null) {
-                    return false;
-                } else {
-                    $assessed = '';
-                    foreach ($user->article_user as $value) {
-                        if ($value->is_assessed == true) {
-                            $assessed .= '<span class="badge alert-success">Assessed</span><br>';
-                        } else {
-                            $assessed .= '<span class="badge alert-danger">Not Assessed</span><br>';
-                        }
-                    }
-                    return $assessed;
-                }
-            })
+            // ->addColumn('id_no', function (User $user) {
+            //     if (count($user->article_user) == 0 || $user->article_user[0]->article == null) {
+            //         return false;
+            //     } else {
+            //         $id_no = '';
+            //         foreach ($user->article_user as $value) {
+            //             $id_no .= $value->article->id . ' - ' . $value->article->no . '<br>';
+            //         }
+            //         return $id_no;
+            //     }
+            // })
+            // ->addColumn('title', function (User $user) {
+            //     if (count($user->article_user) == 0 || $user->article_user[0]->article == null) {
+            //         return false;
+            //     } else {
+            //         $title = '';
+            //         foreach ($user->article_user as $value) {
+            //             $title .= $value->article->title . '<br>';
+            //         }
+            //         return $title;
+            //     }
+            // })
+            // ->addColumn('assessed', function (User $user) {
+            //     if (count($user->article_user) == 0 || $user->article_user[0]->article == null) {
+            //         return false;
+            //     } else {
+            //         $assessed = '';
+            //         foreach ($user->article_user as $value) {
+            //             if ($value->is_assessed == true) {
+            //                 $assessed .= '<span class="badge alert-success">Assessed</span><br>';
+            //             } else {
+            //                 $assessed .= '<span class="badge alert-danger">Not Assessed</span><br>';
+            //             }
+            //         }
+            //         return $assessed;
+            //     }
+            // })
             ->addColumn('action', function (User $user) use ($id) {
-                $btn = '<a href="/dashboard/admin/assign?pid=' . $id . '&uid=' . $user->id . '">
-                            <button type="button" class="btn btn-sm btn-success">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="8.5" cy="7" r="4"></circle>
-                            <polyline points="17 11 19 13 23 9"></polyline>
-                            </svg> Assign</button>
-                        </a>';
-                $btn .= '<a href="javascript:;"
-                            <button type="button" class="btn btn-sm btn-primary">
-                            <ion-icon name="eye-sharp"></ion-icon> Show Article</button>
-                        </a>';
+                if (count($user->article_user) == 0 || $user->article_user[0]->article == null)
+                {
+                    $btn = '<a href="/dashboard/admin/assign?pid=' . $id . '&uid=' . $user->id . '">
+                                <button type="button" class="btn btn-sm btn-success">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="8.5" cy="7" r="4"></circle>
+                                <polyline points="17 11 19 13 23 9"></polyline>
+                                </svg> Assign</button>
+                            </a>';
+                    $btn .= '<button disabled type="button" id="showArticle" class="btn btn-sm btn-primary">
+                                <ion-icon name="eye-sharp"></ion-icon> Show
+                            </button>';  
+                }
+                else {
+                    $btn = '<a href="/dashboard/admin/assign?pid=' . $id . '&uid=' . $user->id . '">
+                                <button type="button" class="btn btn-sm btn-success">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="8.5" cy="7" r="4"></circle>
+                                <polyline points="17 11 19 13 23 9"></polyline>
+                                </svg> Assign</button>
+                            </a>';
+                    $btn .= '<a href="javascript:;"
+                                <button type="button" id="showArticle" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#articleModal" data-name="'.$user->name.'">
+                                <ion-icon name="eye-sharp"></ion-icon> Show</button>
+                            </a>';  
+                }
                 return $btn;
             })
-            ->rawColumns(['id_no', 'title', 'assessed', 'action'])
+            // ->rawColumns(['id_no', 'title', 'assessed', 'action'])
+            ->rawColumns(['action', 'article'])
             ->toJson();
     }
 
@@ -292,5 +316,11 @@ class ArticleController extends Controller
             }]);
         }])->get();
         return $score;
+    }
+
+    public function findArticleUser(Request $request)
+    {
+        $this->authorize('admin');
+        
     }
 }
