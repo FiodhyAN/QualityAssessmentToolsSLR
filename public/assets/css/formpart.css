@@ -55,6 +55,9 @@ button#submit-btn {
     border-bottom-right-radius: 5px;
     border-bottom-left-radius: 5px;
 }
+button#submit-btn {
+    background: #41644A;
+}
  
 button#prev-btn:after,
 button#next-btn:after,
@@ -68,6 +71,9 @@ button#submit-btn:after {
     content: "";
     z-index: -2;
     transition: transform .3s;
+}
+button#submit-btn:after {
+    background: #263A29;
 }
  
 button#prev-btn:hover::after,

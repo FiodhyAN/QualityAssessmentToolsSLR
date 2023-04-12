@@ -111,7 +111,7 @@
                     </li>
         
                     <li>
-                        <a href="/dashboard/summary">
+                        <a href="/dashboard/projectSummary">
                             <div class="parent-icon">
                                 <ion-icon name="pie-chart"></ion-icon>
                             </div>

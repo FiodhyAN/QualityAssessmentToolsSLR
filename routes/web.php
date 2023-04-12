@@ -77,8 +77,8 @@ Route::get('/findStatus', [ProjectAdminController::class, 'findStatus'])->middle
 Route::get('/findUserArticle', [ProjectAdminController::class, 'findUserArticle'])->middleware('auth')->name('find.userArticle');
 
 //Summary
-Route::get('/dashboard/summary', [SummaryController::class, 'projectIndex'])->middleware('auth');
 Route::get('/dashboard/projectSummary', [SummaryController::class, 'projectSummary'])->middleware('auth')->name('project.summary');
+Route::get('/findProjectSummary', [SummaryController::class, 'findProjectSummary'])->middleware('auth')->name('find.projectSummary');
 
 //Reviewer
 Route::get('/dashboard/reviewer/assessment', [AssessmentController::class, 'index'])->middleware('auth');
