@@ -607,7 +607,7 @@ def data(type, name):
             end_time = time.time()
             total_time = end_time - start_time
             print("Waktu eksekusi program: {:.2f} detik".format(total_time))
-            return [my_json,my_base64_jpgData]
+            return json.dumps([my_json,my_base64_jpgData])
         
 
 if __name__ == "__main__":
