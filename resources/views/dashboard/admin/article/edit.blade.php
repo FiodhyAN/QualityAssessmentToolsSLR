@@ -3,7 +3,7 @@
 @section('container')
     <h1>Edit Article</h1>
     <hr>
-    <a href="/dashboard/admin/project/{{ $project_id }}"><button type="button" class="btn btn-secondary mb-2"><ion-icon name="arrow-back"></ion-icon> Back to Project</button></a>
+    <a href="/dashboard/admin/project/{{ encrypt($project_id) }}"><button type="button" class="btn btn-secondary mb-2"><ion-icon name="arrow-back"></ion-icon> Back to Project</button></a>
 
     <div class="card">
         <div class="card-header">

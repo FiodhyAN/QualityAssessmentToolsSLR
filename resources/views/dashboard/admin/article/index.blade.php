@@ -17,7 +17,7 @@
 
     <div class="card">
         <div class="col mb-3 mt-3 ms-3">
-            <a href="/dashboard/admin/article/create?id={{ $project->project->id }}"><button type="button"
+            <a href="/dashboard/admin/article/create?id={{ encrypt($project->project->id) }}"><button type="button"
                     class="btn btn-sm btn-success px-5 mb-2">
                     <ion-icon name="add-circle-outline"></ion-icon>Add Article
                 </button></a>
@@ -444,8 +444,9 @@
         assessment_table.on('click', '#showArticle', function(){
             var name = $(this).data('name');
             $('.article-modal-title').text(name + ' Assigned Article');
-            var user_id = $(this).data('user_id');
-            var project_id = $(this).data('project_id');
+            var user_id = $(this).data('id');
+            var project_id = $(this).data('project');
+            console.log(user_id);
 
             $.ajax({
                 url: '{{ route('article.show') }}',
@@ -461,8 +462,8 @@
                     for (let index = 0; index < data.length; index++) {
                         $('#articleData').append(
                             '<tr>' +
-                                '<td>' + data[index].id + ' - ' + data[index].no + '</td>' +
-                                '<td style="white-space:normal;">' + data[index].title + '</td>' +
+                                '<td>' + data[index].article.id + ' - ' + data[index].article.no + '</td>' +
+                                '<td style="white-space:normal;">' + data[index].article.title + '</td>' +
                                 '<td>' + (data[index].is_assessed == true ? 
                                     '<span class="badge alert-success">Assessed</span>' :
                                     '<span class="badge alert-danger">Not Assessed</span>') +
