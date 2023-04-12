@@ -40,14 +40,16 @@
                 <th>No</th>
                 <th>Author</th>
                 <th>Rank</th>
+                <th>Nation</th>
             </tr>
         </thead>
         <tbody>
             @for($i = 0; $i < 20 && $i < count($author_ranks); $i++)
             <tr>
-                <th scope="row">{{$i+1}}</th>
-                <td>{{ $author_ranks[$i][0] }}</td>
+                <th scope="row">{{ $author_ranks[$i][0] }}</th>
                 <td>{{ $author_ranks[$i][1] }}</td>
+                <td>{{ $author_ranks[$i][2] }}</td>
+                <td>{{ $author_ranks[$i][3] }}</td>
             </tr>
             @endfor
         </tbody>

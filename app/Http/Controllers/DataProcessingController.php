@@ -74,7 +74,7 @@ class DataProcessingController extends Controller
     public function getData($projects)
     {
         $this->authorize('projectSummary');
-        $articles = Article::select('no', 'keywords', 'abstracts', 'year', 'authors', 'citing_new','title')->where('project_id', '=', $projects)
+        $articles = Article::select('no', 'keywords', 'abstracts', 'year', 'authors', 'citing_new','title','nation_first_author')->where('project_id', '=', $projects)
             ->get();
 
         $data = json_decode($articles, true);
@@ -93,10 +93,10 @@ class DataProcessingController extends Controller
             $citingNew = preg_split('/\s*[,;\/]\s*/', $row['citing_new']);
             sort($citingNew, SORT_NUMERIC);
             $abstracts = $keywords;
-            $result[] = [$row['no'], $keywords, $abstracts, (string) $row['year'], $authors, $citingNew,$row['title']];
+            $result[] = [$row['no'], $keywords, $abstracts, (string) $row['year'], $authors, $citingNew,$row['title'],$row['nation_first_author']];
 
         }
-        $result[] = ["dummywriter", [], [], [], ["dummywriter"],''];
+        $result[] = ["dummyarticle", [], [], 'dummy year', ["dummywriter"],[],'title of dummywriter','dummy nation'];
         return $result;
     }
 
@@ -129,11 +129,12 @@ class DataProcessingController extends Controller
         // return json_decode($response);
         $authors = $response[0];
         $ranks = $response[1][1];
+        $title = $response[2];
 
         // Combine the authors and ranks into an array of arrays
         $author_ranks = array();
         for ($i = 0; $i < count($authors); $i++) {
-            $author_ranks[] = array($authors[$i], $ranks[$i]);
+            $author_ranks[] = array($authors[$i], $ranks[$i], $title[$i]);
         }
 
         // Sort the author-rank pairs based on the rank (ascending order)
@@ -223,11 +224,45 @@ class DataProcessingController extends Controller
                 'author-rank' => $sum_top_author
             ]
         );
+
+        $authors = $response[0];
+        $ranks = $response[1][1];
+        $title = $response[2];
+        $image = '';
+        // $image = $response[3];
+        // $image =utf8_decode($image);
+
+        // Combine the authors and ranks into an array of arrays
+        $author_ranks = array();
+        for ($i = 0; $i < count($authors); $i++) {
+            $author_ranks[] = array($i,$authors[$i], $ranks[$i], $title[$i]);
+        }
+
+        // Sort the author-rank pairs based on the rank (ascending order)
+        usort($author_ranks, function ($a, $b) {
+            return $a[2] - $b[2];
+        });
+        //dapatkan data top 10 
+        $author_ranks = array_slice($author_ranks, 0, $sum_top_author);
+        $name=$id;
+        $name[0]=strtoupper($name[0]);
+        return view('pengolahan_data_slr.metadata', ['src' => "data:image/png;base64, $image", 'author_ranks' => $author_ranks, 'type' => $name, 'url'=>$id ,'projects' => $projects,'display' => 'block']);
+
+
+
+
+
+
+
+
+
+
         // return $response;
         // return json_decode($response);
         $authors = $response[0];
         $ranks = $response[1][1];
         $image = $response[2];
+        $title = $response[3];
         // decode $image utf-8
         $image = utf8_decode($image);
         
@@ -235,12 +270,12 @@ class DataProcessingController extends Controller
         // Combine the authors and ranks into an array of arrays
         $author_ranks = array();
         for ($i = 0; $i < count($authors); $i++) {
-            $author_ranks[] = array($i, $authors[$i], $ranks[$i]);
+            $author_ranks[] = array($authors[$i], $ranks[$i]);
         }
 
         // Sort the author-rank pairs based on the rank (ascending order)
         usort($author_ranks, function ($a, $b) {
-            return $a[2] - $b[2];
+            return $a[1] - $b[1];
         });
         //dapatkan data top 10 
         $author_ranks = array_slice($author_ranks, 0, $sum_top_author);
