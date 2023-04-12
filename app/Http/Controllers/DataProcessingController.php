@@ -224,13 +224,14 @@ class DataProcessingController extends Controller
                 'author-rank' => $sum_top_author
             ]
         );
+        $part1=$response[0];
+        $part2=$response[1];
 
-        $authors = $response[0];
-        $ranks = $response[1][1];
-        $title = $response[2];
-        $image = '';
-        // $image = $response[3];
-        // $image =utf8_decode($image);
+        $authors = json_decode($part1)[0];
+        $ranks = json_decode($part1)[1][1];
+        $title = json_decode($part1)[2];
+        $image = $part2;
+        $image =utf8_decode($image);
 
         // Combine the authors and ranks into an array of arrays
         $author_ranks = array();
