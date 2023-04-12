@@ -131,7 +131,7 @@
 
     {{-- Modal for detail article --}}
     <div class="modal fade" id="articleModal" tabindex="-1" aria-labelledby="articleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-scrollable">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="article-modal-title" id="articleModalLabel"></h5>
