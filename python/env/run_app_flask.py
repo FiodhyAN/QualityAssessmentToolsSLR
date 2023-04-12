@@ -55,12 +55,12 @@ def query_rank(nama_project, json):
 def getData(data=None):
     if data == None:
         table = [
-            ["a1", ['a', 'b', 'c'],   ['a', 'b', 'c', 'k', 'l'], '1993', ['p1', 'p2'],'title of a1'], 
-            ["a2", ['c', 'd', 'e'],   ['a', 'c', 'd', 'e', 'm', 'n'], '1993', ['p1', 'p3'],'title of a2'],
-            ["a3", ['f', 'g', 'h'],   ['c', 'd', 'f', 'g', 'h', 'o'], '1993', ['p2', 'p4', 'p5'],'title of a3'], 
-            ["a4", ['i', 'j'],        ['c', 'd', 'p', 'q'], '1994', ['p3', 'p6'], ['a1', 'a2'], 'title of a4'], 
-            ["a5", ['dj', 'dk'],      ['a', 'dj', 'dk', 'm', 'r'], '1994', ['p1', 'p7'], ['a1', 'a2', 'a3'], 'title of a5'], 
-            ["a6", ['d', 'ac', 'ad'], ['d', 'ac', 'ad', 's', 't'], '1994', ['p8', 'p9'], ['a1', 'a3'], 'title of a6'],
+            ["a1", ['a', 'b', 'c'],   ['a', 'b', 'c', 'k', 'l'], '1993', ['p1', 'p2'],'title of a1','nation of p1'], 
+            ["a2", ['c', 'd', 'e'],   ['a', 'c', 'd', 'e', 'm', 'n'], '1993', ['p1', 'p3'],'title of a2','nation of p1'],
+            ["a3", ['f', 'g', 'h'],   ['c', 'd', 'f', 'g', 'h', 'o'], '1993', ['p2', 'p4', 'p5'],'title of a3','nation of p2'], 
+            ["a4", ['i', 'j'],        ['c', 'd', 'p', 'q'], '1994', ['p3', 'p6'], ['a1', 'a2'], 'title of a4', 'nation of p3'], 
+            ["a5", ['dj', 'dk'],      ['a', 'dj', 'dk', 'm', 'r'], '1994', ['p1', 'p7'], ['a1', 'a2', 'a3'], 'title of a5','nation of p1'], 
+            ["a6", ['d', 'ac', 'ad'], ['d', 'ac', 'ad', 's', 't'], '1994', ['p8', 'p9'], ['a1', 'a3'], 'title of a6','nation of p8'],
         ]
     else:
         table = data
@@ -73,29 +73,39 @@ def getArticleIdAuthorReferencesAndAuthor(table):
     articles = []
     initial_articles_pair = []
     title_articles_pair = []
+    initial_author_pair = []
+    nation_author_pair = []
+
     for i in table:
         row = []
         row.append(i[0])
         articles.append(i[0])
-
         row.append(i[4])
+        count=0
         for penulis in i[4]:
+            count+=1
+            if count==1:
+                initial_author_pair.append(penulis)
+                print("this is my "+i[len(i)-1])
+                nation_author_pair.append(i[len(i)-1])
             authors.append(penulis)
         try:
             row.append(i[5])
             for article in i[5]:
-                articles.append(article)
+                # memastikan article != ''
+                if len(article) > 1:
+                    articles.append(article)
         except:
             row.append([])
         pairs.append(row)
+
+        # memasukkan array kode artikel dan judulnya
         initial_articles_pair.append(i[0])
-        try:
-            title_articles_pair.append(i[6])
-        except:
-            title_articles_pair.append(i[5])
+        title_articles_pair.append(i[len(i)-2])
+    # menghilangkan duplikat
     authors = sorted(set(authors))
     articles = sorted(set(articles))
-    return pairs, authors, articles,initial_articles_pair ,title_articles_pair
+    return pairs, authors, articles,initial_articles_pair ,title_articles_pair,initial_author_pair,nation_author_pair
 
 
 def author_matrixs(authors):
@@ -141,6 +151,7 @@ def getTable2Data(pairs, search_matrix, type):
             authorList = i[2]
             author = penulisList
             for author_reference in authorList:
+                # memastikan article/author != ''
                 if len(author) <= 1 or len(author_reference) <= 1:
                     continue
                 index = search_matrix.index([author, author_reference])
@@ -492,7 +503,7 @@ def data(type, name):
         print(tabulate(table))
 
     # pair ArticleId,Author,& References & author
-        pairs, authors, articles,initial_articles_pair ,title_articles_pair = getArticleIdAuthorReferencesAndAuthor(table)
+        pairs, authors, articles,initial_articles_pair ,title_articles_pair,initial_author_pair,nation_author_pair = getArticleIdAuthorReferencesAndAuthor(table)
 
         # for i in pairs:
         #     print(i)
@@ -553,38 +564,51 @@ def data(type, name):
                     "Waktu eksekusi program: {:.2f} detik".format(total_time))
                 return my_base64_jpgData
         elif name == "rank":
-            # if type == "article":
-            #     title_of_the_article = []
-            #     for i in input_author_article:
-            #         title_of_the_article.append(title_articles_pair[initial_articles_pair.index(i)])
+            title_nation_of_the_article = []
+            for i in input_author_article:
+                if type == "article":
+                    title_nation_of_the_article.append(title_articles_pair[initial_articles_pair.index(i)])
+                elif type == "author":
+                    try:
+                        title_nation_of_the_article.append(nation_author_pair[initial_author_pair.index(i)])
+                    except:
+                        # bukan penulis pertama
+                        title_nation_of_the_article.append("None")
             tmp = [input_author_article, [table, author_rank]]
-            # if type == "article":
-            #     tmp.append(title_of_the_article)
+            if type == "article" or type == "author":
+                tmp.append(title_nation_of_the_article)
             end_time = time.time()
             total_time = end_time - start_time
             print("Waktu eksekusi program: {:.2f} detik".format(total_time))
             return tmp
         
         elif name == "rankgraph":
-            # if type == "article":
-            #     title_of_the_article = []
-            #     for i in input_author_article:
-            #         title_of_the_article.append(title_articles_pair[initial_articles_pair.index(i)])
+            title_nation_of_the_article = []
+            for i in input_author_article:
+                if type == "article":
+                    title_nation_of_the_article.append(title_articles_pair[initial_articles_pair.index(i)])
+                elif type == "author":
+                    try:
+                        title_nation_of_the_article.append(nation_author_pair[initial_author_pair.index(i)])
+                    except:
+                        # bukan penulis pertama
+                        title_nation_of_the_article.append("None")
+
+            tmp = [input_author_article, [table, author_rank],title_nation_of_the_article]
+            my_json = json.dumps(tmp)
             # Make Term Graph
             output = makeTermGraph(
                 input_author_article, author_matrix_and_relation, last_author_rank, outer_author, top_author_rank)
             output.seek(0)
             my_base64_jpgData = base64.b64encode(output.read())
-            # make my_base64_jpgData to be string
             my_base64_jpgData=my_base64_jpgData.decode("utf-8")
-            tmp = [input_author_article, [table, author_rank],my_base64_jpgData]
-            # if type == "article":
-            #     tmp.append(title_of_the_article)            
+            
+
             end_time = time.time()
             total_time = end_time - start_time
             print("Waktu eksekusi program: {:.2f} detik".format(total_time))
-            my_json = json.dumps(tmp)
-            return my_json
+            return [my_json,my_base64_jpgData]
+        
 
 if __name__ == "__main__":
     app.run(debug=True)

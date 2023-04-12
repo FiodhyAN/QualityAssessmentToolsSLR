@@ -62,6 +62,7 @@
                         <th>No</th>
                         <th>{{$type}}</th>
                         <th>Rank</th>
+                        <th>Title/Nation</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -69,6 +70,7 @@
                         <th scope="row">{{ $author_ranks[$i][0] }}</th>
                         <td>{{ $author_ranks[$i][1] }}</td>
                         <td>{{ $author_ranks[$i][2] }}</td>
+                        <td>{{ $author_ranks[$i][3] }}</td>
                         </tr>
                         @endfor
                 </tbody>
