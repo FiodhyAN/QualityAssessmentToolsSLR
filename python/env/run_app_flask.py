@@ -594,20 +594,20 @@ def data(type, name):
                         # bukan penulis pertama
                         title_nation_of_the_article.append("None")
 
-            tmp = [input_author_article, [table, author_rank],title_nation_of_the_article]
-            my_json = json.dumps(tmp)
+            tmp = {'authors':input_author_article, 'ranks':author_rank,'title':title_nation_of_the_article}
+            tmp=json.dumps(tmp)
             # Make Term Graph
-            output = makeTermGraph(
-                input_author_article, author_matrix_and_relation, last_author_rank, outer_author, top_author_rank)
+            output = makeTermGraph(input_author_article, author_matrix_and_relation, last_author_rank, outer_author, top_author_rank)
             output.seek(0)
             my_base64_jpgData = base64.b64encode(output.read())
             my_base64_jpgData=my_base64_jpgData.decode("utf-8")
-            
+            tmp_dict = json.loads(tmp)
+            tmp_dict['graph']=my_base64_jpgData
 
             end_time = time.time()
             total_time = end_time - start_time
             print("Waktu eksekusi program: {:.2f} detik".format(total_time))
-            return json.dumps([my_json,my_base64_jpgData])
+            return tmp_dict
         
 
 if __name__ == "__main__":
