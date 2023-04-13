@@ -16,7 +16,8 @@
                         <option disabled selected>-- Choose Status --</option>
                         <option value="all">All Article</option>
                         <option value="not_assign">Not Assign</option>
-                        <option value="assessed">Assessed</option>
+                        <option value="part_assessed">Partially Assessed</option>
+                        <option value="full_assessed">Fully Assessed</option>
                         <option value="not_assessed">Not Assessed</option>
                     </select>
                 </div>
@@ -102,6 +103,7 @@
         $('.select_status').on('change', function() {
             var status = $(this).val();
             var project_id = {{ decrypt(request()->pid) }};
+            console.log(project_id);
 
             $.ajax({
                 url: '{{ route('find.status') }}',
@@ -125,7 +127,8 @@
                                 class="d-flex justify-content-center badge alert-primary" data-bs-toggle="modal"\
                                 data-bs-target="#userModal"\
                                 data-id_no="' + data[index].id + ' - ' + data[index].no + '"\
-                                data-id="' + data[index].id + '">\
+                                data-id="' + data[index].id + '"\
+                                data-pid="' + project_id + '">\
                                 <ion-icon name="eye-sharp"></ion-icon> Show\
                             </a>'
                         ]).draw();
@@ -135,7 +138,7 @@
             })
         })
 
-        table.on('click', '#user_status', function() {
+        table.on('click', 'tbody #user_status', function() {
             var id_no = $(this).data('id_no');
             var article_id = $(this).data('id');
             var project_id = $(this).data('pid');
@@ -150,6 +153,7 @@
                     project_id: project_id
                 },
                 success: function(data) {
+                    console.log(data);
                     $('#userTable').empty();
                     let no = 1;
                     for (let index = 0; index < data.length; index++) {
