@@ -18,7 +18,7 @@
         <div class="row">
             <div class="col-md-4">
                 <select class="form-select" name="project" id="project">
-                    <option value="empty-field" disabled selected>-- Select Project --</option>
+                    <option></option>
                     @foreach ($projects as $project)
                         <option value="{{ $project->id }}">{{ $project->project_name }}</option>
                     @endforeach
@@ -26,7 +26,7 @@
             </div>
             <div class="col-md-4">
                 <select class="form-select" aria-label="Default select example" id="top-author" name="top-author">
-                    <option value="empty-field" disabled selected>-- Select Top {{$type}} --</option>
+                    <option></option>
                     <option value="5">5</option>
                     <option value="10">10</option>
                     <option value="20">20</option>
@@ -34,7 +34,7 @@
             </div>
             <div class="col-md-4">
                 <select class="form-select" aria-label="Default select example" id="outer-author" name="outer-author">
-                    <option value="empty-field" disabled selected>-- Select {{$type}} Display --</option>
+                    <option></option>
                     <option value="1">All {{$type}}</option>
                     <option value="0">Relation only</option>
                 </select>
@@ -82,6 +82,20 @@
 </div>
 
 <script>
+    $(document).ready(function(){
+        var type = {!! json_encode($type) !!}
+        $('#project').select2({
+            placeholder: 'Select Project',
+        });
+        $('#top-author').select2({
+            placeholder: 'Select Top ' + type,
+            minimumResultsForSearch: -1
+        });
+        $('#outer-author').select2({
+            placeholder: 'Select ' + type + ' Display',
+            minimumResultsForSearch: -1
+        });
+    })
     var myImage = document.getElementById('my-image');
     myImage.onerror = function() {
         myImage.onerror = null;
