@@ -292,7 +292,7 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
                            )  # increase node size to 200
     nx.draw_networkx_edges(G, pos, edgelist=G.edges(),
                            width=1, alpha=0.5, edge_color="b")
-    nx.draw_networkx_labels(G, pos, font_size=8,
+    nx.draw_networkx_labels(G, pos, font_size=15,
                             font_family="sans-serif", font_color="black",
                             labels=labels
                             )

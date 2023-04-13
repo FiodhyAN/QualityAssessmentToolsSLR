@@ -214,8 +214,8 @@ class DataProcessingController extends Controller
         // https://stackoverflow.com/questions/6297591/how-to-invert-transpose-the-rows-and-columns-of-an-html-table
         set_time_limit(6000);
         $response = Http::timeout(6000)->post(
-            // 'http://127.0.0.1:5000/data/' . $id . '/rankgraph',
-            'https://lokerkita640.pythonanywhere.com//data/' . $id . '/rankgraph',
+            'http://127.0.0.1:5000/data/' . $id . '/rankgraph',
+            // 'https://lokerkita640.pythonanywhere.com//data/' . $id . '/rankgraph',
             [
                 'data' => $result
                 ,

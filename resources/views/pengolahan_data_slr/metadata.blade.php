@@ -18,7 +18,7 @@
         <div class="row">
             <div class="col-md-4">
                 <select class="form-select" name="project" id="project">
-                    <option></option>
+                    <option value="empty-field" disabled selected>-- Select Project --</option>
                     @foreach ($projects as $project)
                         <option value="{{ $project->id }}">{{ $project->project_name }}</option>
                     @endforeach
@@ -26,7 +26,7 @@
             </div>
             <div class="col-md-4">
                 <select class="form-select" aria-label="Default select example" id="top-author" name="top-author">
-                    <option></option>
+                    <option value="empty-field" disabled selected>-- Select Top {{$type}} --</option>
                     <option value="5">5</option>
                     <option value="10">10</option>
                     <option value="20">20</option>
@@ -34,7 +34,7 @@
             </div>
             <div class="col-md-4">
                 <select class="form-select" aria-label="Default select example" id="outer-author" name="outer-author">
-                    <option></option>
+                    <option value="empty-field" disabled selected>-- Select {{$type}} Display --</option>
                     <option value="1">All {{$type}}</option>
                     <option value="0">Relation only</option>
                 </select>
@@ -46,9 +46,24 @@
         <div class="col-md-6" style="display:{{$display}}">
             <div class="container text-center mb-5">
                 <!-- HTML -->
-                <a data-fancybox="gallery" href="{{$src}}">
-                    <img class="img-fluid" src="{{$src}}" alt="Gambar 1" id="my-image" />
-                </a>
+                <figure>
+                    <a data-fancybox="gallery" href="{{$src}}">
+                        <img class="img-fluid" src="{{$src}}" alt="Gambar 1" id="my-image" />
+                    </a>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <figcaption style="color: purple;">Top Authors</figcaption>
+                        </div>
+                        <div class="col-md-4">
+                            <figcaption style="color: blue;">Author with Relation</figcaption>
+                        </div>
+                        <div class="col-md-4">
+                            <figcaption style="color: red;">Author without Relation</figcaption>
+                        </div>
+                        <!-- Tambahkan badge dengan ikon -->
+                        <span class="badge badge-pill badge-danger"><i class="fas fa-circle"></i></span>
+                    </div>
+                </figure>
                 <div class="btn btn-primary mt-5" onclick="download_image()" style="display:{{$display}}" id="download-1">Download</div>
             </div>
         </div>
@@ -82,20 +97,6 @@
 </div>
 
 <script>
-    $(document).ready(function(){
-        var type = {!! json_encode($type) !!}
-        $('#project').select2({
-            placeholder: 'Select Project',
-        });
-        $('#top-author').select2({
-            placeholder: 'Select Top ' + type,
-            minimumResultsForSearch: -1
-        });
-        $('#outer-author').select2({
-            placeholder: 'Select ' + type + ' Display',
-            minimumResultsForSearch: -1
-        });
-    })
     var myImage = document.getElementById('my-image');
     myImage.onerror = function() {
         myImage.onerror = null;
