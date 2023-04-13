@@ -45,19 +45,26 @@ class ProjectAdminController extends Controller
                 $query->with('user');
             }])->where('project_id', $request->project_id)->get();
         }
-        elseif ($request->status == 'assessed') {
+        elseif ($request->status == 'part_assessed') {
             return Article::with(['project', 'article_user' => function($query){
                 $query->with('user')->where('is_assessed', true);
             }])->whereHas('article_user', function($query){
                 $query->where('is_assessed', true);
             })->where('project_id', $request->project_id)->get();
         }
+        elseif ($request->status == 'full_assessed') {
+            return Article::with(['project', 'article_user' => function($query){
+                $query->with('user')->where('is_assessed', true);
+            }])->whereDoesntHave('article_user', function($query){
+                $query->where('is_assessed', false);
+            })->whereHas('article_user')->where('project_id', $request->project_id)->get();
+        }
         elseif ($request->status == 'not_assessed') {
             return Article::with(['project', 'article_user' => function($query){
                 $query->with('user')->where('is_assessed', false);
-            }])->whereHas('article_user', function($query){
-                $query->where('is_assessed', false);
-            })->where('project_id', $request->project_id)->get();
+            }])->whereDoesntHave('article_user', function($query){
+                $query->where('is_assessed', true);
+            })->whereHas('article_user')->where('project_id', $request->project_id)->get();
         }
         else {
             return Article::doesntHave('article_user')->with('article_user')->where('project_id', $request->project_id)->get();
