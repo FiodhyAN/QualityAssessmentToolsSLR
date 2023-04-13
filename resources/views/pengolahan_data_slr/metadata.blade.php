@@ -43,9 +43,7 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <div class="row mt-5">
-        <div class="col-md-6">
-            
-            <h1 class="text-center m-5">{{$type}} Graph</h1>
+        <div class="col-md-6" style="display:{{$display}}">
             <div class="container text-center mb-5">
                 <!-- HTML -->
                 <a data-fancybox="gallery" href="{{$src}}">
@@ -54,11 +52,10 @@
                 <div class="btn btn-primary mt-5" onclick="download_image()" style="display:{{$display}}" id="download-1">Download</div>
             </div>
         </div>
-        <div class="col-md-6">
-            <h1 class="text-center mt-5">{{$type}} Rank Table</h1>
+        <div class="col-md-6" style="display:{{$display}}">
             <table class="table" id="my-table">
                 <thead>
-                    <tr>
+                    <tr class="text-center">
                         <th>Index</th>
                         <th>{{$type}}</th>
                         <th>Rank</th>
