@@ -1,0 +1,75 @@
+<!-- https://worldmapjs.org/cloropleth.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://worldmapjs.org/css/worldmap.v1.css"> <!-- Worldmap CSS -->
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://worldmapjs.org/js/jquery.min.js"></script> 
+    <script src="https://worldmapjs.org/js/topojson.v1.min.js"></script>
+    <!-- jQuery library -->
+    
+    
+    <!-- Latest compiled JavaScript -->
+    <script src="https://worldmapjs.org/js/bootstrap.min.js"></script>
+    
+    <link rel="stylesheet" type="text/css" href="https://worldmapjs.org/css/jquery.dataTables.min.css">
+    
+    <!-- datatables -->
+    <script src="https://worldmapjs.org/js/jquery.dataTables.min.js"></script>
+    <script src="https://worldmapjs.org/js/d3.v3.min.js"></script>
+    <script src="https://worldmapjs.org/js/d3.geo.projection.v0.min.js"></script>
+    <script src="https://worldmapjs.org/js/queue.v1.min.js"></script>
+
+</head>
+<body>
+    <h1>halo</h1>
+    <div id="mapcontainer" align="center"></div> <!-- Container for the map -->
+
+    <script src="https://worldmapjs.org/js/worldmap.v1.js"></script> <!-- Worldmap JavaScript -->
+    <script>
+        var createmap = new Worldmap({  
+            elementid: "#mapcontainer",
+            mapstyle: {
+       ocean: "#4A5B62",
+        region: "#F3F3F3",
+        border : "#ffffff"
+    },
+    project: {
+       // name: "Orthographic",
+        
+        name: "Mercator",
+        zoomlevel: 6
+        //zoomarea:[-122.417, 37.775]
+       // center:[-41,174]
+                           },
+   // showtable:false,
+   // editpanel:false,
+   // zoomlevel: 6,
+   // gotoarea:[-122.417, 37.775],
+  dataType: 'csv',
+   dataurl: 'https://worldmapjs.org/countriesdata.csv',
+   defaultfill: "steelblue",
+   defaultsize: 30,
+  // data:[{"location":"AFG","color":"blue"},{"location":"AGO","color":"green"},{"location":"ALB","color":"magenta"},{"location":"ARE","color":"yellow"},{"location":"ARG","color":"violet"},{"location":"ARM","color":"brown"}],
+  // plugin: "cloropleth",
+  //data:[{"latitude":29.9510658,"longitude":-90.0715323,"image":"https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/24x24/DrawingPin1_Blue.png","width":"20","height":"20"},{"latitude":40.65,"longitude":-73.95,"image":"https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/24x24/DrawingPin1_Blue.png","width":"15","height":"20"},{"latitude":42.2808256,"longitude":-83.7430378,"image":"https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/24x24/DrawingPin1_Blue.png","width":"18","height":"20"},{"latitude":34.0522342,"longitude":-118.2436849,"image":"https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/24x24/DrawingPin1_Blue.png","width":"15","height":"20"},{"latitude":28.5383355,"longitude":-81.3792365,"image":"https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/24x24/DrawingPin1_Blue.png","width":"30","height":"20"},{"latitude":40.4406248,"longitude":-79.9958864,"image":"https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/24x24/DrawingPin1_Blue.png","width":"35","height":"20"}],
+  //plugin: "images",
+        zoomable: true}); 
+  //  setTimeout(function(){createmap.update([{origin:"ES",target:"US"},{origin:"US",target:"CL"},{origin:"CL",target:"AR"},{origin:"AR",target:"BR"},{origin:"BR",target:"EG"},{origin:"EG",target:"BE"}],"arcs")}, 7000)
+$(document).ready(function(){
+     $("#playeranim").click(function() {
+   setTimeout(function(){createmap.update([{"location":"US","color":"darkgreen"},{"location":"MX","color":"brown"},{"location":"CO","color":"#BC0EF6"},{"location":"CU","color":"#F6DF0E"},{"location":"AR","color":"#0E5FF6"},{"location":"CL","color":"#0EF62D"},{"location":"BR","color":"#0E5FF6"}],"cloropleth")}, 4000);
+ 
+});});
+
+</script>
+</body>  
+</html>

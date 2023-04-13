@@ -12,6 +12,9 @@
     <!-- menggunakan CDN untuk fetch -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.6.2/fetch.min.js"></script>
 
+    <!-- font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-PD5eLkBx8QI5lKvS21cmPZdGhZzyI1WYKGp4d/EzXcJx0o0puW/i3qdrQ2syBw0V7RPNtWbeYV7hcSKXHJc7xg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <h1 class="text-center mb-5">{{$type}} Relationships and Popularity</h1>
     <form class="form-body row g-3" action="/proses-metadata/{{$url}}" method="POST" onsubmit="return validateForm()">
         @csrf
@@ -44,21 +47,37 @@
     </form>
     <div class="row mt-5">
         <div class="col-md-6" style="display:{{$display}}">
-            <div class="container text-center mb-5">
+            <div class="container mb-5">
                 <!-- HTML -->
                 <figure>
                     <a data-fancybox="gallery" href="{{$src}}">
                         <img class="img-fluid" src="{{$src}}" alt="Gambar 1" id="my-image" />
                     </a>
-                    <div class="row">
+                    <div class="row text-center">
                         <div class="col-md-4">
-                            <figcaption style="color: purple;">Top Authors</figcaption>
+                            <!-- make small circle with purple color -->
+                            <div class="d-flex align-items-center mx-3">
+                                <svg height="1em" width="1em" viewBox="0 0 512 512">
+                                    <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z" fill="purple" />
+                                </svg>
+                                <figcaption class="ml-2" style="color: purple;">Top Cited Authors</figcaption>
+                            </div>
                         </div>
                         <div class="col-md-4">
-                            <figcaption style="color: blue;">Author with Relation</figcaption>
+                            <div class="d-flex align-items-center mx-3">
+                            <svg height="1em" width="1em" viewBox="0 0 512 512">
+                                <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z" fill="blue" />
+                            </svg>
+                            <figcaption class="ml-2" style="color: blue;">Cited Author</figcaption>
+                            </div>
                         </div>
                         <div class="col-md-4">
-                            <figcaption style="color: red;">Author without Relation</figcaption>
+                            <div class="d-flex align-items-center mx-3">
+                            <svg height="1em" width="1em" viewBox="0 0 512 512">
+                                <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z" fill="red" />
+                            </svg>
+                            <figcaption class="ml-2" style="color: red;">Uncited Author</figcaption>
+                            </div>
                         </div>
                         <!-- Tambahkan badge dengan ikon -->
                         <span class="badge badge-pill badge-danger"><i class="fas fa-circle"></i></span>
