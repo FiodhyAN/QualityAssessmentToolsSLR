@@ -59,10 +59,14 @@
             <table class="table" id="my-table">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th>Index</th>
                         <th>{{$type}}</th>
                         <th>Rank</th>
-                        <th>Title/Nation</th>
+                        @if($type == "Author")
+                        <th>Nation</th>
+                        @else
+                        <th>Title</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
