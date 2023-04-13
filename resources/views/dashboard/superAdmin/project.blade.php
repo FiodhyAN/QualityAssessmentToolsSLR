@@ -230,6 +230,15 @@
                     confirmButtonText: 'Yes, delete it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Deleting...',
+                            text: 'Please wait...',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading()
+                            },
+                        });
+
                         $.ajax({
                             url: '/deleteProject',
                             type: 'DELETE',
@@ -237,16 +246,29 @@
                                 "_token": "{{ csrf_token() }}",
                                 "id": id
                             },
+                            dataType: 'json',
                             success: function(response) {
-                                Swal.fire({
-                                    title: 'Deleted!',
-                                    text: 'Project has been deleted.',
-                                    icon: 'success',
-                                    confirmButtonText: 'Ok',
-                                    timer: 5000
-                                }).then(isConfirmed => {
-                                    table.ajax.reload();
-                                });
+                                console.log(response);
+                                Swal.close();
+                                if (response.error != null || response.error != undefined) {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: response.error,
+                                        icon: 'error',
+                                        confirmButtonText: 'Ok',
+                                    })
+                                }
+                                else {
+                                    Swal.fire({
+                                        title: 'Deleted!',
+                                        text: 'Project has been deleted.',
+                                        icon: 'success',
+                                        confirmButtonText: 'Ok',
+                                        timer: 5000
+                                    }).then(isConfirmed => {
+                                        table.ajax.reload();
+                                    });
+                                }
                             }
                         })
                     }

@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\ProjectUser;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProjectController extends Controller
@@ -103,13 +104,11 @@ class ProjectController extends Controller
             'project_name' => 'required',
             'limit' => 'required',
         ]);
-        Project::where('id', $request->project_id)->update([
-            'project_name' => $request->project_name,
-            'limit_reviewer' => $request->limit,
-        ]);
 
-        if ($request->old_admin != $request->admin_project) {
-            foreach ($request->admin_project as $key => $value) {
+        $admin = ProjectUser::where('project_id', $request->project_id)->where('user_role', 'admin')->pluck('user_id')->toArray();
+
+        foreach ($request->admin_project as $value) {
+            if (!in_array($value, $admin)) {
                 $article_user_admin = ArticleUser::with('user')->where('user_id', $value)->whereHas('article', function($query) use ($request){
                     $query->where('project_id', $request->project_id);
                 })->first();
@@ -119,116 +118,152 @@ class ProjectController extends Controller
                         $error = $article_user_admin->user->name.' cannot be made admin because it has already done an assessment';
                         return json_encode(['error' => $error]);
                     }
-                    else {
-                        ArticleUser::where('user_id', $value)->whereHas('article', function($query) use ($request){
-                            $query->where('project_id', $request->project_id);
-                        })->delete();
-                    }
                 }
-
-                ProjectUser::where('project_id', $request->project_id)->where('user_id', $value)->update([
-                    'user_role' => 'admin',
-                ]);
-                User::where('id', $value)->update([
-                    'is_admin' => true,
-                ]);
-
-            }
-        }
-        
-        $project_user = ProjectUser::where('project_id', $request->project_id)->where('user_role', 'reviewer')->get();
-        $reviewer_array = [];
-        if($request->has('reviewer')){
-            $reviewer_array = $request->reviewer;
-        }
-        foreach ($project_user as $pu) {
-            if (!in_array($pu->user_id, $reviewer_array) && !in_array($pu->user_id, $request->admin_project)) {
-                ProjectUser::where('project_id', $request->project_id)->where('user_id', $pu->user_id)->delete();
-                $article_user = ArticleUser::whereHas('article', function($query) use ($request){
-                    $query->where('project_id', $request->project_id);
-                })->where('user_id', $pu->user_id);
-                $article_user->delete();
-
-                ArticleUserQuestionaire::where('article_user_id', $article_user->pluck('id')->toArray())->delete();
-            }
-        }
-        foreach ($reviewer_array as $reviewer) {
-            if (!in_array($reviewer, $project_user->pluck('user_id')->toArray())) {
-                // update or create
-                ProjectUser::updateOrCreate([
-                    'project_id' => $request->project_id,
-                    'user_id' => $reviewer,
-                ],[
-                    'user_role' => 'reviewer',
-                ]);
             }
         }
 
-        $user_project_user = User::with(['project_user' => function($query){
-            $query->where('user_role', 'admin');
-        }])->get();
-        foreach($user_project_user as $upu){
-            if($upu->project_user->count() == 0 || $upu->project_user == null){
-                User::where('id', $upu->id)->update([
+        DB::beginTransaction();
+        try {
+            Project::where('id', $request->project_id)->update([
+                'project_name' => $request->project_name,
+                'limit_reviewer' => $request->limit,
+            ]);
+    
+            if ($request->old_admin != $request->admin_project) {
+                foreach ($request->admin_project as $key => $value) {
+                    $article_user_admin = ArticleUser::with('user')->where('user_id', $value)->whereHas('article', function($query) use ($request){
+                        $query->where('project_id', $request->project_id);
+                    })->first();
+
+                    ArticleUser::where('user_id', $value)->whereHas('article', function($query) use ($request){
+                        $query->where('project_id', $request->project_id);
+                    })->delete();
+    
+                    ProjectUser::where('project_id', $request->project_id)->where('user_id', $value)->update([
+                        'user_role' => 'admin',
+                    ]);
+                    User::where('id', $value)->update([
+                        'is_admin' => true,
+                    ]);
+    
+                }
+            }
+            
+            $project_user = ProjectUser::where('project_id', $request->project_id)->where('user_role', 'reviewer')->get();
+            $reviewer_array = [];
+            if($request->has('reviewer')){
+                $reviewer_array = $request->reviewer;
+            }
+            foreach ($project_user as $pu) {
+                if (!in_array($pu->user_id, $reviewer_array) && !in_array($pu->user_id, $request->admin_project)) {
+                    ProjectUser::where('project_id', $request->project_id)->where('user_id', $pu->user_id)->delete();
+                    $article_user = ArticleUser::whereHas('article', function($query) use ($request){
+                        $query->where('project_id', $request->project_id);
+                    })->where('user_id', $pu->user_id);
+                    $article_user->delete();
+    
+                    ArticleUserQuestionaire::where('article_user_id', $article_user->pluck('id')->toArray())->delete();
+                }
+            }
+            foreach ($reviewer_array as $reviewer) {
+                if (!in_array($reviewer, $project_user->pluck('user_id')->toArray())) {
+                    // update or create
+                    ProjectUser::updateOrCreate([
+                        'project_id' => $request->project_id,
+                        'user_id' => $reviewer,
+                    ],[
+                        'user_role' => 'reviewer',
+                    ]);
+                }
+            }
+    
+            $user_project_user = User::with(['project_user' => function($query){
+                $query->where('user_role', 'admin');
+            }])->get();
+            foreach($user_project_user as $upu){
+                if($upu->project_user->count() == 0 || $upu->project_user == null){
+                    User::where('id', $upu->id)->update([
+                        'is_admin' => false,
+                    ]);
+                }
+            }
+    
+            $user = User::with(['project_user' => function($query) use ($request){
+                $query->where('user_role', 'admin');
+            }])->where('id', $request->old_admin)->first();
+    
+            if ($user->project_user->count() == 0) {
+                User::where('id', $request->old_admin)->update([
                     'is_admin' => false,
                 ]);
             }
+            else {
+                User::where('id', $request->old_admin)->update([
+                    'is_admin' => true,
+                ]);
+            }
+            DB::commit();
+            return json_encode(['success' => 'success']);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return json_encode(['error' => $th->getMessage()]);
         }
-
-        $user = User::with(['project_user' => function($query) use ($request){
-            $query->where('user_role', 'admin');
-        }])->where('id', $request->old_admin)->first();
-
-        if ($user->project_user->count() == 0) {
-            User::where('id', $request->old_admin)->update([
-                'is_admin' => false,
-            ]);
-        }
-        else {
-            User::where('id', $request->old_admin)->update([
-                'is_admin' => true,
-            ]);
-        }
-        return json_encode(['success' => 'success']);
+        
     }
 
     public function delete(Request $request)
     {
         $this->authorize('superadmin');
         
-        Project::where('id', $request->id)->delete();
-        ProjectUser::where('project_id', $request->id)->delete();
-
-        $users = User::with('project_user')->get();
-        $articles = Article::where('project_id', $request->id)->get();
-        foreach ($articles as $article) {
-            $articleUser = ArticleUser::where('article_id', $article->id);
-            foreach ($articleUser as $au) {
-                ArticleUserQuestionaire::where('article_user_id', $au->id)->delete();
-            }
-            $articleUser->delete();
+        if (Article::whereHas('article_user', function($query){
+            $query->where('is_assessed', true);
+        })->where('project_id', $request->id)->exists()) {
+            return json_encode(['error' => 'Cannot delete project because it has already been assessed']);
         }
-        Article::where('project_id', $request->id)->delete();
+        DB::beginTransaction();
+        try {
+            Project::where('id', $request->id)->delete();
+            ProjectUser::where('project_id', $request->id)->delete();
 
-        $user_project_user = User::with(['project_user' => function($query){
-            $query->where('user_role', 'admin');
-        }])->get();
-        foreach($user_project_user as $upu){
-            if($upu->project_user->count() == 0 || $upu->project_user == null){
-                User::where('id', $upu->id)->update([
-                    'is_admin' => false,
-                ]);
+            $users = User::with('project_user')->get();
+            $articles = Article::where('project_id', $request->id)->get();
+            
+            foreach ($articles as $article) {
+                $articleUser = ArticleUser::where('article_id', $article->id);
+                foreach ($articleUser as $au) {
+                    ArticleUserQuestionaire::where('article_user_id', $au->id)->delete();
+                }
+                $articleUser->delete();
             }
+            Article::where('project_id', $request->id)->delete();
+
+            $user_project_user = User::with(['project_user' => function($query){
+                $query->where('user_role', 'admin');
+            }])->get();
+            foreach($user_project_user as $upu){
+                if($upu->project_user->count() == 0 || $upu->project_user == null){
+                    User::where('id', $upu->id)->update([
+                        'is_admin' => false,
+                    ]);
+                }
+            }
+            foreach ($users as $user) {
+                if ($user->project_user->count() == 0) {
+                    $user->update([
+                        'is_admin' => false,
+                    ]);
+                }
+            }
+            DB::commit();
+            return json_encode(['success' => 'success']);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return json_encode(['error' => $th->getMessage()]);
         }
+        
 
         
-        foreach ($users as $user) {
-            if ($user->project_user->count() == 0) {
-                $user->update([
-                    'is_admin' => false,
-                ]);
-            }
-        }
+        
     }
 
     public function findProjectUser(Request $request)

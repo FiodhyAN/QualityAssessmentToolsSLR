@@ -277,15 +277,14 @@ class ArticleController extends Controller
     {
         $this->authorize('admin');
         $article = Article::find($request->id);
-        $articleUser = ArticleUser::where('article_id', $request->id)->get();
-        foreach ($articleUser as $au) {
-            if($au->is_assessed == true)
-            {
-                return json_encode(['error' => 'Article has been assessed, cannot be deleted!']);
-            }
+        if (ArticleUser::where('article_id', $request->id)->where('is_assessed', true)->exists())
+        {
+            return json_encode(['error' => 'Article has been assessed, cannot be deleted!']);
         }
         ArticleUser::where('article_id', $request->id)->delete();
-        return $article->delete();
+        $article->delete();
+
+        return json_encode(['success' => 'Article successfully deleted!']);
     }
 
     public function storeExcel(Request $request)

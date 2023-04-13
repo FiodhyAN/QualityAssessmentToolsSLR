@@ -288,6 +288,14 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Deleting...',
+                        html: 'Please wait while deleting article.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading()
+                        },
+                    });
                     $.ajax({
                         url: '/deleteArticle',
                         type: 'DELETE',
@@ -297,6 +305,7 @@
                         },
                         dataType: 'json',
                         success: function(response) {
+                            Swal.close();
                             console.log(response);
                             if (response.error != null || response.error != undefined) {
                                 Swal.fire({
