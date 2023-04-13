@@ -8,6 +8,7 @@ use App\Models\ArticleUserQuestionaire;
 use App\Models\Project;
 use App\Models\ProjectUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
 class AssignReviewerController extends Controller
@@ -123,24 +124,37 @@ class AssignReviewerController extends Controller
     public function assignArticle(Request $request)
     {
         $this->authorize('admin');
-        foreach($request->article_id as $value) {
-            ArticleUser::create([
-                'article_id' => $value,
-                'user_id' => $request->user_id
+
+        DB::beginTransaction();
+        try {
+            foreach($request->article_id as $value) {
+                ArticleUser::create([
+                    'article_id' => $value,
+                    'user_id' => $request->user_id
+                ]);
+            }
+            $project_user = ProjectUser::where('project_id', $request->project_id)->where('user_id', $request->user_id)->where('user_role', 'reviewer')->first();
+            if ($project_user == null) {
+                ProjectUser::create([
+                    'project_id' => $request->project_id,
+                    'user_id' => $request->user_id,
+                    'user_role' => 'reviewer'
+                ]);
+            }
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Article has been assigned'
+            ]);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Article has not been assigned'
             ]);
         }
-        $project_user = ProjectUser::where('project_id', $request->project_id)->where('user_id', $request->user_id)->where('user_role', 'reviewer')->first();
-        if ($project_user == null) {
-            ProjectUser::create([
-                'project_id' => $request->project_id,
-                'user_id' => $request->user_id,
-                'user_role' => 'reviewer'
-            ]);
-        }
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Article has been assigned'
-        ]);
+        
+        
     }
 
     public function deleteAssignArticle(Request $request)
