@@ -214,8 +214,8 @@ class DataProcessingController extends Controller
         // https://stackoverflow.com/questions/6297591/how-to-invert-transpose-the-rows-and-columns-of-an-html-table
         set_time_limit(6000);
         $response = Http::timeout(6000)->post(
-            'http://127.0.0.1:5000/data/' . $id . '/rankgraph',
-            // 'https://lokerkita640.pythonanywhere.com//data/' . $id . '/rankgraph',
+            // 'http://127.0.0.1:5000/data/' . $id . '/rankgraph',
+            'https://lokerkita640.pythonanywhere.com//data/' . $id . '/rankgraph',
             [
                 'data' => $result
                 ,
@@ -224,14 +224,14 @@ class DataProcessingController extends Controller
                 'author-rank' => $sum_top_author
             ]
         );
-        $part1=$response[0];
-        $part2=$response[1];
 
-        $authors = json_decode($part1)[0];
-        $ranks = json_decode($part1)[1][1];
-        $title = json_decode($part1)[2];
-        $image = $part2;
+        $image = $response['graph'];
         $image =utf8_decode($image);
+        $authors = $response['authors'];
+        $ranks = $response['ranks'];
+        $title = $response['title'];
+        
+        
 
         // Combine the authors and ranks into an array of arrays
         $author_ranks = array();
