@@ -38,6 +38,7 @@ return new class extends Migration
             $table->string('edatabase_2')->default(NULL)->nullable();
             $table->string('nation_first_author')->nullable();
             $table->string('file')->nullable();
+            $table->string('link_articles')->nullable();
             $table->foreignId('project_id');
             $table->timestamps();
         });

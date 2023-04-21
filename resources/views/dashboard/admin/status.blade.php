@@ -48,7 +48,7 @@
                                             data-id_no="{{ $article->id }} - {{ $article->no }}"
                                             data-id="{{ $article->id }}"
                                             data-pid="{{ decrypt(request()->pid) }}">
-                                            <ion-icon name="eye-sharp"></ion-icon> Show
+                                            <ion-icon name="eye-sharp"></ion-icon>&nbsp;Show
                                         </a>
                                     @endif
                                 </td>

@@ -11,7 +11,10 @@ use App\Models\ArticleUserQuestionaire;
 use App\Models\Questionaire;
 use App\Models\User;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Validation\Rule;
 
 class ArticleController extends Controller
 {
@@ -36,9 +39,9 @@ class ArticleController extends Controller
                 return '<span style="white-space:normal">'.$article->authors.'</span>';
             })
             ->addColumn('action', function (Article $article) use ($id) {
-                $btn = '<button type="button" class="btn btn-warning text-white btn-sm me-2 aksi scoreArticle" id="scoreArticle" data-bs-toggle="modal" data-bs-target="#modalScore" data-id="' . $article->id . '" data-title="' . $article->title . '"><ion-icon name="stats-chart-outline"></ion-icon> Score</button>';
-                $btn .= '<a href="/dashboard/admin/article/' . encrypt($article->id) . '/edit?pid=' . encrypt($id) . '"><button type="button" class="btn btn-primary btn-sm aksi"><ion-icon name="create-outline"></ion-icon> Edit</button></a>';
-                $btn .= '<button type="button" class="btn btn-danger btn-sm ms-2 aksi deleteArticle" data-id="' . $article->id . '"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
+                $btn = '<button type="button" class="btn btn-warning text-white btn-sm aksi scoreArticle" id="scoreArticle" data-bs-toggle="modal" data-bs-target="#modalScore" data-id="' . $article->id . '" data-title="' . $article->title . '"><ion-icon name="stats-chart-outline"></ion-icon> Score</button><br>';
+                $btn .= '<a href="/dashboard/admin/article/' . encrypt($article->id) . '/edit?pid=' . encrypt($id) . '"><button type="button" class="btn btn-primary btn-sm aksi mt-2 mb-2"><ion-icon name="create-outline"></ion-icon> Edit</button></a><br>';
+                $btn .= '<button type="button" class="btn btn-danger btn-sm aksi deleteArticle" data-id="' . $article->id . '"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
                 return $btn;
             })
             ->rawColumns(['no','title', 'publication', 'authors', 'action'])
@@ -68,43 +71,6 @@ class ArticleController extends Controller
                     return '<span class="badge alert-primary">'.count($user->article_user).' Article(s) Assigned</span>';
                 }
             })
-            // ->addColumn('id_no', function (User $user) {
-            //     if (count($user->article_user) == 0 || $user->article_user[0]->article == null) {
-            //         return false;
-            //     } else {
-            //         $id_no = '';
-            //         foreach ($user->article_user as $value) {
-            //             $id_no .= $value->article->id . ' - ' . $value->article->no . '<br>';
-            //         }
-            //         return $id_no;
-            //     }
-            // })
-            // ->addColumn('title', function (User $user) {
-            //     if (count($user->article_user) == 0 || $user->article_user[0]->article == null) {
-            //         return false;
-            //     } else {
-            //         $title = '';
-            //         foreach ($user->article_user as $value) {
-            //             $title .= $value->article->title . '<br>';
-            //         }
-            //         return $title;
-            //     }
-            // })
-            // ->addColumn('assessed', function (User $user) {
-            //     if (count($user->article_user) == 0 || $user->article_user[0]->article == null) {
-            //         return false;
-            //     } else {
-            //         $assessed = '';
-            //         foreach ($user->article_user as $value) {
-            //             if ($value->is_assessed == true) {
-            //                 $assessed .= '<span class="badge alert-success">Assessed</span><br>';
-            //             } else {
-            //                 $assessed .= '<span class="badge alert-danger">Not Assessed</span><br>';
-            //             }
-            //         }
-            //         return $assessed;
-            //     }
-            // })
             ->addColumn('action', function (User $user) use ($id) {
                 if (count($user->article_user) == 0 || $user->article_user[0]->article == null)
                 {
@@ -152,10 +118,10 @@ class ArticleController extends Controller
     public function store(Request $request)
     {
         $this->authorize('admin');
-        // return $request;
         $request->validate([
             'kode_artikel' => 'required',
-            'file' => 'mimes:pdf|nullable',
+            'file' => 'mimes:pdf|nullable|required_without:link',
+            'link' => 'url|nullable|required_without:file',
             'title' => 'required',
             'publication' => 'required',
             'year' => 'required',
@@ -167,18 +133,23 @@ class ArticleController extends Controller
             'cited_gs' => 'required',
             'cited_other' => 'required',
             'keyword' => 'required',
-            'edatabase' => 'required',
+            'edatabase' => 'required'
         ]);
-        //save file to database
+
+        if ($request->link != null && $request->file('file') != null) {
+            return redirect()->back()->with('error', 'Please choose one of the file type');
+        }
+
         if ($request->file('file') != null) {
             $file = $request->file('file');
-            $file_name = $file->getClientOriginalName();
-            $file->move(public_path('articles'), $file_name);
+            $file_name = $file->getClientOriginalName().'_'.time().'.'.$file->getClientOriginalExtension();
+            Storage::putFileAs('public/article', $file, $file_name);
         }
         //save data to database
         $article = Article::create([
             'no' => $request->kode_artikel,
             'file' => $file_name ?? null,
+            'link_articles' => $request->link ?? null,
             'title' => $request->title,
             'publication' => $request->publication,
             'index' => $request->index ?? null,
@@ -217,10 +188,10 @@ class ArticleController extends Controller
     public function update(Request $request)
     {
         $this->authorize('admin');
-        // return $request;
         $request->validate([
             'kode_artikel' => 'required',
-            'file' => 'mimes:pdf|nullable',
+            'file' => 'mimes:pdf|nullable|required_without:link',
+            'link' => 'url|nullable|required_without:file',
             'title' => 'required',
             'publication' => 'required',
             'year' => 'required',
@@ -238,18 +209,32 @@ class ArticleController extends Controller
         $article = Article::find($request->article_id);
         if ($request->file('file') != null) {
             if ($article->file != null) {
-                $file_path = public_path('articles/' . $article->file);
-                $file_delete = File::delete($file_path);
+                $file_path = storage_path('/app/public/article/' . $article->file);
+                File::delete($file_path);
             }
 
             $file = $request->file('file');
-            $file_name = $file->getClientOriginalName();
-            $file->move(public_path('articles'), $file_name);
+            $file_name = $file->getClientOriginalName().'_'.time().'.'.$file->getClientOriginalExtension();
+            Storage::putFileAs('public/article', $file, $file_name);
+            $article->update([
+                'file' => $file_name,
+                'link_articles' => null
+            ]);
+        } elseif ($request->link != null) {
+            if ($article->file != null) {
+                $file_path = storage_path('/app/public/article/' . $article->file);
+                File::delete($file_path);
+            }
+            $article->update([
+                'link_articles' => $request->link,
+                'file' => null
+            ]);
+        } elseif ($request->link != null && $request->file('file') != null) {
+            return redirect()->back()->with('error', 'Please choose one of the file type');
         }
 
         $article->update([
             'no' => $request->kode_artikel,
-            'file' => $file_name ?? $article->file,
             'title' => $request->title ?? $article->title,
             'publication' => $request->publication ?? $article->publication,
             'index' => $request->index ?? $article->index,
@@ -280,6 +265,10 @@ class ArticleController extends Controller
         if (ArticleUser::where('article_id', $request->id)->where('is_assessed', true)->exists())
         {
             return json_encode(['error' => 'Article has been assessed, cannot be deleted!']);
+        }
+        if ($article->file != null) {
+            $file_path = storage_path('/app/public/article/' . $article->file);
+            File::delete($file_path);
         }
         ArticleUser::where('article_id', $request->id)->delete();
         $article->delete();

@@ -190,17 +190,29 @@
                     var neg_answer_user = data.neg_answer_user;
 
                     // Bar Chart Question
-                    bar_question_chart.updateSeries([{
-                        name: 'Positive',
-                        data: pos_answer_question
-                    }, {
-                        name: 'Neutral',
-                        data: net_answer_question
-                    }, {
-                        name: 'Negative',
-                        data: neg_answer_question
-                    }]);
+                    // bar_question_chart.updateSeries([{
+                    //     name: 'Positive',
+                    //     data: pos_answer_question
+                    // }, {
+                    //     name: 'Neutral',
+                    //     data: net_answer_question
+                    // }, {
+                    //     name: 'Negative',
+                    //     data: neg_answer_question
+                    // }]);
                     bar_question_chart.updateOptions({
+                        series: [{
+                            name: 'Positive',
+                            data: pos_answer_question
+                        },
+                        {
+                            name: 'Neutral',
+                            data: net_answer_question
+                        },
+                        {
+                            name: 'Negative',
+                            data: neg_answer_question
+                        }],
                         stroke: {
                             width: 1,
                             colors: ['#fff']
@@ -243,17 +255,29 @@
                     })
 
                     // Column Chart Question
-                    column_question_chart.updateSeries([{
-                        name: 'Positive',
-                        data: pos_answer_question
-                    }, {
-                        name: 'Neutral',
-                        data: net_answer_question
-                    }, {
-                        name: 'Negative',
-                        data: neg_answer_question
-                    }]);
+                    // column_question_chart.updateSeries([{
+                    //     name: 'Positive',
+                    //     data: pos_answer_question
+                    // }, {
+                    //     name: 'Neutral',
+                    //     data: net_answer_question
+                    // }, {
+                    //     name: 'Negative',
+                    //     data: neg_answer_question
+                    // }]);
                     column_question_chart.updateOptions({
+                        series: [{
+                            name: 'Positive',
+                            data: pos_answer_question
+                        },
+                        {
+                            name: 'Neutral',
+                            data: net_answer_question
+                        },
+                        {
+                            name: 'Negative',
+                            data: neg_answer_question
+                        }],
                         dataLabels: {
                             enabled: false
                         },
@@ -292,17 +316,29 @@
                     })
 
                     // Bar Chart User
-                    bar_user_chart.updateSeries([{
-                        name: 'Positive',
-                        data: pos_answer_user
-                    }, {
-                        name: 'Neutral',
-                        data: net_answer_user
-                    }, {
-                        name: 'Negative',
-                        data: neg_answer_user
-                    }]);
+                    // bar_user_chart.updateSeries([{
+                    //     name: 'Positive',
+                    //     data: pos_answer_user
+                    // }, {
+                    //     name: 'Neutral',
+                    //     data: net_answer_user
+                    // }, {
+                    //     name: 'Negative',
+                    //     data: neg_answer_user
+                    // }]);
                     bar_user_chart.updateOptions({
+                        series: [{
+                            name: 'Positive',
+                            data: pos_answer_user
+                        },
+                        {
+                            name: 'Neutral',
+                            data: net_answer_user
+                        },
+                        {
+                            name: 'Negative',
+                            data: neg_answer_user
+                        }],
                         stroke: {
                             width: 1,
                             colors: ['#fff']
@@ -345,17 +381,29 @@
                     });
 
                     // Column Chart User
-                    column_user_chart.updateSeries([{
-                        name: 'Positive',
-                        data: pos_answer_user
-                    }, {
-                        name: 'Neutral',
-                        data: net_answer_user
-                    }, {
-                        name: 'Negative',
-                        data: neg_answer_user
-                    }]);
+                    // column_user_chart.updateSeries([{
+                    //     name: 'Positive',
+                    //     data: pos_answer_user
+                    // }, {
+                    //     name: 'Neutral',
+                    //     data: net_answer_user
+                    // }, {
+                    //     name: 'Negative',
+                    //     data: neg_answer_user
+                    // }]);
                     column_user_chart.updateOptions({
+                        series: [{
+                            name: 'Positive',
+                            data: pos_answer_user
+                        },
+                        {
+                            name: 'Neutral',
+                            data: net_answer_user
+                        },
+                        {
+                            name: 'Negative',
+                            data: neg_answer_user
+                        }],
                         dataLabels: {
                             enabled: false
                         },
