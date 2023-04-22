@@ -66,6 +66,7 @@ Route::get('/article/download', [ArticleController::class, 'downloadExcel'])->mi
 Route::get('/assignmentTable/{id}', [ArticleController::class, 'assignmentTable'])->middleware('auth')->name('assignment.table');
 Route::get('/articleScore', [ArticleController::class, 'articleScore'])->middleware('auth')->name('article.score');
 Route::get('/articleShow', [ArticleController::class, 'articleShow'])->middleware('auth')->name('article.show');
+Route::put('/addArticleFile', [ArticleController::class, 'addArticleFile'])->middleware('auth')->name('article.addFile');
 //Assign Article
 Route::get('/dashboard/admin/assign', [AssignReviewerController::class, 'index'])->middleware('auth');
 Route::get('/assignedTable', [AssignReviewerController::class, 'articleAssignTable'])->middleware('auth')->name('assigned.table');

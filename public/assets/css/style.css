@@ -1505,5 +1505,5 @@ ul.categories-list li {
 .dataTables_scroll
 {
     overflow:auto !important;
-    max-height: 50vh;
+    max-height: 70vh;
 }

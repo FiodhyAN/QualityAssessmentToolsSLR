@@ -11,7 +11,7 @@
         </div>
     @endif
     <a href="/dashboard/admin/project"><button type="button" class="btn btn-secondary mb-2">
-            <ion-icon name="arrow-back"></ion-icon> Back to Project
+            <ion-icon name="arrow-back"></ion-icon> Back
         </button></a>
 
 
@@ -40,6 +40,7 @@
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th></th>
                         </tr>
                     </thead>
                 </table>
@@ -58,9 +59,6 @@
                             <th>No</th>
                             <th>Name</th>
                             <th>Article Assigned</th>
-                            {{-- <th>ID - No</th>
-                            <th>Article</th>
-                            <th>Assessed</th> --}}
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -132,32 +130,88 @@
     {{-- Modal for detail article --}}
     <div class="modal fade" id="articleModal" tabindex="-1" aria-labelledby="articleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="article-modal-title" id="articleModalLabel"></h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table id="score_table" class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th>ID - No</th>
-                                <th>Title</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="articleData">
-                        </tbody>
-                    </table>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="article-modal-title" id="articleModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table id="score_table" class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID - No</th>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="articleData">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-          </div>
         </div>
-      </div>
+    </div>
+
+    {{-- Modal for preview file --}}
+    <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title-file" id="fileModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <iframe id="pdf_preview" src="" width="100%" height="400px"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal For Add File -->
+    <div class="modal fade" id="addFileModal" tabindex="-1" aria-labelledby="addFileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title-addFile" id="addFileModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" id="addFileForm" enctype="multipart/form-data">
+                        @csrf
+                        @method('put')
+                        <input type="hidden" name="article_id" id="article_id">
+                        <div>
+                            <label for="formFile" class="form-label">Upload File</label>
+                            <input class="form-control" type="file" id="formFile" name="file"
+                                accept="application/pdf">
+                                <button id="clearFile" type="button" class="btn alert-danger btn-sm mt-1" disabled><ion-icon name="close-circle"></ion-icon> Clear Choosen File</button>
+                        </div>
+                        <div class="row mt-2">
+                            <span class="d-flex justify-content-center">Or</span>
+                        </div>
+                        <div>
+                            <label for="formFile" class="form-label">Input Link</label>
+                            <input class="form-control" type="text" id="formFile" name="link"
+                                placeholder="ex: https://www.google.com">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" id="submitBtn" class="btn btn-primary">Add File</button>
+                            <button type="button" id="linkNoValidBtn" class="btn btn-primary d-none" disabled>Link Not Valid</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('script')
     <script>
@@ -220,7 +274,6 @@
                 url: '{{ route('article.table', $project->project->id) }}',
                 type: 'GET',
             },
-            // change processing icon
             language: {
                 processing: '<div class="spinner-border text-primary" role="status"> <span class="visually-hidden">Loading...</span></div> '
             },
@@ -233,9 +286,6 @@
                     title: 'Title',
                     data: 'title',
                     name: 'title',
-                    // render: function(data, type, row) {
-                    //     return '<span style="white-space:normal">' + data + "</span>";
-                    // }
                 },
                 {
                     title: 'Year',
@@ -246,17 +296,16 @@
                     title: 'Publication',
                     data: 'publication',
                     name: 'publication',
-                    // render: function(data, type, row) {
-                    //     return '<span style="white-space:normal">' + data + "</span>";
-                    // }
                 },
                 {
                     title: 'Authors',
                     data: 'authors',
                     name: 'authors',
-                    // render: function(data, type, row) {
-                    //     return '<span style="white-space:normal">' + data + "</span>";
-                    // }
+                },
+                {
+                    title: 'File',
+                    data: 'article_file',
+                    name: 'article_file',
                 },
                 {
                     title: 'Action',
@@ -270,7 +319,7 @@
                 targets: [0, 1, 2, 3, 4, 5],
                 className: 'text-center'
             }],
-        }).on('init.dt', function(){
+        }).on('init.dt', function() {
             $('#article_table').wrap('<div class="dataTables_scroll" />')
         });
 
@@ -314,8 +363,7 @@
                                     icon: 'error',
                                     confirmButtonText: 'OK'
                                 });
-                            }
-                            else {
+                            } else {
                                 Swal.fire({
                                     title: 'Deleted!',
                                     text: 'Article has been deleted.',
@@ -352,23 +400,22 @@
                     article_id: article_id
                 },
                 dataType: 'JSON',
-                success: function(result){
+                success: function(result) {
                     console.log(result);
                     var html = '';
                     var no = 1;
 
-                    $.each(result, function(key, value){
+                    $.each(result, function(key, value) {
                         var sum = 0;
                         var name = '';
                         var score = '';
                         // console.log(value.article_user_questionaire[0].article_user.user.name);
-                        $.each(value.article_user_questionaire, function(key, value){
-                            if(value.article_user == null) {
+                        $.each(value.article_user_questionaire, function(key, value) {
+                            if (value.article_user == null) {
                                 name += '';
                                 score += '';
                                 sum += 0;
-                            }
-                            else {
+                            } else {
                                 sum += value.score;
                                 name += value.article_user.user.name + '<br>';
                                 score += value.score + '<br>';
@@ -385,7 +432,7 @@
                     });
                     $('#scoreData').html(html);
                 },
-                error: function(error){
+                error: function(error) {
                     console.log(error);
                 }
             })
@@ -446,11 +493,11 @@
             //         $(row).find('td:eq(2)').addClass('text-center');
             //     }
             // }
-        }).on('init.dt', function(){
+        }).on('init.dt', function() {
             $('#assessment_table').wrap('<div class="dataTables_scroll" />')
         });
 
-        assessment_table.on('click', '#showArticle', function(){
+        assessment_table.on('click', '#showArticle', function() {
             var name = $(this).data('name');
             $('.article-modal-title').text(name + ' Assigned Article');
             var user_id = $(this).data('id');
@@ -471,15 +518,122 @@
                     for (let index = 0; index < data.length; index++) {
                         $('#articleData').append(
                             '<tr>' +
-                                '<td>' + data[index].article.id + ' - ' + data[index].article.no + '</td>' +
-                                '<td style="white-space:normal;">' + data[index].article.title + '</td>' +
-                                '<td>' + (data[index].is_assessed == true ? 
-                                    '<span class="badge alert-success">Assessed</span>' :
-                                    '<span class="badge alert-danger">Not Assessed</span>') +
-                                '</td>' +
+                            '<td>' + data[index].article.id + ' - ' + data[index].article.no +
+                            '</td>' +
+                            '<td style="white-space:normal;">' + data[index].article.title +
+                            '</td>' +
+                            '<td>' + (data[index].is_assessed == true ?
+                                '<span class="badge alert-success">Assessed</span>' :
+                                '<span class="badge alert-danger">Not Assessed</span>') +
+                            '</td>' +
                             '</tr>'
                         );
                     }
+                }
+            })
+        })
+
+        table.on('click', '#filePreview', function() {
+            var title = $(this).data('title');
+            $('.modal-title-file').text(title);
+            var file = $(this).data('file');
+            $('#pdf_preview').attr('src', file);
+        })
+
+        table.on('click', '#addFileBtn', function() {
+            var title = $(this).data('title');
+            var id = $(this).data('id');
+            $('.modal-title-addFile').text('Add File For ' + title);
+            $('#article_id').val(id);
+        })
+
+        $('input[name="file"]').change(function() {
+            var file = $(this).prop('files')[0];
+
+            if (file != undefined) {
+                $('input[name="link"]').prop('disabled', true);
+                $('#clearFile').prop('disabled', false);
+            } else {
+                $('input[name="link"]').prop('disabled', false);
+                $('#clearFile').prop('disabled', true);
+            }
+        })
+
+        function isValidUrl(url) {
+            const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+            return urlPattern.test(url);
+        }
+
+        $('input[name="link"]').on('keyup', function() {
+            var link = $(this).val();
+
+            if (link != '') {
+                $('input[name="file"]').prop('disabled', true);
+                if (isValidUrl(link)) {
+                    $('#submitBtn').removeClass('d-none')
+                    $('#linkNoValidBtn').addClass('d-none')
+                } else {
+                    $('#submitBtn').addClass('d-none')
+                    $('#linkNoValidBtn').removeClass('d-none')
+                }
+            } else {
+                $('input[name="file"]').prop('disabled', false);
+                $('#submitBtn').removeClass('d-none')
+                $('#linkNoValidBtn').addClass('d-none')
+            }
+        })
+
+        $('#clearFile').on('click', function() {
+            $('input[name="file"]').val('');
+            $('input[name="link"]').prop('disabled', false);
+            $('#clearFile').prop('disabled', true);
+        })
+
+        $('#addFileForm').on('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            Swal.fire({
+                title: 'Uploading File',
+                html: 'Please wait while we upload your file',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                },
+            });
+            $.ajax({
+                url: '{{ route('article.addFile') }}',
+                type: 'POST',
+                data: formData,
+                dataType: 'JSON',
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(data) {
+                    console.log(data);
+                    $('#addFileModal').modal('hide');
+                    table.ajax.reload();
+                    Swal.close();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'File Added Successfully',
+                    })
+                    // reset form
+                    $('#addFileForm')[0].reset();
+                    $('input[name="file"]').prop('disabled', false);
+                    $('#clearFile').prop('disabled', true);
+                    $('#submitBtn').removeClass('d-none')
+                    $('#linkNoValidBtn').addClass('d-none')
+                    $('input[name="link"]').prop('disabled', false);
+                },
+                error: function(error) {
+                    console.log(error);
+                    Swal.close();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong',
+                    })
                 }
             })
         })

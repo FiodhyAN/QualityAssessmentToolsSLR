@@ -56,6 +56,7 @@ class ArticleImport implements ToModel, WithStartRow, SkipsEmptyRows
             'edatabase' => $row[19],
             'edatabase_2' => $row[20],
             'nation_first_author' => $row[21],
+            'link_articles' => $row[22],
             'project_id' => $this->project_id,
         ]);
     }
