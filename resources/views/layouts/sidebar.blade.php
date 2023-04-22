@@ -97,7 +97,7 @@
                             <div class="parent-icon">
                                 <ion-icon name="people"></ion-icon>
                             </div>
-                            <div class="menu-title">Author Summary</div>
+                            <div class="menu-title">Author Rank</div>
                         </a>
                     </li>
         
@@ -106,7 +106,7 @@
                             <div class="parent-icon">
                                 <ion-icon name="book"></ion-icon>
                             </div>
-                            <div class="menu-title">Article Summary</div>
+                            <div class="menu-title">Article Rank</div>
                         </a>
                     </li>
         
@@ -115,7 +115,7 @@
                             <div class="parent-icon">
                                 <ion-icon name="pie-chart"></ion-icon>
                             </div>
-                            <div class="menu-title">Project Summary</div>
+                            <div class="menu-title">Project Chart</div>
                         </a>
                     </li>
                 </ul>

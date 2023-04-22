@@ -618,7 +618,6 @@
                         title: 'Success',
                         text: 'File Added Successfully',
                     })
-                    // reset form
                     $('#addFileForm')[0].reset();
                     $('input[name="file"]').prop('disabled', false);
                     $('#clearFile').prop('disabled', true);

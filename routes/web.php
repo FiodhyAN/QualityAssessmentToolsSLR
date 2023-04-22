@@ -90,6 +90,7 @@ Route::get('/assessedTable', [AssessmentController::class, 'assessedTable'])->mi
 Route::get('/reviewerScore', [AssessmentController::class, 'scoreReviewer'])->middleware('auth')->name('reviewer.score');
 Route::get('/editScore', [AssessmentController::class, 'editScore'])->middleware('auth')->name('reviewer.editScore');
 Route::post('/dashboard/reviewer/assessment/update', [AssessmentController::class, 'updateScore'])->middleware('auth')->name('reviewer.updateScore');
+Route::get('/previewArticle', [AssessmentController::class, 'previewArticle'])->middleware('auth')->name('reviewer.previewArticle');
 //////////////////////////////////////
 // PENGOLAHAN DATA
 /////////////////////////////////////

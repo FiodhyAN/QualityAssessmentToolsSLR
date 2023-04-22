@@ -4,7 +4,7 @@
     <hr>
 
     <a href="/dashboard/admin/project"><button type="button" class="btn btn-secondary mb-2">
-            <ion-icon name="arrow-back"></ion-icon> Back to Project
+            <ion-icon name="arrow-back"></ion-icon> Back
         </button>
     </a>
 

@@ -13,6 +13,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <a id="previewFile" class="btn btn-sm btn-secondary mb-2" target="_blank"><ion-icon name="document-attach"></ion-icon> Preview Article</a>
+                    <a id="previewLink" class="btn btn-sm btn-secondary mb-2" target="_blank"><ion-icon name="link"></ion-icon> Article Link</a>
+                    <span id="noPreview" class="badge alert-secondary mb-2">No Preview Available</span>
                     <div class="progress">
                         <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="50"
                             class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar"
@@ -249,11 +252,31 @@
         // Modal Assess
         $('#exampleModal').on('show.bs.modal', function(event) {
             var id = $(event.relatedTarget).data('article_id');
-            var no = $(event.relatedTarget).data('article_no');
+            var title = $(event.relatedTarget).data('title');
+            var link = $(event.relatedTarget).data('link');
+            var file = $(event.relatedTarget).data('file');
 
-            // add to modal title
-            $(this).find('.modal-title').text('Assess Article ' + id + ' - ' + no);
+            $(this).find('.modal-title').text('Assess Article - ' + title);
             $(this).find('#article_id').val(id);
+
+            if (link == '' && file == '') {
+                $('#previewLink').addClass('d-none');
+                $('#previewFile').addClass('d-none');
+                $('#noPreview').removeClass('d-none');
+            }
+            else if (link == '' && file != '') {
+                $('#previewLink').addClass('d-none');
+                $('#previewFile').removeClass('d-none');
+                $('#noPreview').addClass('d-none');
+                var urlFile = '{{ URL::asset('storage/article/') }}' + '/' + file;
+                $('#previewFile').attr('href', urlFile);
+            }
+            else if (link != '' && file == '') {
+                $('#previewLink').removeClass('d-none');
+                $('#previewFile').addClass('d-none');
+                $('#noPreview').addClass('d-none');
+                $('#previewLink').attr('href', link);
+            }
         });
 
         let step = document.getElementsByClassName('step');

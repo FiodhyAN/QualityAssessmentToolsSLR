@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
 use App\Models\ArticleUser;
 use App\Models\ArticleUserQuestionaire;
 use App\Models\Project;
@@ -64,7 +65,7 @@ class AssessmentController extends Controller
                 return $article->article->authors;
             })
             ->addColumn('action', function(ArticleUser $article){
-                return '<button class="btn btn-primary btn-sm" id="btn_assessment" data-bs-toggle="modal" data-bs-target="#exampleModal" data-article_id="'.$article->article->id.'" data-article_no="'.$article->article->no.'"><ion-icon name="pencil"></ion-icon> Assess</button>';
+                return '<button class="btn btn-primary btn-sm" id="btn_assessment" data-bs-toggle="modal" data-bs-target="#exampleModal" data-article_id="'.$article->article->id.'" data-title="'.$article->article->title.'" data-link="'.$article->article->link.'" data-file="'.$article->article->file.'"><ion-icon name="pencil"></ion-icon> Assess</button>';
             })->rawColumns(['action'])
             ->toJson();
     }
@@ -151,7 +152,7 @@ class AssessmentController extends Controller
             })
             ->addColumn('action', function(ArticleUser $article){
                 $btn = '<button type="button" class="btn btn-warning text-white btn-sm me-2 aksi scoreArticle" id="scoreArticle" data-bs-toggle="modal" data-bs-target="#modalScore" data-id="' . $article->article->id . '" data-title="' . $article->article->title . '"><ion-icon name="stats-chart-outline"></ion-icon> Result</button>';
-                $btn .= '<button class="btn btn-primary btn-sm" id="btn_edit_assessment" data-bs-toggle="modal" data-bs-target="#exampleModal" data-article_id="'.$article->article->id.'" data-article_no="'.$article->article->no.'"><ion-icon name="create-outline"></ion-icon> Edit</button>';
+                $btn .= '<button class="btn btn-primary btn-sm" id="btn_edit_assessment" data-bs-toggle="modal" data-bs-target="#exampleModal" data-article_id="'.$article->article->id.'" data-title="'.$article->article->title.'" data-link="'.$article->article->link.'" data-file="'.$article->article->file.'"><ion-icon name="create-outline"></ion-icon> Edit</button>';
                 return $btn;
             })->rawColumns(['action'])
             ->toJson();
