@@ -86,7 +86,7 @@ def getArticleIdAuthorReferencesAndAuthor(table):
             count+=1
             if count==1:
                 initial_author_pair.append(penulis)
-                print("this is my "+i[len(i)-1])
+                # print("this is my country "+i[len(i)-1])
                 nation_author_pair.append(i[len(i)-1])
             authors.append(penulis)
         try:
@@ -94,6 +94,7 @@ def getArticleIdAuthorReferencesAndAuthor(table):
             for article in i[5]:
                 # memastikan article != ''
                 if len(article) > 1:
+                    # print("this is my article "+article)
                     articles.append(article)
         except:
             row.append([])
