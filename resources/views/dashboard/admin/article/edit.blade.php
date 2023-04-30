@@ -7,7 +7,7 @@
             <ion-icon name="arrow-back"></ion-icon> Back
         </button></a>
 
-    <div class="card">
+    <div class="card" id="body">
         <div class="card-header">
             <h6 class="mb-0">Edit Article</h6>
         </div>
@@ -297,7 +297,8 @@
                 viewMode: "years",
                 minViewMode: "years",
                 autoclose: true,
-                orientation: "auto"
+                orientation: "bottom auto",
+                container: '#body'
             });
 
             var oldFile = $('#pdf_preview').attr('src');

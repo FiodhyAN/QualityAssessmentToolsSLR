@@ -123,11 +123,11 @@
             <div class="page-content">
                 @can('superadmin')
                     <div
-                        class="page-breadcrumb d-none d-sm-flex align-items-center mb-3 {{ Request::is('dashboard') || Request::is('dashboard/*') || Request::is('metadata/*') ? 'd-none' : '' }}">
+                        class="page-breadcrumb d-none d-sm-flex align-items-center mb-3 {{ Request::is('dashboard') || Request::is('dashboard/*') || Request::is('metadata/*') || Request::is('articleType') ? 'd-none' : '' }}">
                         <div class="breadcrumb-title pe-3">
                         </div>
                         <div
-                            class="ps-3 {{ Request::is('dashboard') || Request::is('dashboard/*') || Request::is('metadata/*') ? 'd-none' : '' }}">
+                            class="ps-3 {{ Request::is('dashboard') || Request::is('dashboard/*') || Request::is('metadata/*') || Request::is('articleType') ? 'd-none' : '' }}">
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb mb-0 p-0 align-items-center">
                                     <li class="breadcrumb-item"><a href="javascript:;">
@@ -142,7 +142,7 @@
                     </div>
                 @endcan
                 @can('admin')
-                    <div class="page-breadcrumb d-sm-flex align-items-center mb-3 {{ Request::is('dashboard') || Request::is('dashboard/admin/project/') || Request::is('dashboard/reviewer/*') || Request::is('metadata/*') || Request::is('dashboard/projectSummary') ? 'd-none' : '' }}">
+                    <div class="page-breadcrumb d-sm-flex align-items-center mb-3 {{ Request::is('dashboard') || Request::is('dashboard/admin/project/') || Request::is('dashboard/reviewer/*') || Request::is('metadata/*') || Request::is('dashboard/projectSummary') || Request::is('articleType') ? 'd-none' : '' }}">
                         <div class="breadcrumb-title pe-3">
                             @if (Request::is('dashboard/admin/project/*'))
                                 Article Management
@@ -157,9 +157,9 @@
                             @endif
                         </div>
                         <div
-                            class="ps-3 {{ Request::is('dashboard') || Request::is('dashboard/admin/project/') || Request::is('metadata/*') ? 'd-none' : '' }}">
+                            class="ps-3 {{ Request::is('dashboard') || Request::is('dashboard/admin/project/') || Request::is('metadata/*') || Request::is('articleType') ? 'd-none' : '' }}">
                             <nav aria-label="breadcrumb"
-                                class="{{ Request::is('dashboard/admin/project') || Request::is('dashboard/reviewer/*') || Request::is('dashboard/projectSummary') ? 'd-none' : '' }}">
+                                class="{{ Request::is('dashboard/admin/project') || Request::is('dashboard/reviewer/*') || Request::is('dashboard/projectSummary') || Request::is('articleType') ? 'd-none' : '' }}">
                                 <ol class="breadcrumb mb-0 p-0 align-items-center">
                                     <li class="breadcrumb-item">
                                         <ion-icon name="home-outline"></ion-icon>

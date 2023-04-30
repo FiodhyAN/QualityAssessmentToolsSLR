@@ -9,6 +9,7 @@ use App\Models\ProjectUser;
 use App\Models\Questionaire;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SummaryController extends Controller
 {
@@ -145,5 +146,25 @@ class SummaryController extends Controller
                                                                 'neg_answer_user'
                                                                 ));
 
+    }
+
+    public function articleType()
+    {
+        return view('dashboard.summary.type');
+    }
+
+    public function findArticleType(Request $request)
+    {
+        $articles = Article::select('type', 'year', DB::raw('count(*) as total'))
+                            ->where('project_id', 6)
+                            ->whereBetween('year', [$request->yearFrom, $request->yearTo])
+                            ->groupBy('year', 'type')
+                            ->get();
+        $data_year = $articles->pluck('year')->unique();
+        $year = [];
+        foreach ($data_year as $value) {
+            $year[] = $value;
+        }
+        return compact('articles', 'year');
     }
 }

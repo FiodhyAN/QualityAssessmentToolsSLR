@@ -118,6 +118,15 @@
                             <div class="menu-title">Quality Summary</div>
                         </a>
                     </li>
+
+                    <li>
+                        <a href="/articleType">
+                            <div class="parent-icon">
+                                <ion-icon name="pie-chart"></ion-icon>
+                            </div>
+                            <div class="menu-title">Article Type</div>
+                        </a>
+                    </li>
                 </ul>
             </li>
         @endcan
