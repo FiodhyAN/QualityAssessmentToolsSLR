@@ -185,7 +185,7 @@ class DataProcessingController extends Controller
         }
         $name=$id;
         $name[0]=strtoupper($name[0]);
-        return view('pengolahan_data_slr.metadata', ['src' => "", 'author_ranks' => [], 'type' => $name, 'url'=>$id , 'projects' => $projects,'display' => 'none']);
+        return view('pengolahan_data_slr.metadata', ['src' => "", 'author_ranks' => [], 'type' => $name, 'url'=>$id , 'projects' => $projects,'display' => 'none','id_project'=>'']);
     }
 
     public function proses_meta_data(Request $request, $id)
@@ -217,7 +217,15 @@ class DataProcessingController extends Controller
             'http://127.0.0.1:5000/data/' . $id . '/rankgraph',
             // 'https://lokerkita640.pythonanywhere.com//data/' . $id . '/rankgraph',
             [
-                'data' => $result
+                // 'data' => $result
+                'data' => [
+                    ["a1", ['a', 'b', 'c'],   ['a', 'b', 'c', 'k', 'l'], '1993', ['p1', 'p2'],'title of a1','nation of p1'], 
+                    ["a2", ['c', 'd', 'e'],   ['a', 'c', 'd', 'e', 'm', 'n'], '1993', ['p1', 'p3'],'title of a2','nation of p1'],
+                    ["a3", ['f', 'g', 'h'],   ['c', 'd', 'f', 'g', 'h', 'o'], '1993', ['p2', 'p4', 'p5'],'title of a3','nation of p2'], 
+                    ["a4", ['i', 'j'],        ['c', 'd', 'p', 'q'], '1994', ['p3', 'p6'], ['a1', 'a2'], 'title of a4', 'nation of p3'], 
+                    ["a5", ['dj', 'dk'],      ['a', 'dj', 'dk', 'm', 'r'], '1994', ['p1', 'p7'], ['a1', 'a2', 'a3'], 'title of a5','nation of p1'], 
+                    ["a6", ['d', 'ac', 'ad'], ['d', 'ac', 'ad', 's', 't'], '1994', ['p8', 'p9'], ['a1', 'a3'], 'title of a6','nation of p8'],
+                ]
                 ,
                 'outer' => $author['outer-author']
                 ,
@@ -247,44 +255,7 @@ class DataProcessingController extends Controller
         $author_ranks = array_slice($author_ranks, 0, $sum_top_author);
         $name=$id;
         $name[0]=strtoupper($name[0]);
-        return view('pengolahan_data_slr.metadata', ['src' => "data:image/png;base64, $image", 'author_ranks' => $author_ranks, 'type' => $name, 'url'=>$id ,'projects' => $projects,'display' => 'block']);
-
-
-
-
-
-
-
-
-
-
-        // return $response;
-        // return json_decode($response);
-        $authors = $response[0];
-        $ranks = $response[1][1];
-        $image = $response[2];
-        $title = $response[3];
-        // decode $image utf-8
-        $image = utf8_decode($image);
-        
-
-        // Combine the authors and ranks into an array of arrays
-        $author_ranks = array();
-        for ($i = 0; $i < count($authors); $i++) {
-            $author_ranks[] = array($authors[$i], $ranks[$i]);
-        }
-
-        // Sort the author-rank pairs based on the rank (ascending order)
-        usort($author_ranks, function ($a, $b) {
-            return $a[1] - $b[1];
-        });
-        //dapatkan data top 10 
-        $author_ranks = array_slice($author_ranks, 0, $sum_top_author);
-        $name=$id;
-        $name[0]=strtoupper($name[0]);
-        return view('pengolahan_data_slr.metadata', ['src' => "data:image/png;base64, $image", 'author_ranks' => $author_ranks, 'type' => $name, 'url'=>$id ,'projects' => $projects,'display' => 'block']);
-        // return redirect('/metadata/'.$id)->with(['src' => "data:image/png;base64, $response",'author_ranks' => $author_ranks,'type'=>$id,'projects'=>$projects]);
-
+        return view('pengolahan_data_slr.metadata', ['src' => "data:image/png;base64, $image", 'author_ranks' => $author_ranks, 'type' => $name, 'url'=>$id ,'projects' => $projects,'display' => 'block','id_project'=>$author['project']]);
     }
 
 }

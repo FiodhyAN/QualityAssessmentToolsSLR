@@ -1,6 +1,7 @@
 @extends('layouts.main')
 @section('container')
 <div class="container">
+    <h1>{{$id_project}}</h1>
     <!-- CSS -->
     <link rel="stylesheet" type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" />
