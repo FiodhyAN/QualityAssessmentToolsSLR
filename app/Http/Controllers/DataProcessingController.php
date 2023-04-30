@@ -82,11 +82,11 @@ class DataProcessingController extends Controller
 
         $flag = 0;
         foreach ($data as $row) {
-            $flag++;
-            if ($flag <= 0)
-                continue;
-            if ($flag > 60)
-                break;
+            // $flag++;
+            // if ($flag <= 0)
+            //     continue;
+            // if ($flag > 60)
+            //     break;
             $keywords = preg_split('/\s*[,;\/]\s*/', $row['keywords']);
             $authors = preg_split('/\s*[,;\/]\s*/', $row['authors']);
             sort($authors, SORT_NUMERIC);
