@@ -119,8 +119,9 @@ def author_matrixs(authors):
 # ge table 2 data start
 def getTable2Data(pairs, search_matrix, type):
     # create a DataFrame to store the author matrix
-    author_matrix_df = pd.DataFrame(search_matrix, columns=['author_1', 'author_2'])
-    author_matrix_df['count'] = 0
+    author_matrixs = []
+    for i in search_matrix:
+        author_matrixs.append([i[0], i[1], 0])
 
     if type == "author":
         for i in pairs:
@@ -138,7 +139,8 @@ def getTable2Data(pairs, search_matrix, type):
                 for author in penulisList:
                     for row in row_author:
                         if author != row:
-                            author_matrix_df.loc[(author_matrix_df['author_1'] == author) & (author_matrix_df['author_2'] == row), 'count'] += 1
+                            index = search_matrix.index([author, row])
+                            author_matrixs[index][2] += 1
         print("\n")
     elif type == "article":
         for i in pairs:
@@ -149,9 +151,10 @@ def getTable2Data(pairs, search_matrix, type):
                 # memastikan article/author != ''
                 if len(author) <= 1 or len(author_reference) <= 1:
                     continue
-                author_matrix_df.loc[(author_matrix_df['author_1'] == author) & (author_matrix_df['author_2'] == author_reference), 'count'] += 1
+                index = search_matrix.index([author, author_reference])
+                print("index:"+str(index)+"author"+str(author)+"author_reference"+str(author_reference))
+                author_matrixs[index][2] += 1
 
-    author_matrixs= author_matrix_df.values.tolist()
     return author_matrixs
 # ge table 2 data end
 
