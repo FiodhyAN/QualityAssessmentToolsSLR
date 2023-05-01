@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 import json
@@ -10,6 +11,7 @@ from flask_cors import CORS
 import io
 import matplotlib
 from tabulate import tabulate
+from numba import jit
 matplotlib.use('Agg')
 
 
@@ -51,7 +53,6 @@ def query_rank(nama_project, json):
     cur.close()
     return "Data berhasil disimpan!"
 
-
 def getData(data=None):
     if data == None:
         table = [
@@ -65,7 +66,6 @@ def getData(data=None):
     else:
         table = data
     return (table)
-
 
 def getArticleIdAuthorReferencesAndAuthor(table):
     pairs = []
@@ -89,15 +89,12 @@ def getArticleIdAuthorReferencesAndAuthor(table):
                 # print("this is my country "+i[len(i)-1])
                 nation_author_pair.append(i[len(i)-1])
             authors.append(penulis)
-        try:
-            row.append(i[5])
-            for article in i[5]:
-                # memastikan article != ''
-                if len(article) > 1:
-                    # print("this is my article "+article)
-                    articles.append(article)
-        except:
-            row.append([])
+        row.append(i[5])
+        for article in i[5]:
+            # memastikan article != ''
+            if len(article) > 1:
+                # print("this is my article "+article)
+                articles.append(article)
         pairs.append(row)
 
         # memasukkan array kode artikel dan judulnya
@@ -107,7 +104,6 @@ def getArticleIdAuthorReferencesAndAuthor(table):
     authors = sorted(set(authors))
     articles = sorted(set(articles))
     return pairs, authors, articles,initial_articles_pair ,title_articles_pair,initial_author_pair,nation_author_pair
-
 
 def author_matrixs(authors):
     author_matrix = []
@@ -120,18 +116,17 @@ def author_matrixs(authors):
     return author_matrix
 
 
+# ge table 2 data start
 def getTable2Data(pairs, search_matrix, type):
-    author_matrixs = []
-    for i in search_matrix:
-        author_matrixs.append([i[0], i[1], 0])
+    # create a DataFrame to store the author matrix
+    author_matrix_df = pd.DataFrame(search_matrix, columns=['author_1', 'author_2'])
+    author_matrix_df['count'] = 0
 
-    print("getTable2Data")
     if type == "author":
         for i in pairs:
             penulisList = i[1]
             authorList = i[2]
             for author in authorList:
-                # try:
                 row_author = []
                 for row in pairs:
                     if author == row[0]:
@@ -143,9 +138,8 @@ def getTable2Data(pairs, search_matrix, type):
                 for author in penulisList:
                     for row in row_author:
                         if author != row:
-                            index = search_matrix.index([author, row])
-                            author_matrixs[index][2] += 1
-                print("\n")
+                            author_matrix_df.loc[(author_matrix_df['author_1'] == author) & (author_matrix_df['author_2'] == row), 'count'] += 1
+        print("\n")
     elif type == "article":
         for i in pairs:
             penulisList = i[0]
@@ -155,37 +149,30 @@ def getTable2Data(pairs, search_matrix, type):
                 # memastikan article/author != ''
                 if len(author) <= 1 or len(author_reference) <= 1:
                     continue
-                index = search_matrix.index([author, author_reference])
-                print("index:"+str(index)+"author"+str(author)+"author_reference"+str(author_reference))
-                author_matrixs[index][2] += 1
+                author_matrix_df.loc[(author_matrix_df['author_1'] == author) & (author_matrix_df['author_2'] == author_reference), 'count'] += 1
 
+    author_matrixs= author_matrix_df.values.tolist()
     return author_matrixs
-
+# ge table 2 data end
 
 def index_2d(myList, v):
     for i, x in enumerate(myList):
         if v in x:
             return i  # , x.index(v)
 
-
 def makeTable2(author_matrix, authors):
-    import pandas as pd
     pretable2 = []
     for x in authors:
         authortmp = []
         for y in author_matrix:
             if y[1] == x:
-                try:
-                    authortmp.append(y[2])
-                except:
-                    authortmp.append(0)
+                authortmp.append(y[2])
         pretable2.append(authortmp)
     # print(pretable2)
     table2 = pd.DataFrame(pretable2, columns=authors, index=authors)
     print("tabel 2")
     print(table2)
     return table2, pretable2
-
 
 def getTopAuthor(authors, author_rank, ranking):
     author_ranking = []
@@ -198,7 +185,6 @@ def getTopAuthor(authors, author_rank, ranking):
     top_authors = [x[0] for x in sorted_authors[:ranking]]
     return top_authors
 
-
 def add_node_graph(G, author_matrixs):
     for author_matrix in author_matrixs:
         if author_matrix[2] > 0:
@@ -208,7 +194,6 @@ def add_node_graph(G, author_matrixs):
             G.add_node(author_matrix[0])
             G.add_node(author_matrix[1])
     return G
-
 
 def get_no_outer_author(authors, author_rank, exist_authors):
     count = -1
@@ -222,7 +207,6 @@ def get_no_outer_author(authors, author_rank, exist_authors):
             authors.pop(count)
             author_rank.pop(count)
     return authors, author_rank, outer_author_rank, outer_authors
-
 
 def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     # acuan
@@ -311,7 +295,6 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     # query_graph("project 1",my_base64_jpgData)
 
     return buf
-
 
 def makeTermGraph2(authors, author_matrixs, author_rank, outer_author, ranking):
     rank_outer_author = author_rank[len(author_rank)-1]
@@ -404,9 +387,7 @@ def makeTermGraph2(authors, author_matrixs, author_rank, outer_author, ranking):
 
     return buf
 
-
 def addTable2TotalRowAndColoumn(pretable2, authors):
-    import pandas as pd
     sumrow = []
     sumcol = []
     lenauthor = len(authors)
@@ -436,9 +417,7 @@ def addTable2TotalRowAndColoumn(pretable2, authors):
     print(table2)
     return pretable2
 
-
 def makeNewAdjMatrix(pretable3, lenauthor):
-    import pandas as pd
     for x in range(lenauthor):
         for y in range(lenauthor):
             if pretable3[lenauthor][y] == 0:
@@ -454,8 +433,6 @@ def makeNewAdjMatrix(pretable3, lenauthor):
 
 
 def rank(pretable3, author, name):
-    import numpy as np
-    import pandas as pd
     lenauthor = len(author)
     d = 0.850466963
     table4 = []
@@ -570,9 +547,9 @@ def data(type, name):
                 if type == "article":
                     title_nation_of_the_article.append(title_articles_pair[initial_articles_pair.index(i)])
                 elif type == "author":
-                    try:
+                    if i in initial_author_pair:
                         title_nation_of_the_article.append(nation_author_pair[initial_author_pair.index(i)])
-                    except:
+                    else:
                         # bukan penulis pertama
                         title_nation_of_the_article.append("None")
             tmp = [input_author_article, [table, author_rank]]
@@ -589,9 +566,9 @@ def data(type, name):
                 if type == "article":
                     title_nation_of_the_article.append(title_articles_pair[initial_articles_pair.index(i)])
                 elif type == "author":
-                    try:
+                    if i in initial_author_pair:
                         title_nation_of_the_article.append(nation_author_pair[initial_author_pair.index(i)])
-                    except:
+                    else:
                         # bukan penulis pertama
                         title_nation_of_the_article.append("None")
 
