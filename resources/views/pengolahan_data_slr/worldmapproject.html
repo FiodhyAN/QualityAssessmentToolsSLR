@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        /* Loading Spinner */
+        .spinner{margin:0;width:70px;height:18px;margin:-35px 0 0 -9px;position:absolute;top:50%;left:50%;text-align:center}.spinner > div{width:18px;height:18px;background-color:#333;border-radius:100%;display:inline-block;-webkit-animation:bouncedelay 1.4s infinite ease-in-out;animation:bouncedelay 1.4s infinite ease-in-out;-webkit-animation-fill-mode:both;animation-fill-mode:both}.spinner .bounce1{-webkit-animation-delay:-.32s;animation-delay:-.32s}.spinner .bounce2{-webkit-animation-delay:-.16s;animation-delay:-.16s}@-webkit-keyframes bouncedelay{0%,80%,100%{-webkit-transform:scale(0.0)}40%{-webkit-transform:scale(1.0)}}@keyframes bouncedelay{0%,80%,100%{transform:scale(0.0);-webkit-transform:scale(0.0)}40%{transform:scale(1.0);-webkit-transform:scale(1.0)}}
+    </style>
+    <meta charset="UTF-8">
+<!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
+<title> WorldMaps.js Cloropleth example and code </title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+
+
+
+    <!-- HELPERS -->
+
+<link rel="stylesheet" type="text/css" href="https://worldmapjs.org/assets/helpers/animate.css">
+<link rel="stylesheet" type="text/css" href="https://worldmapjs.org/assets/helpers/backgrounds.css">
+<link rel="stylesheet" type="text/css" href="https://worldmapjs.org/assets/helpers/boilerplate.css">
+<link rel="stylesheet" type="text/css" href="https://worldmapjs.org/assets/helpers/border-radius.css">
+<link rel="stylesheet" type="text/css" href="https://worldmapjs.org/assets/helpers/grid.css">
+<link rel="stylesheet" type="text/css" href="https://worldmapjs.org/assets/helpers/page-transitions.css">
+<link rel="stylesheet" type="text/css" href="https://worldmapjs.org/assets/helpers/spacing.css">
+<link rel="stylesheet" type="text/css" href="https://worldmapjs.org/assets/helpers/typography.css">
+<link rel="stylesheet" type="text/css" href="https://worldmapjs.org/assets/helpers/utils.css">
+<link rel="stylesheet" type="text/css" href="https://worldmapjs.org/assets/helpers/colors.css">
+
+
+
+<!-- FRONTEND ELEMENTS -->
+
+
+<link rel="stylesheet" type="text/css" href="https://worldmapjs.org/assets/frontend-elements/footer.css">
+
+
+<link rel="stylesheet" type="text/css" href="assets/snippets/todo.css">
+<link rel="stylesheet" type="text/css" href="assets/snippets/user-profile.css">
+<link rel="stylesheet" type="text/css" href="assets/snippets/mobile-navigation.css">
+
+<!-- Frontend theme -->
+
+<link rel="stylesheet" type="text/css" href="assets/themes/frontend/layout.css">
+<link rel="stylesheet" type="text/css" href="assets/themes/frontend/color-schemes/default.css">
+
+<!-- Components theme -->
+
+<link rel="stylesheet" type="text/css" href="assets/themes/components/default.css">
+<link rel="stylesheet" type="text/css" href="assets/themes/components/border-radius.css">
+
+<!-- Frontend responsive -->
+
+<link rel="stylesheet" type="text/css" href="assets/helpers/responsive-elements.css">
+<link rel="stylesheet" type="text/css" href="assets/helpers/frontend-responsive.css">
+
+<link rel="stylesheet" href="css/bootstrap.min.css">
+
+<script src="js/jquery.min.js"></script> 
+<script src="js/topojson.v1.min.js"></script>
+<!-- jQuery library -->
+
+
+<!-- Latest compiled JavaScript -->
+<script src="js/bootstrap.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="css/jquery.dataTables.min.css">
+
+<!-- datatables -->
+<script src="js/jquery.dataTables.min.js"></script>
+<script src="js/d3.v3.min.js"></script>
+<script src="js/d3.geo.projection.v0.min.js"></script>
+ <script src="js/queue.v1.min.js"></script>
+
+
+
+
+<script type="text/javascript">
+    $(window).load(function(){
+        setTimeout(function() {
+            $('#loading').fadeOut( 400, "linear" );
+        }, 300);
+    });
+</script>
+
+</head>
+
+<body>
+<div id="loading">
+    <div class="spinner">
+        <div class="bounce1"></div>
+        <div class="bounce2"></div>
+        <div class="bounce3"></div>
+    </div>
+</div>
+
+<div id="page-wrapper">
+<div class="main-header bg-header wow fadeInDown">
+    <div class="container">
+    <a href="index.html" class="header-logo" title="Monarch - Create perfect presentation websites"></a><!-- .header-logo -->
+   
+    
+</div><!-- .container -->
+</div><!-- .main-header -->
+
+
+         <div id="contenedor" align="center"> 
+
+</div>
+          
+   
+
+
+<div class="container features-tour-box">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>WorldMaps.js Cloropleth example and code </h3>
+            <p>The following code is an example cloropleth with the mercator projection, and a custom style. Press play for it to show, or click on the table to select the cloropleth plugin, the location column and the data column. You can also test the charts by selecting one or multiple columns of data and the location.</p>            
+         
+            <pre><xmp>
+ <div id="mapcontainer" align="center"> <!-- You can place the container wherever you want, but it has to be before loading the code-->
+<link rel="stylesheet" href="css/worldmap.v1.css"> 
+<script src="js/worldmap.v1.js"></script>
+<script>
+
+
+   var createmap = new Worldmap({  
+    elementid: "#mapcontainer",
+     mapstyle: {   // Change the map style
+       ocean: "#4A5B62",
+        region: "#F3F3F3",
+        border : "#ffffff"
+    },
+    project: {  
+        name: "Mercator",
+        //zoomlevel: 6 // If you want it to zoom into an area
+        //zoomarea:[-122.417, 37.775] 
+                           },
+   // showtable:false, // Hide Table
+   // editpanel:false,  // Hide Edit
+   dataType: 'csv',
+   dataurl: 'countriesdata.csv', // location of the file
+   defaultfill: "steelblue", // default fill color
+   defaultsize: 30,
+   player: true // show player
+   }); 
+ 
+// Adds the button an 
+ 
+$(document).ready(function(){
+     $("#playeranim").click(function() {
+   setTimeout(function(){createmap.update([{"location":"US","color":"darkgreen"},{"location":"MX","color":"brown"},{"location":"CO","color":"#BC0EF6"},{"location":"CU","color":"#F6DF0E"},{"location":"AR","color":"#0E5FF6"},{"location":"CL","color":"#0EF62D"},{"location":"BR","color":"#0E5FF6"}],"cloropleth")}, 4000);
+ 
+});});
+
+  </body>  
+            </xmp></pre>         
+        </div>
+       
+        </div>
+    </div>
+</div>
+
+
+
+<div class="divider"></div>
+
+<div class="main-footer bg-gradient-4 clearfix">
+  
+       
+    <div class="footer-pane">
+        <div class="container clearfix">
+            <div class="logo">&copy; 2017 WorldMap.js. All Rights Reserved.</div>
+           
+        </div>
+    </div>
+</div></div>
+
+
+    <!-- FRONTEND ELEMENTS -->
+
+<!-- Skrollr -->
+
+<script type="text/javascript" src="assets/widgets/skrollr/skrollr.js"></script>
+
+<!-- Owl carousel -->
+
+<script type="text/javascript" src="assets/widgets/owlcarousel/owlcarousel.js"></script>
+<script type="text/javascript" src="assets/widgets/owlcarousel/owlcarousel-demo.js"></script>
+
+<!-- HG sticky -->
+
+<script type="text/javascript" src="assets/widgets/sticky/sticky.js"></script>
+
+<!-- WOW -->
+
+<script type="text/javascript" src="assets/widgets/wow/wow.js"></script>
+
+
+
+<!-- Widgets init for demo -->
+
+
+<script type="text/javascript" src="assets/js-init/frontend-init.js"></script>
+
+<!-- Theme layout -->
+
+<script type="text/javascript" src="assets/themes/frontend/layout.js"></script>
+
+<!-- Theme switcher -->
+
+
+ <link rel="stylesheet" href="css/worldmap.v1.css"> 
+<script src="js/worldmap.v1.js"></script>
+<script>
+
+
+       var createmap = new Worldmap({
+   
+    elementid: "#contenedor",
+     mapstyle: {
+       ocean: "#4A5B62",
+        region: "#F3F3F3",
+        border : "#ffffff"
+    },
+    project: {
+       // name: "Orthographic",
+        
+        name: "Mercator",
+        zoomlevel: 6
+        //zoomarea:[-122.417, 37.775]
+       // center:[-41,174]
+                           },
+   // showtable:false,
+   // editpanel:false,
+   // zoomlevel: 6,
+   // gotoarea:[-122.417, 37.775],
+  dataType: 'csv',
+   dataurl: 'countriesdata.csv',
+   defaultfill: "steelblue",
+   defaultsize: 30,
+  // data:[{"location":"AFG","color":"blue"},{"location":"AGO","color":"green"},{"location":"ALB","color":"magenta"},{"location":"ARE","color":"yellow"},{"location":"ARG","color":"violet"},{"location":"ARM","color":"brown"}],
+  // plugin: "cloropleth",
+  //data:[{"latitude":29.9510658,"longitude":-90.0715323,"image":"https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/24x24/DrawingPin1_Blue.png","width":"20","height":"20"},{"latitude":40.65,"longitude":-73.95,"image":"https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/24x24/DrawingPin1_Blue.png","width":"15","height":"20"},{"latitude":42.2808256,"longitude":-83.7430378,"image":"https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/24x24/DrawingPin1_Blue.png","width":"18","height":"20"},{"latitude":34.0522342,"longitude":-118.2436849,"image":"https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/24x24/DrawingPin1_Blue.png","width":"15","height":"20"},{"latitude":28.5383355,"longitude":-81.3792365,"image":"https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/24x24/DrawingPin1_Blue.png","width":"30","height":"20"},{"latitude":40.4406248,"longitude":-79.9958864,"image":"https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/24x24/DrawingPin1_Blue.png","width":"35","height":"20"}],
+  //plugin: "images",
+        zoomable: true}); 
+  //  setTimeout(function(){createmap.update([{origin:"ES",target:"US"},{origin:"US",target:"CL"},{origin:"CL",target:"AR"},{origin:"AR",target:"BR"},{origin:"BR",target:"EG"},{origin:"EG",target:"BE"}],"arcs")}, 7000)
+$(document).ready(function(){
+     $("#playeranim").click(function() {
+   setTimeout(function(){createmap.update([{"location":"US","color":"darkgreen"},{"location":"MX","color":"brown"},{"location":"CO","color":"#BC0EF6"},{"location":"CU","color":"#F6DF0E"},{"location":"AR","color":"#0E5FF6"},{"location":"CL","color":"#0EF62D"},{"location":"BR","color":"#0E5FF6"}],"cloropleth")}, 4000);
+ 
+});});
+
+</script>
+
+</body>
+</html>
