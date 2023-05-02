@@ -80,7 +80,6 @@ Route::get('/findUserArticle', [ProjectAdminController::class, 'findUserArticle'
 //Summary
 Route::get('/dashboard/projectSummary', [SummaryController::class, 'projectSummary'])->middleware('auth')->name('project.summary');
 Route::get('/findProjectSummary', [SummaryController::class, 'findProjectSummary'])->middleware('auth')->name('find.projectSummary');
-Route::get('/articleType', [SummaryController::class, 'articleType'])->middleware('auth')->name('article.type');
 Route::get('/findArticleType', [SummaryController::class, 'findArticleType'])->middleware('auth')->name('find.articleType');
 
 //Reviewer

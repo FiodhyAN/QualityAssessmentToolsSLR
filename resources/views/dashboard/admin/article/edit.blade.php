@@ -38,12 +38,20 @@
                             {{ $message }}
                         </div>
                     @enderror
-                    <button id="clearFile" type="button" class="btn alert-danger btn-sm mt-1" disabled><ion-icon name="close-circle"></ion-icon> Clear Choosen File</button>
+                    <button id="clearFile" type="button" class="btn alert-danger btn-sm mt-1" disabled>
+                        <ion-icon name="close-circle"></ion-icon> Clear Choosen File
+                    </button>
                 </div>
                 <div class="col-6">
                     <label for="link" class="form-label">or Insert Link</label>
-                    <input class="form-control" type="text" name="link" id="link"
-                        placeholder="ex: https://www.google.com" value="{{ old('link_articles', $article->link_articles) }}">
+                    <input class="form-control @error('link') is-invalid @enderror" type="text" name="link" id="link"
+                        placeholder="ex: https://www.google.com"
+                        value="{{ old('link', $article->link_articles) }}">
+                    @error('link')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
                 </div>
                 <a href="{{ $article->link_articles }}" target="_blank" id="linkBtn"
                     class=" text-white btn btn-primary mt-3 justify-content-center {{ $article->link_articles == null ? 'd-none' : '' }}">

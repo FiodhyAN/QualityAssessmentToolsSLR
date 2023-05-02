@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('container')
-    <h1>Article Management</h1>
+    <h1>Article Management {{ $project->project->project_name }}</h1>
     <hr />
 
     @if (session()->has('success'))
@@ -12,7 +12,8 @@
     @endif
     <a href="/dashboard/admin/project"><button type="button" class="btn btn-secondary mb-2">
             <ion-icon name="arrow-back"></ion-icon> Back
-        </button></a>
+        </button>
+    </a>
 
 
     <div class="card">
@@ -327,6 +328,7 @@
         table.on('click', '.deleteArticle', function(e) {
             e.preventDefault();
             var id = $(this).data('id');
+            var project_id = $(this).data('project_id');
             Swal.fire({
                 title: 'Delete Article',
                 text: 'Are you sure you want to delete this article?',
@@ -350,7 +352,8 @@
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}',
-                            id: id
+                            id: id,
+                            project_id: project_id,
                         },
                         dataType: 'json',
                         success: function(response) {

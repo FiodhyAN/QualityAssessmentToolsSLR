@@ -22,7 +22,7 @@ class ArticleController extends Controller
     public function articleTable($id)
     {
         $this->authorize('admin');
-        $articles = Article::select('id', 'no', 'title', 'year', 'publication', 'authors', 'file', 'link_articles')->where('project_id', $id)->get();
+        $articles = Article::select('id', 'no', 'title', 'year', 'publication', 'authors', 'file', 'link_articles', 'project_id')->where('project_id', $id)->get();
         return DataTables::of($articles)
             ->addColumn('no', function (Article $article) {
                 return $article->id . ' - ' . $article->no;
@@ -53,9 +53,9 @@ class ArticleController extends Controller
                 return $content;
             })
             ->addColumn('action', function (Article $article) use ($id) {
-                $btn = '<button type="button" class="btn btn-warning text-white btn-sm aksi scoreArticle" id="scoreArticle" data-bs-toggle="modal" data-bs-target="#modalScore" data-id="' . $article->id . '" data-title="' . $article->title . '"><ion-icon name="stats-chart-outline"></ion-icon> Score</button><br>';
-                $btn .= '<a href="/dashboard/admin/article/' . encrypt($article->id) . '/edit?pid=' . encrypt($id) . '"><button type="button" class="btn btn-primary btn-sm aksi mt-2 mb-2"><ion-icon name="create-outline"></ion-icon> Edit</button></a><br>';
-                $btn .= '<button type="button" class="btn btn-danger btn-sm aksi deleteArticle" data-id="' . $article->id . '"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
+                $btn = '<button type="button" style="width:100%;" class="btn btn-warning text-white btn-sm aksi scoreArticle" id="scoreArticle" data-bs-toggle="modal" data-bs-target="#modalScore" data-id="' . $article->id . '" data-title="' . $article->title . '"><ion-icon name="stats-chart-outline"></ion-icon> Score</button><br>';
+                $btn .= '<a href="/dashboard/admin/article/' . encrypt($article->id) . '/edit?pid=' . encrypt($id) . '"><button type="button" style="width:100%;" class="btn btn-primary btn-sm aksi mt-2 mb-2"><ion-icon name="create-outline"></ion-icon> Edit</button></a><br>';
+                $btn .= '<button type="button" style="width:100%;" class="btn btn-danger btn-sm aksi deleteArticle" data-id="' . $article->id . '" data-project_id="'.$article->project_id.'"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
                 return $btn;
             })
             ->rawColumns(['no','title', 'publication', 'authors', 'action', 'article_file'])
@@ -134,8 +134,8 @@ class ArticleController extends Controller
         $this->authorize('admin');
         $request->validate([
             'kode_artikel' => 'required',
-            'file' => 'mimes:pdf|nullable|required_without:link',
-            'link' => 'url|nullable|required_without:file',
+            'file' => 'mimes:pdf|nullable',
+            'link' => 'url|nullable',
             'title' => 'required',
             'publication' => 'required',
             'year' => 'required',
@@ -179,6 +179,7 @@ class ArticleController extends Controller
             'references_filter' => $request->references_filter ?? null,
             'cited' => $request->cited,
             'cited_gs' => $request->cited_gs,
+            'cited_other' => $request->cited_other,
             'citing' => $request->cited_other,
             'keyword' => $request->keyword,
             'edatabase' => $request->edatabase,
@@ -204,8 +205,8 @@ class ArticleController extends Controller
         $this->authorize('admin');
         $request->validate([
             'kode_artikel' => 'required',
-            'file' => 'mimes:pdf|nullable|required_without:link',
-            'link' => 'url|nullable|required_without:file',
+            'file' => 'mimes:pdf|nullable',
+            'link' => 'url|nullable',
             'title' => 'required',
             'publication' => 'required',
             'year' => 'required',
@@ -264,6 +265,7 @@ class ArticleController extends Controller
             'references_filter' => $request->references_filter ?? $article->references_filter,
             'cited' => $request->cited ?? $article->cited,
             'cited_gs' => $request->cited_gs ?? $article->cited_gs,
+            'cited_other' => $request->cited_other ?? $article->cited_other,
             'citing_new' => $request->cited_other ?? $article->citing_new,
             'keyword' => $request->keyword ?? $article->keyword,
             'edatabase' => $request->edatabase ?? $article->edatabase,
@@ -276,6 +278,10 @@ class ArticleController extends Controller
     {
         $this->authorize('admin');
         $article = Article::find($request->id);
+        $article_citing = Article::select('id', 'no', 'citing', 'citing_new', 'project_id')->where('project_id', $request->project_id)->where(function($query) use ($article) {
+            $query->where('citing', 'like', '%'.$article->no.'%')->orWhere('citing_new', 'like', '%'.$article->no.'%');
+        })->get();
+
         if (ArticleUser::where('article_id', $request->id)->where('is_assessed', true)->exists())
         {
             return json_encode(['error' => 'Article has been assessed, cannot be deleted!']);
@@ -284,8 +290,40 @@ class ArticleController extends Controller
             $file_path = storage_path('/app/public/article/' . $article->file);
             File::delete($file_path);
         }
+
         ArticleUser::where('article_id', $request->id)->delete();
         $article->delete();
+
+        foreach ($article_citing as $key => $value) {
+            if (substr($value->citing, -strlen($article->no)) === $article->no) {
+                $citing = $value->citing;
+                $citing = str_replace($article->no, '', $citing);
+                $value->update([
+                    'citing' => $citing
+                ]);
+            }
+            else {
+                $citing = $value->citing_new;
+                $citing = str_replace($article->no.';', '', $citing);
+                $value->update([
+                    'citing' => $citing
+                ]);
+            }
+            if (substr($value->citing_new, -strlen($article->no)) === $article->no) {
+                $citing_new = $value->citing_new;
+                $citing_new = str_replace($article->no, '', $citing_new);
+                $value->update([
+                    'citing_new' => $citing_new
+                ]);
+            }
+            else {
+                $citing_new = $value->citing_new;
+                $citing_new = str_replace($article->no.';', '', $citing_new);
+                $value->update([
+                    'citing_new' => $citing_new
+                ]);
+            }
+        }
 
         return json_encode(['success' => 'Article successfully deleted!']);
     }
@@ -334,8 +372,8 @@ class ArticleController extends Controller
     {
         $this->authorize('admin');
         $this->validate($request, [
-            'file' => 'mimes:pdf|nullable|required_without:link',
-            'link' => 'url|nullable|required_without:file',
+            'file' => 'mimes:pdf|nullable',
+            'link' => 'url|nullable',
         ]);
 
         $article = Article::find($request->article_id);
