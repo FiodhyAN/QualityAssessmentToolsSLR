@@ -232,7 +232,6 @@ class DataProcessingController extends Controller
                 'author-rank' => $sum_top_author
             ]
         );
-
         $image = $response['graph'];
         $image =utf8_decode($image);
         $authors = $response['authors'];

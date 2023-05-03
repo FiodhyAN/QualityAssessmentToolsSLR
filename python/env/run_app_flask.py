@@ -68,6 +68,7 @@ def getData(data=None):
     return (table)
 
 def getArticleIdAuthorReferencesAndAuthor(table):
+    time_start = time.time()
     pairs = []
     authors = []
     articles = []
@@ -103,9 +104,12 @@ def getArticleIdAuthorReferencesAndAuthor(table):
     # menghilangkan duplikat
     authors = sorted(set(authors))
     articles = sorted(set(articles))
+    time_end = time.time()
+    print("getArticleIdAuthorReferencesAndAuthor time: ", time_end - time_start)
     return pairs, authors, articles,initial_articles_pair ,title_articles_pair,initial_author_pair,nation_author_pair
 
 def author_matrixs(authors):
+    time_start = time.time()
     author_matrix = []
     for author_x in authors:
         for author_y in authors:
@@ -113,11 +117,14 @@ def author_matrixs(authors):
             row.append(author_x)
             row.append(author_y)
             author_matrix.append(row)
+    time_end = time.time()
+    print("author_matrixs time: ", time_end - time_start)
     return author_matrix
 
 
 # ge table 2 data start
 def getTable2Data(pairs, search_matrix, type):
+    time_start = time.time()
     # create a DataFrame to store the author matrix
     author_matrixs = []
     for i in search_matrix:
@@ -131,9 +138,7 @@ def getTable2Data(pairs, search_matrix, type):
                 row_author = []
                 for row in pairs:
                     if author == row[0]:
-                        for author2 in row[1]:
-                            row_author.append(author2)
-                        # skip karena sudah ketemu
+                        row_author.extend(row[1])
                         break
 
                 for author in penulisList:
@@ -155,6 +160,8 @@ def getTable2Data(pairs, search_matrix, type):
                 print("index:"+str(index)+"author"+str(author)+"author_reference"+str(author_reference))
                 author_matrixs[index][2] += 1
 
+    time_end = time.time()
+    print("getTable2Data time: "+str(time_end-time_start))
     return author_matrixs
 # ge table 2 data end
 
@@ -164,6 +171,8 @@ def index_2d(myList, v):
             return i  # , x.index(v)
 
 def makeTable2(author_matrix, authors):
+    # perluotomasi
+    time_start = time.time()
     pretable2 = []
     for x in authors:
         authortmp = []
@@ -175,9 +184,12 @@ def makeTable2(author_matrix, authors):
     table2 = pd.DataFrame(pretable2, columns=authors, index=authors)
     print("tabel 2")
     print(table2)
+    time_end = time.time()
+    print("makeTable2 time: "+str(time_end-time_start))
     return table2, pretable2
 
 def getTopAuthor(authors, author_rank, ranking):
+    time_start = time.time()
     author_ranking = []
     count = -1
     for author in authors:
@@ -186,9 +198,12 @@ def getTopAuthor(authors, author_rank, ranking):
     sorted_authors = sorted(author_ranking, key=lambda x: x[1], reverse=True)
     # get the top 20 author names
     top_authors = [x[0] for x in sorted_authors[:ranking]]
+    time_end = time.time()
+    print("getTopAuthor time: "+str(time_end-time_start))
     return top_authors
 
 def add_node_graph(G, author_matrixs):
+    time_start = time.time()
     for author_matrix in author_matrixs:
         if author_matrix[2] > 0:
             # (penulis merujuk,dirujuk,nilai)
@@ -196,9 +211,12 @@ def add_node_graph(G, author_matrixs):
                        author_matrix[1], weight=author_matrix[2])
             G.add_node(author_matrix[0])
             G.add_node(author_matrix[1])
+    time_end = time.time()
+    print("add_node_graph time: "+str(time_end-time_start))
     return G
 
 def get_no_outer_author(authors, author_rank, exist_authors):
+    time_start = time.time()
     count = -1
     outer_author_rank = []
     outer_authors = []
@@ -209,9 +227,13 @@ def get_no_outer_author(authors, author_rank, exist_authors):
             outer_authors.append(author)
             authors.pop(count)
             author_rank.pop(count)
+    time_end = time.time()
+    print("get_no_outer_author time: "+str(time_end-time_start))
     return authors, author_rank, outer_author_rank, outer_authors
 
 def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
+    # perluooptimasi
+    time_start = time.time()
     # acuan
     search_author = []
     for i in authors:
@@ -296,7 +318,8 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     output.seek(0)
     my_base64_jpgData = base64.b64encode(output.read())
     # query_graph("project 1",my_base64_jpgData)
-
+    time_end = time.time()
+    print("Time taken to run maketermgraph: ", time_end - time_start)
     return buf
 
 def makeTermGraph2(authors, author_matrixs, author_rank, outer_author, ranking):
@@ -391,6 +414,8 @@ def makeTermGraph2(authors, author_matrixs, author_rank, outer_author, ranking):
     return buf
 
 def addTable2TotalRowAndColoumn(pretable2, authors):
+    # perluotomasi
+    time_start = time.time()
     sumrow = []
     sumcol = []
     lenauthor = len(authors)
@@ -418,9 +443,13 @@ def addTable2TotalRowAndColoumn(pretable2, authors):
     print("tabel 3: Add Total Row & Col")
     table2 = pd.DataFrame(pretable2)
     print(table2)
+    time_end = time.time()
+    print("time addTable2TotalRowAndColoumn: "+str(time_end-time_start))
     return pretable2
 
 def makeNewAdjMatrix(pretable3, lenauthor):
+    # perluotomasi
+    time_start = time.time()
     for x in range(lenauthor):
         for y in range(lenauthor):
             if pretable3[lenauthor][y] == 0:
@@ -432,10 +461,14 @@ def makeNewAdjMatrix(pretable3, lenauthor):
     table3 = pd.DataFrame(pretable3)
     print("tabel 3:new adj Matrix")
     print(table3)
+    time_end = time.time()
+    print("time makeNewAdjMatrix: "+str(time_end-time_start))
     return pretable3
 
 
 def rank(pretable3, author, name):
+    # perluotomasi
+    date_start = time.time()
     lenauthor = len(author)
     d = 0.850466963
     table4 = []
@@ -465,6 +498,8 @@ def rank(pretable3, author, name):
 
     json_data = json.dumps({"author": author, "ranks": rank})
     # query_rank("project 1",json_data)
+    date_end = time.time()
+    print("time of rank function: "+str(date_end-date_start))
     return table4, rank,rowbaru
 
 
