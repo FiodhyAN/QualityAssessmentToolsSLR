@@ -129,23 +129,28 @@ def getTable2Data(pairs, search_matrix, type):
     author_matrixs = []
     for i in search_matrix:
         author_matrixs.append([i[0], i[1], 0])
+    
+    new_search_matrix = {}
+    count = 0
+    for i in search_matrix:
+        new_search_matrix[i[0]+"-"+i[1]] = count
+        count += 1
+    
+    article_and_authors={}
+    for i in pairs:
+        article_and_authors[i[0]]=i[1]
 
     if type == "author":
         for i in pairs:
             penulisList = i[1]
             authorList = i[2]
             for author in authorList:
-                row_author = []
-                for row in pairs:
-                    if author == row[0]:
-                        row_author.extend(row[1])
-                        break
-
-                for author in penulisList:
-                    for row in row_author:
-                        if author != row:
-                            index = search_matrix.index([author, row])
-                            author_matrixs[index][2] += 1
+                if len(author) <= 1:
+                    continue
+                for penulis in penulisList:
+                    for row in article_and_authors[author]:
+                        if penulis != row:
+                            author_matrixs[new_search_matrix[penulis+"-"+row]][2] += 1
         print("\n")
     elif type == "article":
         for i in pairs:
