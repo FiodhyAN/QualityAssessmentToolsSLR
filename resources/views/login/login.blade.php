@@ -90,6 +90,11 @@
         </div>
     </div>
   </div>
+  <footer class="footer-login" style="margin-left: 0;">
+    <div class="footer-text">
+      <p class="my-4">Copyright © 2023 Institut Teknologi Sepuluh Nopember.</p>
+    </div>
+  </footer>
   <!--end wrapper-->
   <script src="/assets/js/jquery.min.js"></script>
   <script src="/assets/plugins/simplebar/js/simplebar.min.js"></script>

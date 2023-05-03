@@ -41,7 +41,12 @@
                 </div>
                 <div class="col-6">
                     <label for="link" class="form-label">or Insert Link</label>
-                    <input class="form-control" type="text" name="link" id="link" placeholder="ex: https://www.google.com">
+                    <input class="form-control @error('link') is-invalid @enderror" type="text" name="link" id="link" placeholder="ex: https://www.google.com">
+                    @error('link')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
                 </div>
                 <button id="previewBtn" type="button" class="btn btn-primary mt-3  justify-content-center" data-bs-toggle="modal"
                     data-bs-target="#exampleModal" disabled>

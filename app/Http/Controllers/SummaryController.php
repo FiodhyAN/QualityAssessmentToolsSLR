@@ -148,15 +148,11 @@ class SummaryController extends Controller
 
     }
 
-    public function articleType()
-    {
-        return view('dashboard.summary.type');
-    }
-
     public function findArticleType(Request $request)
     {
+        $this->authorize('projectSummary');
         $articles = Article::select('type', 'year', DB::raw('count(*) as total'))
-                            ->where('project_id', 6)
+                            ->where('project_id', $request->project_id)
                             ->whereBetween('year', [$request->yearFrom, $request->yearTo])
                             ->groupBy('year', 'type')
                             ->get();

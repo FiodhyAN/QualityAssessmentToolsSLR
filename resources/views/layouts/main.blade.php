@@ -142,7 +142,8 @@
                     </div>
                 @endcan
                 @can('admin')
-                    <div class="page-breadcrumb d-sm-flex align-items-center mb-3 {{ Request::is('dashboard') || Request::is('dashboard/admin/project/') || Request::is('dashboard/reviewer/*') || Request::is('metadata/*') || Request::is('dashboard/projectSummary') || Request::is('articleType') ? 'd-none' : '' }}">
+                    <div
+                        class="page-breadcrumb d-sm-flex align-items-center mb-3 {{ Request::is('dashboard') || Request::is('dashboard/admin/project/') || Request::is('dashboard/reviewer/*') || Request::is('metadata/*') || Request::is('dashboard/projectSummary') || Request::is('articleType') ? 'd-none' : '' }}">
                         <div class="breadcrumb-title pe-3">
                             @if (Request::is('dashboard/admin/project/*'))
                                 Article Management
@@ -203,14 +204,14 @@
         </a>
         <!--End Back To Top Button-->
 
+        {{-- <footer class="footer">
+            <div class="footer-text">
+                Copyright © 2023. All right reserved.
+            </div>
+        </footer> --}}
     </div>
     <!--end wrapper-->
 
-    {{-- <footer class="footer">
-    <div class="footer-text">
-      Copyright © 2023. All right reserved.
-    </div>
-  </footer> --}}
 
 
     <!-- JS Files-->
