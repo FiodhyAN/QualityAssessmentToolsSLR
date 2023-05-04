@@ -176,6 +176,8 @@ def index_2d(myList, v):
 def makeTable2(author_matrix, authors):
     # perluotomasi
     time_start = time.time()
+    time_end = time.time()
+    print("makeTable2 time: "+str(time_end-time_start))
     pretable2 = []
     for x in authors:
         authortmp = []
@@ -187,8 +189,6 @@ def makeTable2(author_matrix, authors):
     table2 = pd.DataFrame(pretable2, columns=authors, index=authors)
     print("tabel 2")
     print(table2)
-    time_end = time.time()
-    print("makeTable2 time: "+str(time_end-time_start))
     return table2, pretable2
 
 def getTopAuthor(authors, author_rank, ranking):
