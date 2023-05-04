@@ -186,7 +186,7 @@ def makeTable2(author_matrix, authors):
     # print(pretable2)
     table2 = pd.DataFrame(pretable2, columns=authors, index=authors)
     print("tabel 2")
-    # print(table2)
+    print(table2)
     time_end = time.time()
     print("makeTable2 time: "+str(time_end-time_start))
     return table2, pretable2
@@ -320,22 +320,28 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
 
     edge_labels = nx.get_edge_attributes(G, name='weight')
 
-    start_edge_labels_time=time.time()
     edge_labels = {(u, v): weight_matrix for u, v,
                    weight_matrix in G.edges(data='weight')}
-    end_edge_labels_time=time.time()-start_edge_labels_time
-    print("edge_labels time: "+str(end_edge_labels_time))
-
+    
     draw_time=time.time()
     nx.draw_networkx_edge_labels(G, pos, edge_labels, font_size=5)
+    end_draw_time=time.time()-draw_time
+    print("draw time: "+str(end_draw_time))
+
+
     buf = io.BytesIO()
+
+
+    plt_time=time.time()
     plt.savefig(buf, format='png')
+    end_plt_time=time.time()-plt_time
+    print("plt time: "+str(end_plt_time))
 
     output = buf
     output.seek(0)
-    my_base64_jpgData = base64.b64encode(output.read())
-    end_draw_time=time.time()-draw_time
-    print("draw time: "+str(end_draw_time))
+
+
+    # my_base64_jpgData = base64.b64encode(output.read())
     # query_graph("project 1",my_base64_jpgData)
     time_end = time.time()
     print("Time taken to run maketermgraph: ", time_end - time_start)
