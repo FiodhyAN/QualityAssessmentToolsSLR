@@ -341,96 +341,6 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     print("Time taken to run maketermgraph: ", time_end - time_start)
     return buf
 
-def makeTermGraph2(authors, author_matrixs, author_rank, outer_author, ranking):
-    rank_outer_author = author_rank[len(author_rank)-1]
-    G = nx.Graph()
-    labels = {}
-    my_node_sizes = []
-    my_node_colors = []
-    my_node_label_color = []
-
-    author_ranking = []
-    count = -1
-    for author in authors:
-        count += 1
-        author_ranking.append((author, author_rank[count]))
-
-    sorted_authors = sorted(author_ranking, key=lambda x: x[1], reverse=True)
-
-    # get the top 20 author names
-    top_authors = [x[0] for x in sorted_authors[:ranking]]
-
-    count = -1
-    # Add nodes to the graph
-    for author, size in zip(authors, author_rank):
-        count += 1
-        if size > rank_outer_author:
-            G.add_node(author)
-            # jika iya nilainya *300
-            my_node_sizes.append(size * 300)
-            if author in top_authors:
-                my_node_colors.append('purple')
-            else:
-                my_node_colors.append('blue')
-            labels[author] = author
-        else:
-            G.add_node(author)
-            # jika tidak dirujuk nilainya 10
-            if outer_author == True:
-                my_node_sizes.append(8)
-                my_node_label_color.append(8)
-                labels[author] = author
-            else:
-                my_node_sizes.append(0)
-                labels[author] = ""
-            my_node_colors.append('red')
-
-    for author_matrix in author_matrixs:
-        if author_matrix[2] > 0:
-            # print("value:"+str(author_matrix[2]))
-            # jika ada hubungan dengan top author maka tambahkan edge
-            if outer_author == False:
-                if (author_matrix[0] in top_authors or author_matrix[1] in top_authors):
-                    G.add_edge(
-                        author_matrix[0], author_matrix[1], weight=author_matrix[2])
-                    print(
-                        "edge:"+str(author_matrix[0])+"-"+str(author_matrix[1]))
-            else:
-                G.add_edge(
-                    author_matrix[0], author_matrix[1], weight=author_matrix[2])
-                print("edge:"+str(author_matrix[0])+"-"+str(author_matrix[1]))
-
-            index = authors.index(author_matrix[0])
-            if my_node_sizes[index] == 8 or my_node_sizes[index] == 0:
-                # node yang merujuk tapi tidak dirujuk ubah size=100
-                my_node_sizes[index] = 100
-                labels[authors[index]] = authors[index]
-    # Draw the graph
-    # fig, ax = plt.subplots(figsize=(15,12)) # increase plot size to 10x8 inches
-    # increase plot size to 10x8 inches
-    fig, ax = plt.subplots(figsize=(90, 72))
-    # decrease k parameter to increase spacing between nodes
-    pos = nx.spring_layout(G, seed=7, k=0.4)
-    nx.draw_networkx_nodes(G, pos, node_size=my_node_sizes, alpha=0.7,
-                           node_color=my_node_colors)  # increase node size to 200
-    nx.draw_networkx_edges(G, pos, edgelist=G.edges(),
-                           width=1, alpha=0.5, edge_color="b")
-    nx.draw_networkx_labels(G, pos, labels, font_size=8,
-                            font_family="sans-serif", font_color="black")
-
-    edge_labels = nx.get_edge_attributes(G, name='weight')
-    edge_labels = {(u, v): weight_matrix for u, v,
-                   weight_matrix in G.edges(data='weight')}
-    nx.draw_networkx_edge_labels(G, pos, edge_labels, font_size=5)
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-
-    output = buf
-    output.seek(0)
-    my_base64_jpgData = base64.b64encode(output.read())
-    # query_graph("project 1",my_base64_jpgData)
-
-    return buf
 
 def addTable2TotalRowAndColoumn(pretable2, authors):
     # perluotomasi
@@ -580,6 +490,18 @@ def data(type, name):
             outer_author = True
             top_author_rank = 10
 
+        initial_articles_pair_search={}
+        count=0
+        for j in initial_articles_pair:
+            initial_articles_pair_search[j]=count
+            count+=1
+
+        initial_author_pair_search={}
+        count=0
+        for j in initial_author_pair:
+            initial_author_pair_search[j]=count
+            count+=1
+
         if name == "graph":
             # Make Term Graph
             output = makeTermGraph(
@@ -602,10 +524,10 @@ def data(type, name):
             title_nation_of_the_article = []
             for i in input_author_article:
                 if type == "article":
-                    title_nation_of_the_article.append(title_articles_pair[initial_articles_pair.index(i)])
+                    title_nation_of_the_article.append(title_articles_pair[initial_articles_pair_search[i]])
                 elif type == "author":
                     if i in initial_author_pair:
-                        title_nation_of_the_article.append(nation_author_pair[initial_author_pair.index(i)])
+                        title_nation_of_the_article.append(nation_author_pair[initial_author_pair_search[i]])
                     else:
                         # bukan penulis pertama
                         title_nation_of_the_article.append("None")
@@ -621,10 +543,10 @@ def data(type, name):
             title_nation_of_the_article = []
             for i in input_author_article:
                 if type == "article":
-                    title_nation_of_the_article.append(title_articles_pair[initial_articles_pair.index(i)])
+                    title_nation_of_the_article.append(title_articles_pair[initial_articles_pair_search[i]])
                 elif type == "author":
                     if i in initial_author_pair:
-                        title_nation_of_the_article.append(nation_author_pair[initial_author_pair.index(i)])
+                        title_nation_of_the_article.append(nation_author_pair[initial_author_pair_search[i]])
                     else:
                         # bukan penulis pertama
                         title_nation_of_the_article.append("None")
