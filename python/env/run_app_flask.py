@@ -168,27 +168,27 @@ def getTable2Data(pairs, search_matrix, type):
     return author_matrixs
 # ge table 2 data end
 
-def index_2d(myList, v):
-    for i, x in enumerate(myList):
-        if v in x:
-            return i  # , x.index(v)
-
 def makeTable2(author_matrix, authors):
     # perluotomasi
     time_start = time.time()
-    time_end = time.time()
-    print("makeTable2 time: "+str(time_end-time_start))
+
+    new_search_matrix = {}
+    for i in author_matrix:
+        new_search_matrix[i[0]+"-"+i[1]] = i[2]
+
     pretable2 = []
-    for x in authors:
+    for p1 in authors:
         authortmp = []
-        for y in author_matrix:
-            if y[1] == x:
-                authortmp.append(y[2])
+        for p2 in authors:
+            val = new_search_matrix[p1+"-"+p2]
+            authortmp.append(val)
         pretable2.append(authortmp)
     # print(pretable2)
     table2 = pd.DataFrame(pretable2, columns=authors, index=authors)
     print("tabel 2")
-    print(table2)
+    # print(table2)
+    time_end = time.time()
+    print("makeTable2 time: "+str(time_end-time_start))
     return table2, pretable2
 
 def getTopAuthor(authors, author_rank, ranking):
@@ -341,37 +341,33 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     print("Time taken to run maketermgraph: ", time_end - time_start)
     return buf
 
-
+# improve
 def addTable2TotalRowAndColoumn(pretable2, authors):
     # perluotomasi
     time_start = time.time()
-    sumrow = []
-    sumcol = []
     lenauthor = len(authors)
-    for x in range(lenauthor):
-        nilai = 0
-        for y in range(lenauthor):
-            nilai = nilai+pretable2[x][y]
-        sumrow.append(nilai)
-    print("p1p9")
-    print(sumrow)
 
-    sumcol = []
-    for x in range(lenauthor):
-        nilai = 0
-        for y in range(lenauthor):
-            nilai = nilai+pretable2[y][x]
-        sumcol.append(nilai)
-    sumcol.append(0)
-    print("p9p1")
-    print(sumcol)
+    sumrow = []
+    sumcol = [0] * len(authors)
+
+    for i, row in enumerate(pretable2):
+        row_sum = 0
+        for j, val in enumerate(row):
+            row_sum += val
+            sumcol[j] += val
+        sumrow.append(row_sum)
+    
+    print("p1p9(sumrow)")
+    # print(sumrow)
+    print("p9p1(sumcol)")
+    # print(sumcol)
     for x in range(lenauthor):
         pretable2[x].append(sumrow[x])
     pretable2.append(sumcol)
-    print(pretable2)
+    # print(pretable2)
     print("tabel 3: Add Total Row & Col")
     table2 = pd.DataFrame(pretable2)
-    print(table2)
+    # print(table2)
     time_end = time.time()
     print("time addTable2TotalRowAndColoumn: "+str(time_end-time_start))
     return pretable2
@@ -389,11 +385,10 @@ def makeNewAdjMatrix(pretable3, lenauthor):
                 pretable3[x][y] = pretable3[x][y]/pretable3[lenauthor][y]
     table3 = pd.DataFrame(pretable3)
     print("tabel 3:new adj Matrix")
-    print(table3)
+    # print(table3)
     time_end = time.time()
     print("time makeNewAdjMatrix: "+str(time_end-time_start))
     return pretable3
-
 
 def rank(pretable3, author, name):
     # perluotomasi
@@ -423,7 +418,7 @@ def rank(pretable3, author, name):
     table4.append(rank)
     table5 = pd.DataFrame(table4)
     print("tabel 3: Ranking")
-    print(table5.T)
+    # print(table5.T)
 
     json_data = json.dumps({"author": author, "ranks": rank})
     # query_rank("project 1",json_data)
@@ -472,14 +467,11 @@ def data(type, name):
         # return author_matrix_and_relation
 
     # errornyadisini
-        table2, raw_table2 = makeTable2(
-            author_matrix_and_relation, input_author_article)
+        table2, raw_table2 = makeTable2(author_matrix_and_relation, input_author_article)
         # add total coloum & row in table 2
-        raw_table2WithRowCol = addTable2TotalRowAndColoumn(
-            raw_table2, input_author_article)
+        raw_table2WithRowCol = addTable2TotalRowAndColoumn(raw_table2, input_author_article)
         # makeNewAdjMatrix
-        newAdjMatrixs = makeNewAdjMatrix(
-            raw_table2WithRowCol, len(input_author_article))
+        newAdjMatrixs = makeNewAdjMatrix(raw_table2WithRowCol, len(input_author_article))
         # rank author
         table, author_rank,last_author_rank = rank(newAdjMatrixs, input_author_article, name)
 
