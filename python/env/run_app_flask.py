@@ -238,9 +238,11 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     # perluooptimasi
     time_start = time.time()
     # acuan
-    search_author = []
+    count = 0
+    search_author_json={}
     for i in authors:
-        search_author.append(i)
+        search_author_json[i]=count
+        count+=1
 
     # nilai author tanpa hubungan ex:0.123
     rank_outer_author = author_rank[len(author_rank)-1]
@@ -264,12 +266,18 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
 
     authors, author_rank, outer_author_rank, outer_authors = get_no_outer_author(
         authors, author_rank, G.nodes)
+    
+    search_authors={}
+    count=0
+    for author in authors:
+        search_authors[author]=count
+        count+=1
 
     print(len(authors))
     print(len(author_rank))
 
     for author in G.nodes:
-        size = author_rank[authors.index(author)]
+        size = author_rank[search_authors[author]]
         if size > rank_outer_author:
             # jika iya nilainya *300
             my_node_sizes.append(size * 800)
@@ -281,14 +289,14 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
             # jika tidak dirujuk nilainya 10
             my_node_sizes.append(1000)
             my_node_colors.append('red')
-        labels[author] = str(search_author.index(author))
+        labels[author] = str(search_author_json[author])
 
     if outer_author == True:
         for author, size in zip(outer_authors, outer_author_rank):
             G.add_node(author)
             my_node_sizes.append(100)
             my_node_colors.append('red')
-            labels[author] = str(search_author.index(author))
+            labels[author] = str(search_author_json[author])
 
     # default=125
     total_author = len(G.nodes)
@@ -311,8 +319,14 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
                             )
 
     edge_labels = nx.get_edge_attributes(G, name='weight')
+
+    start_edge_labels_time=time.time()
     edge_labels = {(u, v): weight_matrix for u, v,
                    weight_matrix in G.edges(data='weight')}
+    end_edge_labels_time=time.time()-start_edge_labels_time
+    print("edge_labels time: "+str(end_edge_labels_time))
+
+    draw_time=time.time()
     nx.draw_networkx_edge_labels(G, pos, edge_labels, font_size=5)
     buf = io.BytesIO()
     plt.savefig(buf, format='png')
@@ -320,6 +334,8 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     output = buf
     output.seek(0)
     my_base64_jpgData = base64.b64encode(output.read())
+    end_draw_time=time.time()-draw_time
+    print("draw time: "+str(end_draw_time))
     # query_graph("project 1",my_base64_jpgData)
     time_end = time.time()
     print("Time taken to run maketermgraph: ", time_end - time_start)
