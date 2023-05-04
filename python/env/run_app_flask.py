@@ -180,7 +180,7 @@ def makeTable2(author_matrix, authors):
     for p1 in authors:
         authortmp = []
         for p2 in authors:
-            val = new_search_matrix[p1+"-"+p2]
+            val = new_search_matrix[p2+"-"+p1]
             authortmp.append(val)
         pretable2.append(authortmp)
     # print(pretable2)
