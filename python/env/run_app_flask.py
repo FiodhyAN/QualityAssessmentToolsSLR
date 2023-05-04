@@ -161,9 +161,7 @@ def getTable2Data(pairs, search_matrix, type):
                 # memastikan article/author != ''
                 if len(author) <= 1 or len(author_reference) <= 1:
                     continue
-                index = search_matrix.index([author, author_reference])
-                print("index:"+str(index)+"author"+str(author)+"author_reference"+str(author_reference))
-                author_matrixs[index][2] += 1
+                author_matrixs[new_search_matrix[author+"-"+author_reference]][2] += 1
 
     time_end = time.time()
     print("getTable2Data time: "+str(time_end-time_start))
