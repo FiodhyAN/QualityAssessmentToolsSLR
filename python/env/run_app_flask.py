@@ -68,6 +68,7 @@ def getData(data=None):
     return (table)
 
 def getArticleIdAuthorReferencesAndAuthor(table):
+    time_start = time.time()
     pairs = []
     authors = []
     articles = []
@@ -103,9 +104,12 @@ def getArticleIdAuthorReferencesAndAuthor(table):
     # menghilangkan duplikat
     authors = sorted(set(authors))
     articles = sorted(set(articles))
+    time_end = time.time()
+    print("getArticleIdAuthorReferencesAndAuthor time: ", time_end - time_start)
     return pairs, authors, articles,initial_articles_pair ,title_articles_pair,initial_author_pair,nation_author_pair
 
 def author_matrixs(authors):
+    time_start = time.time()
     author_matrix = []
     for author_x in authors:
         for author_y in authors:
@@ -113,34 +117,40 @@ def author_matrixs(authors):
             row.append(author_x)
             row.append(author_y)
             author_matrix.append(row)
+    time_end = time.time()
+    print("author_matrixs time: ", time_end - time_start)
     return author_matrix
 
 
 # ge table 2 data start
 def getTable2Data(pairs, search_matrix, type):
+    time_start = time.time()
     # create a DataFrame to store the author matrix
     author_matrixs = []
     for i in search_matrix:
         author_matrixs.append([i[0], i[1], 0])
+    
+    new_search_matrix = {}
+    count = 0
+    for i in search_matrix:
+        new_search_matrix[i[0]+"-"+i[1]] = count
+        count += 1
+    
+    article_and_authors={}
+    for i in pairs:
+        article_and_authors[i[0]]=i[1]
 
     if type == "author":
         for i in pairs:
             penulisList = i[1]
             authorList = i[2]
             for author in authorList:
-                row_author = []
-                for row in pairs:
-                    if author == row[0]:
-                        for author2 in row[1]:
-                            row_author.append(author2)
-                        # skip karena sudah ketemu
-                        break
-
-                for author in penulisList:
-                    for row in row_author:
-                        if author != row:
-                            index = search_matrix.index([author, row])
-                            author_matrixs[index][2] += 1
+                if len(author) <= 1:
+                    continue
+                for penulis in penulisList:
+                    for row in article_and_authors[author]:
+                        if penulis != row:
+                            author_matrixs[new_search_matrix[penulis+"-"+row]][2] += 1
         print("\n")
     elif type == "article":
         for i in pairs:
@@ -151,33 +161,38 @@ def getTable2Data(pairs, search_matrix, type):
                 # memastikan article/author != ''
                 if len(author) <= 1 or len(author_reference) <= 1:
                     continue
-                index = search_matrix.index([author, author_reference])
-                print("index:"+str(index)+"author"+str(author)+"author_reference"+str(author_reference))
-                author_matrixs[index][2] += 1
+                author_matrixs[new_search_matrix[author+"-"+author_reference]][2] += 1
 
+    time_end = time.time()
+    print("getTable2Data time: "+str(time_end-time_start))
     return author_matrixs
 # ge table 2 data end
 
-def index_2d(myList, v):
-    for i, x in enumerate(myList):
-        if v in x:
-            return i  # , x.index(v)
-
 def makeTable2(author_matrix, authors):
+    # perluotomasi
+    time_start = time.time()
+
+    new_search_matrix = {}
+    for i in author_matrix:
+        new_search_matrix[i[0]+"-"+i[1]] = i[2]
+
     pretable2 = []
-    for x in authors:
+    for p1 in authors:
         authortmp = []
-        for y in author_matrix:
-            if y[1] == x:
-                authortmp.append(y[2])
+        for p2 in authors:
+            val = new_search_matrix[p2+"-"+p1]
+            authortmp.append(val)
         pretable2.append(authortmp)
     # print(pretable2)
     table2 = pd.DataFrame(pretable2, columns=authors, index=authors)
     print("tabel 2")
     print(table2)
+    time_end = time.time()
+    print("makeTable2 time: "+str(time_end-time_start))
     return table2, pretable2
 
 def getTopAuthor(authors, author_rank, ranking):
+    time_start = time.time()
     author_ranking = []
     count = -1
     for author in authors:
@@ -186,9 +201,12 @@ def getTopAuthor(authors, author_rank, ranking):
     sorted_authors = sorted(author_ranking, key=lambda x: x[1], reverse=True)
     # get the top 20 author names
     top_authors = [x[0] for x in sorted_authors[:ranking]]
+    time_end = time.time()
+    print("getTopAuthor time: "+str(time_end-time_start))
     return top_authors
 
 def add_node_graph(G, author_matrixs):
+    time_start = time.time()
     for author_matrix in author_matrixs:
         if author_matrix[2] > 0:
             # (penulis merujuk,dirujuk,nilai)
@@ -196,9 +214,12 @@ def add_node_graph(G, author_matrixs):
                        author_matrix[1], weight=author_matrix[2])
             G.add_node(author_matrix[0])
             G.add_node(author_matrix[1])
+    time_end = time.time()
+    print("add_node_graph time: "+str(time_end-time_start))
     return G
 
 def get_no_outer_author(authors, author_rank, exist_authors):
+    time_start = time.time()
     count = -1
     outer_author_rank = []
     outer_authors = []
@@ -209,13 +230,19 @@ def get_no_outer_author(authors, author_rank, exist_authors):
             outer_authors.append(author)
             authors.pop(count)
             author_rank.pop(count)
+    time_end = time.time()
+    print("get_no_outer_author time: "+str(time_end-time_start))
     return authors, author_rank, outer_author_rank, outer_authors
 
 def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
+    # perluooptimasi
+    time_start = time.time()
     # acuan
-    search_author = []
+    count = 0
+    search_author_json={}
     for i in authors:
-        search_author.append(i)
+        search_author_json[i]=count
+        count+=1
 
     # nilai author tanpa hubungan ex:0.123
     rank_outer_author = author_rank[len(author_rank)-1]
@@ -239,12 +266,18 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
 
     authors, author_rank, outer_author_rank, outer_authors = get_no_outer_author(
         authors, author_rank, G.nodes)
+    
+    search_authors={}
+    count=0
+    for author in authors:
+        search_authors[author]=count
+        count+=1
 
     print(len(authors))
     print(len(author_rank))
 
     for author in G.nodes:
-        size = author_rank[authors.index(author)]
+        size = author_rank[search_authors[author]]
         if size > rank_outer_author:
             # jika iya nilainya *300
             my_node_sizes.append(size * 800)
@@ -256,14 +289,14 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
             # jika tidak dirujuk nilainya 10
             my_node_sizes.append(1000)
             my_node_colors.append('red')
-        labels[author] = str(search_author.index(author))
+        labels[author] = str(search_author_json[author])
 
     if outer_author == True:
         for author, size in zip(outer_authors, outer_author_rank):
             G.add_node(author)
             my_node_sizes.append(100)
             my_node_colors.append('red')
-            labels[author] = str(search_author.index(author))
+            labels[author] = str(search_author_json[author])
 
     # default=125
     total_author = len(G.nodes)
@@ -286,141 +319,68 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
                             )
 
     edge_labels = nx.get_edge_attributes(G, name='weight')
+
     edge_labels = {(u, v): weight_matrix for u, v,
                    weight_matrix in G.edges(data='weight')}
+    
+    draw_time=time.time()
     nx.draw_networkx_edge_labels(G, pos, edge_labels, font_size=5)
+    end_draw_time=time.time()-draw_time
+    print("draw time: "+str(end_draw_time))
+
+
     buf = io.BytesIO()
+
+
+    plt_time=time.time()
     plt.savefig(buf, format='png')
+    end_plt_time=time.time()-plt_time
+    print("plt time: "+str(end_plt_time))
 
     output = buf
     output.seek(0)
-    my_base64_jpgData = base64.b64encode(output.read())
-    # query_graph("project 1",my_base64_jpgData)
 
+
+    # my_base64_jpgData = base64.b64encode(output.read())
+    # query_graph("project 1",my_base64_jpgData)
+    time_end = time.time()
+    print("Time taken to run maketermgraph: ", time_end - time_start)
     return buf
 
-def makeTermGraph2(authors, author_matrixs, author_rank, outer_author, ranking):
-    rank_outer_author = author_rank[len(author_rank)-1]
-    G = nx.Graph()
-    labels = {}
-    my_node_sizes = []
-    my_node_colors = []
-    my_node_label_color = []
-
-    author_ranking = []
-    count = -1
-    for author in authors:
-        count += 1
-        author_ranking.append((author, author_rank[count]))
-
-    sorted_authors = sorted(author_ranking, key=lambda x: x[1], reverse=True)
-
-    # get the top 20 author names
-    top_authors = [x[0] for x in sorted_authors[:ranking]]
-
-    count = -1
-    # Add nodes to the graph
-    for author, size in zip(authors, author_rank):
-        count += 1
-        if size > rank_outer_author:
-            G.add_node(author)
-            # jika iya nilainya *300
-            my_node_sizes.append(size * 300)
-            if author in top_authors:
-                my_node_colors.append('purple')
-            else:
-                my_node_colors.append('blue')
-            labels[author] = author
-        else:
-            G.add_node(author)
-            # jika tidak dirujuk nilainya 10
-            if outer_author == True:
-                my_node_sizes.append(8)
-                my_node_label_color.append(8)
-                labels[author] = author
-            else:
-                my_node_sizes.append(0)
-                labels[author] = ""
-            my_node_colors.append('red')
-
-    for author_matrix in author_matrixs:
-        if author_matrix[2] > 0:
-            # print("value:"+str(author_matrix[2]))
-            # jika ada hubungan dengan top author maka tambahkan edge
-            if outer_author == False:
-                if (author_matrix[0] in top_authors or author_matrix[1] in top_authors):
-                    G.add_edge(
-                        author_matrix[0], author_matrix[1], weight=author_matrix[2])
-                    print(
-                        "edge:"+str(author_matrix[0])+"-"+str(author_matrix[1]))
-            else:
-                G.add_edge(
-                    author_matrix[0], author_matrix[1], weight=author_matrix[2])
-                print("edge:"+str(author_matrix[0])+"-"+str(author_matrix[1]))
-
-            index = authors.index(author_matrix[0])
-            if my_node_sizes[index] == 8 or my_node_sizes[index] == 0:
-                # node yang merujuk tapi tidak dirujuk ubah size=100
-                my_node_sizes[index] = 100
-                labels[authors[index]] = authors[index]
-    # Draw the graph
-    # fig, ax = plt.subplots(figsize=(15,12)) # increase plot size to 10x8 inches
-    # increase plot size to 10x8 inches
-    fig, ax = plt.subplots(figsize=(90, 72))
-    # decrease k parameter to increase spacing between nodes
-    pos = nx.spring_layout(G, seed=7, k=0.4)
-    nx.draw_networkx_nodes(G, pos, node_size=my_node_sizes, alpha=0.7,
-                           node_color=my_node_colors)  # increase node size to 200
-    nx.draw_networkx_edges(G, pos, edgelist=G.edges(),
-                           width=1, alpha=0.5, edge_color="b")
-    nx.draw_networkx_labels(G, pos, labels, font_size=8,
-                            font_family="sans-serif", font_color="black")
-
-    edge_labels = nx.get_edge_attributes(G, name='weight')
-    edge_labels = {(u, v): weight_matrix for u, v,
-                   weight_matrix in G.edges(data='weight')}
-    nx.draw_networkx_edge_labels(G, pos, edge_labels, font_size=5)
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-
-    output = buf
-    output.seek(0)
-    my_base64_jpgData = base64.b64encode(output.read())
-    # query_graph("project 1",my_base64_jpgData)
-
-    return buf
-
+# improve
 def addTable2TotalRowAndColoumn(pretable2, authors):
-    sumrow = []
-    sumcol = []
+    # perluotomasi
+    time_start = time.time()
     lenauthor = len(authors)
-    for x in range(lenauthor):
-        nilai = 0
-        for y in range(lenauthor):
-            nilai = nilai+pretable2[x][y]
-        sumrow.append(nilai)
-    print("p1p9")
-    print(sumrow)
 
-    sumcol = []
-    for x in range(lenauthor):
-        nilai = 0
-        for y in range(lenauthor):
-            nilai = nilai+pretable2[y][x]
-        sumcol.append(nilai)
-    sumcol.append(0)
-    print("p9p1")
-    print(sumcol)
+    sumrow = []
+    sumcol = [0] * len(authors)
+
+    for i, row in enumerate(pretable2):
+        row_sum = 0
+        for j, val in enumerate(row):
+            row_sum += val
+            sumcol[j] += val
+        sumrow.append(row_sum)
+    
+    print("p1p9(sumrow)")
+    # print(sumrow)
+    print("p9p1(sumcol)")
+    # print(sumcol)
     for x in range(lenauthor):
         pretable2[x].append(sumrow[x])
     pretable2.append(sumcol)
-    print(pretable2)
+    # print(pretable2)
     print("tabel 3: Add Total Row & Col")
     table2 = pd.DataFrame(pretable2)
-    print(table2)
+    # print(table2)
+    time_end = time.time()
+    print("time addTable2TotalRowAndColoumn: "+str(time_end-time_start))
     return pretable2
 
 def makeNewAdjMatrix(pretable3, lenauthor):
+    # perluotomasi
+    time_start = time.time()
     for x in range(lenauthor):
         for y in range(lenauthor):
             if pretable3[lenauthor][y] == 0:
@@ -431,11 +391,14 @@ def makeNewAdjMatrix(pretable3, lenauthor):
                 pretable3[x][y] = pretable3[x][y]/pretable3[lenauthor][y]
     table3 = pd.DataFrame(pretable3)
     print("tabel 3:new adj Matrix")
-    print(table3)
+    # print(table3)
+    time_end = time.time()
+    print("time makeNewAdjMatrix: "+str(time_end-time_start))
     return pretable3
 
-
 def rank(pretable3, author, name):
+    # perluotomasi
+    date_start = time.time()
     lenauthor = len(author)
     d = 0.850466963
     table4 = []
@@ -461,10 +424,12 @@ def rank(pretable3, author, name):
     table4.append(rank)
     table5 = pd.DataFrame(table4)
     print("tabel 3: Ranking")
-    print(table5.T)
+    # print(table5.T)
 
     json_data = json.dumps({"author": author, "ranks": rank})
     # query_rank("project 1",json_data)
+    date_end = time.time()
+    print("time of rank function: "+str(date_end-date_start))
     return table4, rank,rowbaru
 
 
@@ -508,14 +473,11 @@ def data(type, name):
         # return author_matrix_and_relation
 
     # errornyadisini
-        table2, raw_table2 = makeTable2(
-            author_matrix_and_relation, input_author_article)
+        table2, raw_table2 = makeTable2(author_matrix_and_relation, input_author_article)
         # add total coloum & row in table 2
-        raw_table2WithRowCol = addTable2TotalRowAndColoumn(
-            raw_table2, input_author_article)
+        raw_table2WithRowCol = addTable2TotalRowAndColoumn(raw_table2, input_author_article)
         # makeNewAdjMatrix
-        newAdjMatrixs = makeNewAdjMatrix(
-            raw_table2WithRowCol, len(input_author_article))
+        newAdjMatrixs = makeNewAdjMatrix(raw_table2WithRowCol, len(input_author_article))
         # rank author
         table, author_rank,last_author_rank = rank(newAdjMatrixs, input_author_article, name)
 
@@ -525,6 +487,18 @@ def data(type, name):
         except:
             outer_author = True
             top_author_rank = 10
+
+        initial_articles_pair_search={}
+        count=0
+        for j in initial_articles_pair:
+            initial_articles_pair_search[j]=count
+            count+=1
+
+        initial_author_pair_search={}
+        count=0
+        for j in initial_author_pair:
+            initial_author_pair_search[j]=count
+            count+=1
 
         if name == "graph":
             # Make Term Graph
@@ -548,10 +522,10 @@ def data(type, name):
             title_nation_of_the_article = []
             for i in input_author_article:
                 if type == "article":
-                    title_nation_of_the_article.append(title_articles_pair[initial_articles_pair.index(i)])
+                    title_nation_of_the_article.append(title_articles_pair[initial_articles_pair_search[i]])
                 elif type == "author":
                     if i in initial_author_pair:
-                        title_nation_of_the_article.append(nation_author_pair[initial_author_pair.index(i)])
+                        title_nation_of_the_article.append(nation_author_pair[initial_author_pair_search[i]])
                     else:
                         # bukan penulis pertama
                         title_nation_of_the_article.append("None")
@@ -567,10 +541,10 @@ def data(type, name):
             title_nation_of_the_article = []
             for i in input_author_article:
                 if type == "article":
-                    title_nation_of_the_article.append(title_articles_pair[initial_articles_pair.index(i)])
+                    title_nation_of_the_article.append(title_articles_pair[initial_articles_pair_search[i]])
                 elif type == "author":
                     if i in initial_author_pair:
-                        title_nation_of_the_article.append(nation_author_pair[initial_author_pair.index(i)])
+                        title_nation_of_the_article.append(nation_author_pair[initial_author_pair_search[i]])
                     else:
                         # bukan penulis pertama
                         title_nation_of_the_article.append("None")
