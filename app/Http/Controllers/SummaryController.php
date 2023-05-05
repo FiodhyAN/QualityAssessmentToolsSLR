@@ -8,8 +8,10 @@ use App\Models\Project;
 use App\Models\ProjectUser;
 use App\Models\Questionaire;
 use App\Models\User;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class SummaryController extends Controller
 {
@@ -162,5 +164,16 @@ class SummaryController extends Controller
             $year[] = $value;
         }
         return compact('articles', 'year');
+    }
+
+    public function authorMapIndex()
+    {
+        return view('dashboard.summary.map');
+    }
+
+    public function getMapData()
+    {
+        $http = Http::get('http://country.io/names.json');
+        return $http->json();
     }
 }
