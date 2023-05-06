@@ -11,7 +11,6 @@ from flask_cors import CORS
 import io
 import matplotlib
 from tabulate import tabulate
-from numba import jit
 matplotlib.use('Agg')
 
 
