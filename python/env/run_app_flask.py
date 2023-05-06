@@ -301,18 +301,28 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     # default=125
     total_author = len(G.nodes)
 
-    subplot_size = total_author/5
-    k = subplot_size/60
+    if 0<=total_author<=200:
+        subplot_size=25
+        k=0.4
+    elif 200<total_author<=400:
+        subplot_size=27
+        k=0.8
+    elif 400<total_author<=600:
+        subplot_size=29
+        k=1.2
+    elif 600<total_author:
+        subplot_size=60
+        k=3.2
 
-    fig, ax = plt.subplots(figsize=(25, 25))
+    fig, ax = plt.subplots(figsize=(subplot_size, subplot_size))
     # decrease k parameter to increase spacing between nodes
-    pos = nx.spring_layout(G, seed=7, k=0.4)
+    pos = nx.spring_layout(G, seed=7, k=k)
     nx.draw_networkx_nodes(G, pos, alpha=0.7,
                            node_size=my_node_sizes,
                            node_color=my_node_colors
                            )  # increase node size to 200
     nx.draw_networkx_edges(G, pos, edgelist=G.edges(),
-                           width=1, alpha=0.5, edge_color="b")
+                           width=1, alpha=0.5, edge_color="green")
     nx.draw_networkx_labels(G, pos, font_size=15,
                             font_family="sans-serif", font_color="black",
                             labels=labels
