@@ -311,7 +311,7 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
         subplot_size=29
         k=1.2
     elif 600<total_author:
-        subplot_size=60
+        subplot_size=32
         k=3.2
 
     fig, ax = plt.subplots(figsize=(subplot_size, subplot_size))
