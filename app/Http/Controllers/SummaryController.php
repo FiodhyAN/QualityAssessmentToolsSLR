@@ -168,12 +168,16 @@ class SummaryController extends Controller
 
     public function authorMapIndex()
     {
+        // $response = Http::get('https://restcountries.com/v2/all');
+        // $data = $response->json();
+        // return $data;
         return view('dashboard.summary.map');
     }
 
     public function getMapData()
     {
-        $http = Http::get('http://country.io/names.json');
-        return $http->json();
+        $response = Http::get('https://restcountries.com/v2/all');
+        $data = $response->json();
+        return $data;
     }
 }
