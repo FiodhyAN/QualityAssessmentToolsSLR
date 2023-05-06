@@ -46,6 +46,9 @@
     {{-- jvectormap --}}
     <link rel="stylesheet" href="/assets/css/jquery-jvectormap-2.0.5.css"/>
 
+    {{-- fuse --}}
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js"></script>
+
     <style>
         .loader_bg {
             position: fixed;

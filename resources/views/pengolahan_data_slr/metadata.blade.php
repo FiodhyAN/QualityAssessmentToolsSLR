@@ -113,6 +113,15 @@
             </table>
             <div class="btn btn-primary mt-5" onclick="exportToExcel()" style="display:{{$display}}"  id="download-2">Download</div>
         </div>
+        @if($type == "Author")
+        <div class="col-md-12">
+            <div class="card mt-5">
+                <div class="card-body">
+                    <div id="world-map" style="height: 400px"></div>
+                </div>
+            </div>
+        </div>
+        @endif
     </div>
 </div>
 
@@ -200,4 +209,75 @@
     }
 
 </script>
+@endsection
+
+@section('script')
+    <script>
+        function getRandomColor(excludeColor) {
+            var color;
+            do {
+                color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            } while (color === excludeColor);
+            return color;
+        }
+        $(function() {
+            $.ajax({
+                url: '/getMapData',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    var author_ranks = {!! json_encode($author_ranks) !!};
+                    let mapData = {};
+                    let usedColors = {};
+                    // initialize Fuse with country data
+                    let fuse = new Fuse(data, {
+                        keys: ['name'],
+                        threshold: 0.3
+                    });
+                    // id, name, rank, nation
+                    for (let i = 0; i < author_ranks.length; i++) {
+                        let id = author_ranks[i][0];
+                        let name = author_ranks[i][1];
+                        let rank = author_ranks[i][2];
+                        let nation = author_ranks[i][3];
+                        // find the corresponding country code from the API data
+                        let results = "None"
+                        if (nation === "None") {
+                            results = "None";
+                        }
+                        else{
+                            results = fuse.search(nation)[0]?.item?.name;
+                        }
+                        let countryCode = data.find(c => c.name === results)?.alpha2Code;
+                        if (countryCode) {
+                            // add an entry to mapData with a random color, but not #87CEEB
+                            let color;
+                            do {
+                                color = getRandomColor();
+                            } while (color === '#87CEEB' || usedColors[color]);
+                            usedColors[color] = true;
+                            mapData[countryCode] = color;
+                            $("#my-table tbody tr").each(function() {
+                            if ($(this).find("td:eq(2)").text() === nation) {
+                                $(this).find("td").css("color", color);
+                            }
+                            });
+                        }
+                    }
+                    console.log(mapData);
+                    var map = new jvm.Map({
+                        map: 'world_mill',
+                        backgroundColor: '#87CEEB',
+                        container: $('#world-map'),
+                        series: {
+                            regions: [{
+                                values: mapData,
+                                attribute: 'fill'
+                            }]
+                        }
+                    });
+                }
+            })
+        });
+    </script>
 @endsection
