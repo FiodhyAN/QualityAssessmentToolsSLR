@@ -70,7 +70,18 @@ class DataProcessingController extends Controller
         return $response;
     }
 
-
+    public function separate($keywords) {
+        $newKeywords = [];
+        foreach ($keywords as $keyword) {
+          $regex = '/([A-Za-z]+\d+)/';
+          preg_match_all($regex, $keyword, $matches);
+          $newKeywords = array_merge($newKeywords, $matches[0]);
+        }
+        // dd($newKeywords);
+        return $newKeywords;
+    }
+      
+      
     public function getData($projects)
     {
         $this->authorize('projectSummary');
@@ -88,11 +99,16 @@ class DataProcessingController extends Controller
             // if ($flag > 60)
             //     break;
             $keywords = preg_split('/\s*[,;\/]\s*/', $row['keywords']);
+
             $authors = preg_split('/\s*[,;\/]\s*/', $row['authors']);
             sort($authors, SORT_NUMERIC);
+
             $citingNew = preg_split('/\s*[,;\/]\s*/', $row['citing_new']);
             sort($citingNew, SORT_NUMERIC);
+            $citingNew=$this->separate($citingNew);
+
             $abstracts = $keywords;
+            
             $result[] = [$row['no'], $keywords, $abstracts, (string) $row['year'], $authors, $citingNew,$row['title'],$row['nation_first_author']];
 
         }

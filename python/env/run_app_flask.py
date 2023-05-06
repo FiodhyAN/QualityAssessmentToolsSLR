@@ -147,6 +147,9 @@ def getTable2Data(pairs, search_matrix, type):
                 if len(author) <= 1:
                     continue
                 for penulis in penulisList:
+                    # rujukan tidak ada di daftar penulis
+                    if article_and_authors.get(author) is None:
+                        continue
                     for row in article_and_authors[author]:
                         if penulis != row:
                             author_matrixs[new_search_matrix[penulis+"-"+row]][2] += 1
