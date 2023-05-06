@@ -105,7 +105,7 @@ def getArticleIdAuthorReferencesAndAuthor(table):
     authors = sorted(set(authors))
     articles = sorted(set(articles))
     time_end = time.time()
-    print("getArticleIdAuthorReferencesAndAuthor time: ", time_end - time_start)
+    # print("getArticleIdAuthorReferencesAndAuthor time: ", time_end - time_start)
     return pairs, authors, articles,initial_articles_pair ,title_articles_pair,initial_author_pair,nation_author_pair
 
 def author_matrixs(authors):
@@ -118,7 +118,7 @@ def author_matrixs(authors):
             row.append(author_y)
             author_matrix.append(row)
     time_end = time.time()
-    print("author_matrixs time: ", time_end - time_start)
+    # print("author_matrixs time: ", time_end - time_start)
     return author_matrix
 
 
@@ -164,7 +164,7 @@ def getTable2Data(pairs, search_matrix, type):
                 author_matrixs[new_search_matrix[author+"-"+author_reference]][2] += 1
 
     time_end = time.time()
-    print("getTable2Data time: "+str(time_end-time_start))
+    # print("getTable2Data time: "+str(time_end-time_start))
     return author_matrixs
 # ge table 2 data end
 
@@ -185,10 +185,10 @@ def makeTable2(author_matrix, authors):
         pretable2.append(authortmp)
     # print(pretable2)
     table2 = pd.DataFrame(pretable2, columns=authors, index=authors)
-    print("tabel 2")
+    print("Tabel 2: Only Relational Matrix")
     print(table2)
     time_end = time.time()
-    print("makeTable2 time: "+str(time_end-time_start))
+    # print("makeTable2 time: "+str(time_end-time_start))
     return table2, pretable2
 
 def getTopAuthor(authors, author_rank, ranking):
@@ -202,7 +202,7 @@ def getTopAuthor(authors, author_rank, ranking):
     # get the top 20 author names
     top_authors = [x[0] for x in sorted_authors[:ranking]]
     time_end = time.time()
-    print("getTopAuthor time: "+str(time_end-time_start))
+    # print("getTopAuthor time: "+str(time_end-time_start))
     return top_authors
 
 def add_node_graph(G, author_matrixs):
@@ -215,7 +215,7 @@ def add_node_graph(G, author_matrixs):
             G.add_node(author_matrix[0])
             G.add_node(author_matrix[1])
     time_end = time.time()
-    print("add_node_graph time: "+str(time_end-time_start))
+    # print("add_node_graph time: "+str(time_end-time_start))
     return G
 
 def get_no_outer_author(authors, author_rank, exist_authors):
@@ -231,7 +231,7 @@ def get_no_outer_author(authors, author_rank, exist_authors):
             authors.pop(count)
             author_rank.pop(count)
     time_end = time.time()
-    print("get_no_outer_author time: "+str(time_end-time_start))
+    # print("get_no_outer_author time: "+str(time_end-time_start))
     return authors, author_rank, outer_author_rank, outer_authors
 
 def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
@@ -261,8 +261,8 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     my_node_colors = []
     labels = {}
 
-    print(len(authors))
-    print(len(author_rank))
+    print("total all author name:"+str(len(authors)))
+    print("total all author Rank:"+str(len(author_rank)))
 
     authors, author_rank, outer_author_rank, outer_authors = get_no_outer_author(
         authors, author_rank, G.nodes)
@@ -273,8 +273,8 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
         search_authors[author]=count
         count+=1
 
-    print(len(authors))
-    print(len(author_rank))
+    print("total relational author name:"+str(len(authors)))
+    print("total relational author Rank:"+str(len(author_rank)))
 
     for author in G.nodes:
         size = author_rank[search_authors[author]]
@@ -301,18 +301,28 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     # default=125
     total_author = len(G.nodes)
 
-    subplot_size = total_author/5
-    k = subplot_size/60
+    if 0<=total_author<=200:
+        subplot_size=25
+        k=0.4
+    elif 200<total_author<=400:
+        subplot_size=27
+        k=0.8
+    elif 400<total_author<=600:
+        subplot_size=29
+        k=1.2
+    elif 600<total_author:
+        subplot_size=60
+        k=3.2
 
-    fig, ax = plt.subplots(figsize=(25, 25))
+    fig, ax = plt.subplots(figsize=(subplot_size, subplot_size))
     # decrease k parameter to increase spacing between nodes
-    pos = nx.spring_layout(G, seed=7, k=0.4)
+    pos = nx.spring_layout(G, seed=7, k=k)
     nx.draw_networkx_nodes(G, pos, alpha=0.7,
                            node_size=my_node_sizes,
                            node_color=my_node_colors
                            )  # increase node size to 200
     nx.draw_networkx_edges(G, pos, edgelist=G.edges(),
-                           width=1, alpha=0.5, edge_color="b")
+                           width=1, alpha=0.5, edge_color="green")
     nx.draw_networkx_labels(G, pos, font_size=15,
                             font_family="sans-serif", font_color="black",
                             labels=labels
@@ -326,7 +336,7 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     draw_time=time.time()
     nx.draw_networkx_edge_labels(G, pos, edge_labels, font_size=5)
     end_draw_time=time.time()-draw_time
-    print("draw time: "+str(end_draw_time))
+    # print("draw time: "+str(end_draw_time))
 
 
     buf = io.BytesIO()
@@ -335,7 +345,7 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     plt_time=time.time()
     plt.savefig(buf, format='png')
     end_plt_time=time.time()-plt_time
-    print("plt time: "+str(end_plt_time))
+    # print("plt time: "+str(end_plt_time))
 
     output = buf
     output.seek(0)
@@ -344,7 +354,7 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     # my_base64_jpgData = base64.b64encode(output.read())
     # query_graph("project 1",my_base64_jpgData)
     time_end = time.time()
-    print("Time taken to run maketermgraph: ", time_end - time_start)
+    # print("Time taken to run maketermgraph: ", time_end - time_start)
     return buf
 
 # improve
@@ -363,19 +373,19 @@ def addTable2TotalRowAndColoumn(pretable2, authors):
             sumcol[j] += val
         sumrow.append(row_sum)
     
-    print("p1p9(sumrow)")
+    # print("p1p9(sumrow)")
     # print(sumrow)
-    print("p9p1(sumcol)")
+    # print("p9p1(sumcol)")
     # print(sumcol)
     for x in range(lenauthor):
         pretable2[x].append(sumrow[x])
     pretable2.append(sumcol)
     # print(pretable2)
-    print("tabel 3: Add Total Row & Col")
+    print("Tabel 2: Add Total Row & Col (TABLE II. AUTHOR ADJACENT MATRIX OF 1994 PUBLICATION)")
     table2 = pd.DataFrame(pretable2)
-    # print(table2)
+    print(table2)
     time_end = time.time()
-    print("time addTable2TotalRowAndColoumn: "+str(time_end-time_start))
+    # print("time addTable2TotalRowAndColoumn: "+str(time_end-time_start))
     return pretable2
 
 def makeNewAdjMatrix(pretable3, lenauthor):
@@ -390,10 +400,10 @@ def makeNewAdjMatrix(pretable3, lenauthor):
                 # print("nilaiku="+str(pretable3[x][y]))
                 pretable3[x][y] = pretable3[x][y]/pretable3[lenauthor][y]
     table3 = pd.DataFrame(pretable3)
-    print("tabel 3:new adj Matrix")
-    # print(table3)
+    print("Tabel pre III: Wij")
+    print(table3)
     time_end = time.time()
-    print("time makeNewAdjMatrix: "+str(time_end-time_start))
+    # print("time makeNewAdjMatrix: "+str(time_end-time_start))
     return pretable3
 
 def rank(pretable3, author, name):
@@ -423,13 +433,13 @@ def rank(pretable3, author, name):
     rank = [x + 1 for x in rank]
     table4.append(rank)
     table5 = pd.DataFrame(table4)
-    print("tabel 3: Ranking")
-    # print(table5.T)
+    print("Tabel 3: Ranking (TABLE III. S(VI)7$1'Ǽ_T OF AUTHOR-TERM GRAPH.)")
+    print(table5.T)
 
     json_data = json.dumps({"author": author, "ranks": rank})
     # query_rank("project 1",json_data)
     date_end = time.time()
-    print("time of rank function: "+str(date_end-date_start))
+    # print("time of rank function: "+str(date_end-date_start))
     return table4, rank,rowbaru
 
 
