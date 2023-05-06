@@ -82,6 +82,10 @@ Route::get('/dashboard/projectSummary', [SummaryController::class, 'projectSumma
 Route::get('/findProjectSummary', [SummaryController::class, 'findProjectSummary'])->middleware('auth')->name('find.projectSummary');
 Route::get('/findArticleType', [SummaryController::class, 'findArticleType'])->middleware('auth')->name('find.articleType');
 
+//map
+Route::get('/authorMap', [SummaryController::class, 'authorMapIndex'])->middleware('auth')->name('author.map');
+Route::get('/getMapData', [SummaryController::class, 'getMapData'])->middleware('auth')->name('get.mapData');
+
 //Reviewer
 Route::get('/dashboard/reviewer/assessment', [AssessmentController::class, 'index'])->middleware('auth');
 Route::get('/assessmentTable', [AssessmentController::class, 'assessmentTable'])->middleware('auth')->name('assessment.table');

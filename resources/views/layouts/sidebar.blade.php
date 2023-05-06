@@ -118,6 +118,14 @@
                             <div class="menu-title">Quality Summary</div>
                         </a>
                     </li>
+                    <li>
+                        <a href="/authorMap">
+                            <div class="parent-icon">
+                                <ion-icon name="map"></ion-icon>
+                            </div>
+                            <div class="menu-title">Author Map</div>
+                        </a>
+                    </li>
                 </ul>
             </li>
         @endcan

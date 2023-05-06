@@ -43,6 +43,9 @@
         href="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.12/css/dataTables.checkboxes.css"
         rel="stylesheet" />
 
+    {{-- jvectormap --}}
+    <link rel="stylesheet" href="/assets/css/jquery-jvectormap-2.0.5.css"/>
+
     <style>
         .loader_bg {
             position: fixed;
@@ -278,6 +281,10 @@
         src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.12/js/dataTables.checkboxes.min.js"></script>
     <script src="/assets/plugins/apexcharts-bundle/js/apexcharts.min.js"></script>
     <script src="/assets/plugins/chartjs/chart.min.js"></script>
+
+    {{-- JvectorMap --}}
+    <script src="/assets/js/jquery-jvectormap-2.0.5.min.js"></script>
+    <script src="https://jvectormap.com/js/jquery-jvectormap-world-mill.js"></script>
     @yield('script')
 
 
