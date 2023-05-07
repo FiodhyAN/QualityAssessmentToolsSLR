@@ -89,7 +89,7 @@
         <div class="col-md-6" style="display:{{$display}}">
             <table class="table" id="my-table">
                 <thead>
-                    <tr class="text-center">
+                    <tr class="">
                         <th>Index</th>
                         <th>{{$type}}</th>
                         <th>Rank</th>

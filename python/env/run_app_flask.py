@@ -534,7 +534,11 @@ def data(type, name):
             title_nation_of_the_article = []
             for i in input_author_article:
                 if type == "article":
-                    title_nation_of_the_article.append(title_articles_pair[initial_articles_pair_search[i]])
+                    if i in initial_articles_pair:
+                        title_nation_of_the_article.append(title_articles_pair[initial_articles_pair_search[i]])
+                    else:
+                        # bukan penulis pertama
+                        title_nation_of_the_article.append("None")
                 elif type == "author":
                     if i in initial_author_pair:
                         title_nation_of_the_article.append(nation_author_pair[initial_author_pair_search[i]])
@@ -553,7 +557,11 @@ def data(type, name):
             title_nation_of_the_article = []
             for i in input_author_article:
                 if type == "article":
-                    title_nation_of_the_article.append(title_articles_pair[initial_articles_pair_search[i]])
+                    if i in initial_articles_pair:
+                        title_nation_of_the_article.append(title_articles_pair[initial_articles_pair_search[i]])
+                    else:
+                        # bukan penulis pertama
+                        title_nation_of_the_article.append("None")
                 elif type == "author":
                     if i in initial_author_pair:
                         title_nation_of_the_article.append(nation_author_pair[initial_author_pair_search[i]])
