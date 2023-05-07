@@ -418,6 +418,7 @@ def rank(pretable3, author, name):
     for x in range(lenauthor):
         row.append(1/lenauthor)
     table4.append(row)
+    time_1 = time.time()
     for y in range(100):
         rowbaru = []
         for x in range(lenauthor):
@@ -428,9 +429,12 @@ def rank(pretable3, author, name):
         selisih = abs(np.array(row)-np.array(rowbaru))
         ns = max(selisih)
         if ns < 0.001:
+            # print("y="+str(y))
             break
         # print(ns)
         row = rowbaru
+    time_2 = time.time()-time_1
+    print("time of rank loop: "+str(time_2))
     rank = [sorted(row, reverse=True).index(x) for x in row]
     rank = [x + 1 for x in rank]
     table4.append(rank)
@@ -441,7 +445,7 @@ def rank(pretable3, author, name):
     json_data = json.dumps({"author": author, "ranks": rank})
     # query_rank("project 1",json_data)
     date_end = time.time()
-    # print("time of rank function: "+str(date_end-date_start))
+    print("time of rank function: "+str(date_end-date_start))
     return table4, rank,rowbaru
 
 
