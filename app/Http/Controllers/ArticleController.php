@@ -10,6 +10,7 @@ use App\Models\ArticleUser;
 use App\Models\ArticleUserQuestionaire;
 use App\Models\Questionaire;
 use App\Models\User;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -124,8 +125,12 @@ class ArticleController extends Controller
     public function create()
     {
         $this->authorize('admin');
+        $http = new Client();
+        $response = $http->get('https://restcountries.com/v3.1/all?fields=name,cca2');
+        $countries = json_decode($response->getBody(), true);
         return view('dashboard.admin.article.create', [
-            'project_id' => decrypt(request()->id)
+            'project_id' => decrypt(request()->id),
+            'countries' => $countries,
         ]);
     }
 
@@ -133,7 +138,9 @@ class ArticleController extends Controller
     {
         $this->authorize('admin');
         $request->validate([
-            'kode_artikel' => 'required',
+            'kode_artikel' => ['required', Rule::unique('articles', 'no')->where(function($query) use ($request){
+                return $query->where('project_id', $request->project_id);
+            })],
             'file' => 'mimes:pdf|nullable',
             'link' => 'url|nullable',
             'title' => 'required',
@@ -184,6 +191,7 @@ class ArticleController extends Controller
             'keyword' => $request->keyword,
             'edatabase' => $request->edatabase,
             'edatabase_2' => $request->edatabase2 ?? null,
+            'nation_first_author' => $request->nation_first_author ?? null,
             'project_id' => $request->project_id,
         ]);
         return redirect()->route('project.show',  encrypt($request->project_id))->with('success', 'Article successfully added!');
@@ -193,10 +201,13 @@ class ArticleController extends Controller
     {
         $this->authorize('admin');
         $article = Article::find(decrypt($id));
-        // return $article;
+        $http = new Client();
+        $response = $http->get('https://restcountries.com/v3.1/all?fields=name,cca2');
+        $countries = json_decode($response->getBody(), true);
         return view('dashboard.admin.article.edit', [
             'article' => $article,
-            'project_id' => decrypt(request()->pid)
+            'project_id' => decrypt(request()->pid),
+            'countries' => $countries,
         ]);
     }
 
@@ -204,7 +215,9 @@ class ArticleController extends Controller
     {
         $this->authorize('admin');
         $request->validate([
-            'kode_artikel' => 'required',
+            'no' => ['required', Rule::unique('articles', 'no')->where(function($query) use ($request){
+                return $query->where('project_id', $request->project_id);
+            })],
             'file' => 'mimes:pdf|nullable',
             'link' => 'url|nullable',
             'title' => 'required',
@@ -270,6 +283,7 @@ class ArticleController extends Controller
             'keyword' => $request->keyword ?? $article->keyword,
             'edatabase' => $request->edatabase ?? $article->edatabase,
             'edatabase_2' => $request->edatabase2 ?? $article->edatabase_2,
+            'nation_first_author' => $request->nation_first_author ?? $article->nation_first_author,
         ]);
         return redirect()->route('project.show',  encrypt($article->project_id))->with('success', 'Article successfully updated!');
     }

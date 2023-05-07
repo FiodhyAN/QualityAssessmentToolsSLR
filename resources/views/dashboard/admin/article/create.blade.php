@@ -16,10 +16,10 @@
                 <input type="hidden" name="project_id" value="{{ $project_id }}">
                 @csrf
                 <div class="col-12">
-                    <label for="kode_artikel" class="form-label">Kode Artikel</label>
+                    <label for="kode_artikel" class="form-label">Article Code</label>
                     <small class="text-danger">*required</small>
                     <input class="form-control @error('kode_artikel') is-invalid @enderror" type="text"
-                        placeholder="Kode" name="kode_artikel" aria-label="default input example"
+                        placeholder="ex: A1" name="kode_artikel" aria-label="default input example"
                         value="{{ old('kode_artikel') }}" required>
                     @error('kode_artikel')
                         <div class="invalid-feedback">
@@ -79,7 +79,7 @@
                     <label for="title" class="form-label">Title</label>
                     <small class="text-danger">*required</small>
                     <input class="form-control @error('title') is-invalid @enderror" type="text"
-                        placeholder="Judul Artikel" name="title" aria-label="default input example"
+                        placeholder="Article Title" name="title" aria-label="default input example"
                         value="{{ old('title') }}" required>
                     @error('title')
                         <div class="invalid-feedback">
@@ -121,7 +121,7 @@
                         </div>
                     @enderror
                 </div>
-                <div class="col-12">
+                <div class="col-6">
                     <label for="authors" class="form-label">Authors</label>
                     <small class="text-danger">*required</small>
                     <input class="form-control @error('authors') is-invalid @enderror" type="text"
@@ -132,6 +132,15 @@
                             {{ $message }}
                         </div>
                     @enderror
+                </div>
+                <div class="col-6">
+                    <label for="nation_first_author" class="form-label">Nation First Author</label>
+                    <select name="nation_first_author" id="nation_author" class="form-select">
+                        <option disabled selected>Select Nation</option>
+                        @foreach ($countries as $country)
+                            <option value="{{ $country['name']['common'] }}" {{ old('nation_first_author') == $country['name']['common'] ? 'selected' : '' }}>{{ $country['name']['common'] }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="col-12">
                     <label for="abstract" class="form-label">Abstract</label>
@@ -275,6 +284,10 @@
             return urlPattern.test(url);
         }
         $(function() {
+            $('#nation_author').select2({
+                placeholder: "Select Nation",
+                allowClear: true
+            });
             $('#year').datepicker({
                 format: "yyyy",
                 viewMode: "years",

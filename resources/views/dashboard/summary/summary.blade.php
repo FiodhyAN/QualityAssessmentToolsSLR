@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('container')
-    <h1>Project Summary</h1>
+    <h1>Quality Summary</h1>
     <hr>
 
     <div class="mb-4">

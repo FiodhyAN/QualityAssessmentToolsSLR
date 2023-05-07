@@ -166,14 +166,6 @@ class SummaryController extends Controller
         return compact('articles', 'year');
     }
 
-    public function authorMapIndex()
-    {
-        // $response = Http::get('https://restcountries.com/v2/all');
-        // $data = $response->json();
-        // return $data;
-        return view('dashboard.summary.map');
-    }
-
     public function getMapData()
     {
         $response = Http::get('https://restcountries.com/v2/all');

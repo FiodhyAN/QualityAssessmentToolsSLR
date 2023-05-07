@@ -1,7 +1,6 @@
 @extends('layouts.main')
 @section('container')
 <div class="container">
-    <h1>{{$id_project}}</h1>
     <!-- CSS -->
     <link rel="stylesheet" type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" />
@@ -114,10 +113,10 @@
             <div class="btn btn-primary mt-5" onclick="exportToExcel()" style="display:{{$display}}"  id="download-2">Download</div>
         </div>
         @if($type == "Author")
-        <div class="col-md-12">
+        <div class="col-md-12" style="display: {{ $display }}">
             <div class="card mt-5">
                 <div class="card-body">
-                    <div id="world-map" style="height: 400px"></div>
+                    <div id="world-map" style="height: 400px;"></div>
                 </div>
             </div>
         </div>
@@ -259,7 +258,7 @@
                             mapData[countryCode] = color;
                             $("#my-table tbody tr").each(function() {
                             if ($(this).find("td:eq(2)").text() === nation) {
-                                $(this).find("td").css("color", color);
+                                $(this).find("td:eq(2)").css("color", color);
                             }
                             });
                         }

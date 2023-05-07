@@ -142,7 +142,7 @@
                         </div>
                     @enderror
                 </div>
-                <div class="col-12">
+                <div class="col-6">
                     <label for="authors" class="form-label">Authors</label>
                     <small class="text-danger">*required</small>
                     <input class="form-control @error('authors') is-invalid @enderror" type="text"
@@ -153,6 +153,15 @@
                             {{ $message }}
                         </div>
                     @enderror
+                </div>
+                <div class="col-6">
+                    <label for="nation_first_author" class="form-label">Nation First Author</label>
+                    <select name="nation_first_author" id="nation_author" class="form-select">
+                        <option disabled selected>Select Nation</option>
+                        @foreach ($countries as $country)
+                            <option value="{{ $country['name']['common'] }}" {{ old('nation_first_author', $article->nation_first_author) == $country['name']['common'] ? 'selected' : '' }}>{{ $country['name']['common'] }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="col-12">
                     <label for="abstract" class="form-label">Abstract</label>
@@ -300,6 +309,10 @@
             return urlPattern.test(url);
         }
         $(function() {
+            $('#nation_author').select2({
+                placeholder: "Select Nation",
+                allowClear: true
+            });
             $('#year').datepicker({
                 format: "yyyy",
                 viewMode: "years",

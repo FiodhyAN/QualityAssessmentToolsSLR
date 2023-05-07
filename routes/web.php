@@ -83,7 +83,6 @@ Route::get('/findProjectSummary', [SummaryController::class, 'findProjectSummary
 Route::get('/findArticleType', [SummaryController::class, 'findArticleType'])->middleware('auth')->name('find.articleType');
 
 //map
-Route::get('/authorMap', [SummaryController::class, 'authorMapIndex'])->middleware('auth')->name('author.map');
 Route::get('/getMapData', [SummaryController::class, 'getMapData'])->middleware('auth')->name('get.mapData');
 
 //Reviewer
