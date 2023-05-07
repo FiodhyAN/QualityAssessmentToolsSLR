@@ -90,7 +90,7 @@
         <div class="col-md-6" style="display:{{$display}}">
             <table class="table" id="my-table">
                 <thead>
-                    <tr class="text-center">
+                    <tr class="">
                         <th>Index</th>
                         <th>{{$type}}</th>
                         <th>Rank</th>
@@ -114,7 +114,7 @@
             <div class="btn btn-primary mt-5" onclick="exportToExcel()" style="display:{{$display}}"  id="download-2">Download</div>
         </div>
         @if($type == "Author")
-        <div class="col-md-12">
+        <div class="col-md-12" style="display:{{$display}}">
             <div class="card mt-5">
                 <div class="card-body">
                     <div id="world-map" style="height: 400px"></div>
@@ -259,7 +259,7 @@
                             mapData[countryCode] = color;
                             $("#my-table tbody tr").each(function() {
                             if ($(this).find("td:eq(2)").text() === nation) {
-                                $(this).find("td").css("color", color);
+                                $(this).find("td:eq(2)").css("color", color);
                             }
                             });
                         }
