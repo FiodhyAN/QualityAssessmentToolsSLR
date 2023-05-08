@@ -79,20 +79,28 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="table-responsive">
-                        <table id="score_table" class="table table-striped table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Question</th>
-                                    <th>User</th>
-                                    <th>Score</th>
-                                    <th>Sum</th>
-                                </tr>
-                            </thead>
-                            <tbody id="scoreData">
-                            </tbody>
-                        </table>
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="table-responsive">
+                                <table id="score_table" class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Question</th>
+                                            <th>User</th>
+                                            <th>Score</th>
+                                            <th>Sum</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="scoreData">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="bar_chart_question"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -171,7 +179,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
@@ -194,7 +201,9 @@
                             <label for="formFile" class="form-label">Upload File</label>
                             <input class="form-control" type="file" id="formFile" name="file"
                                 accept="application/pdf">
-                                <button id="clearFile" type="button" class="btn alert-danger btn-sm mt-1" disabled><ion-icon name="close-circle"></ion-icon> Clear Choosen File</button>
+                            <button id="clearFile" type="button" class="btn alert-danger btn-sm mt-1" disabled>
+                                <ion-icon name="close-circle"></ion-icon> Clear Choosen File
+                            </button>
                         </div>
                         <div class="row mt-2">
                             <span class="d-flex justify-content-center">Or</span>
@@ -207,7 +216,8 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <button type="submit" id="submitBtn" class="btn btn-primary">Add File</button>
-                            <button type="button" id="linkNoValidBtn" class="btn btn-primary d-none" disabled>Link Not Valid</button>
+                            <button type="button" id="linkNoValidBtn" class="btn btn-primary d-none" disabled>Link Not
+                                Valid</button>
                     </form>
                 </div>
             </div>
@@ -392,6 +402,36 @@
             })
         });
 
+        var options = {
+            series: [],
+            chart: {
+                type: 'bar',
+                height: 350,
+                stacked: true,
+                stackType: '100%'
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    dataLabels: {
+                        total: {
+                            enabled: true,
+                            offsetX: 0,
+                            style: {
+                                fontSize: '13px',
+                                fontWeight: 900
+                            }
+                        }
+                    }
+                },
+            },
+            title: {
+                text: 'Article Score'
+            },
+        };
+        var bar_question_chart = new ApexCharts(document.querySelector("#bar_chart_question"), options);
+        bar_question_chart.render();
+
         table.on('click', '.scoreArticle', function() {
             var title = $(this).data('title');
             $('.modal-title-score').text('Score For ' + title)
@@ -404,7 +444,6 @@
                 },
                 dataType: 'JSON',
                 success: function(result) {
-                    console.log(result);
                     var html = '';
                     var no = 1;
 
@@ -427,7 +466,7 @@
                         // sum += value.article_user_questionaire.score;
                         html += '<tr>';
                         html += '<td>' + no++ + '</td>';
-                        html += '<td>' + value.question + '</td>';
+                        html += '<td style="white-space:normal">' + value.question + '</td>';
                         html += '<td class="name">' + name + '</td>';
                         html += '<td class="text-center">' + score + '</td>';
                         html += '<td class="text-center">' + sum + '</td>';
@@ -437,6 +476,72 @@
                 },
                 error: function(error) {
                     console.log(error);
+                }
+            });
+
+            $.ajax({
+                url: '{{ route('find.articleScore') }}',
+                type: 'GET',
+                data: {
+                    article_id: article_id
+                },
+                dataType: 'JSON',
+                success: function(data) {
+                    console.log(data);
+                    bar_question_chart.updateOptions({
+                        series: [{
+                                name: 'Positive',
+                                data: data.pos_answer_question
+                            },
+                            {
+                                name: 'Neutral',
+                                data: data.net_answer_question
+                            },
+                            {
+                                name: 'Negative',
+                                data: data.neg_answer_question
+                            }
+                        ],
+                        stroke: {
+                            width: 1,
+                            colors: ['#fff']
+                        },
+                        xaxis: {
+                            categories: data.question_name,
+                            labels: {
+                                formatter: function(val) {
+                                    return val
+                                }
+                            }
+                        },
+                        yaxis: {
+                            title: {
+                                text: undefined
+                            },
+                        },
+                        tooltip: {
+                            y: {
+                                formatter: function(val) {
+                                    return val
+                                }
+                            },
+                            marker: {
+                                fillColors: ['#008FFB', '#00E396', '#FF0000']
+                            }
+                        },
+                        fill: {
+                            opacity: 1,
+                            colors: ['#008FFB', '#00E396', '#FF0000']
+                        },
+                        legend: {
+                            position: 'top',
+                            horizontalAlign: 'left',
+                            offsetX: 40,
+                            markers: {
+                                fillColors: ['#008FFB', '#00E396', '#FF0000']
+                            }
+                        }
+                    })
                 }
             })
         });

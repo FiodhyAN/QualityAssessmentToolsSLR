@@ -409,4 +409,92 @@ class ArticleController extends Controller
 
         return json_encode(['success' => 'Article file successfully added!']);
     }
+
+    public function findArticleScore(Request $request)
+    {
+        $this->authorize('admin');
+        $pos_answer_question = [];
+        $net_answer_question = [];
+        $neg_answer_question = [];
+
+        $data = Questionaire::with(['article_user_questionaire' => function($query) use ($request){
+            $query->whereHas('articleUser', function($query) use ($request){
+                $query->where('article_id', $request->article_id);
+            })->groupBy('score', 'questionaire_id')->selectRaw('count(*) as total, score, questionaire_id');
+        }])->get();
+
+        foreach ($data as $key => $value) {
+            foreach ($value->article_user_questionaire as $value2) {
+                if ($value2->score == 1) {
+                    $pos_answer_question[$key] = $value2->total;
+                    break;
+                }
+                else {
+                    $pos_answer_question[$key] = 0;
+                }
+            }
+        }
+
+        foreach ($data as $key => $value) {
+            foreach ($value->article_user_questionaire as $value2) {
+                if ($value2->score == 0) {
+                    $net_answer_question[$key] = $value2->total;
+                    break;
+                }
+                else {
+                    $net_answer_question[$key] = 0;
+                }
+            }
+        }
+
+        foreach ($data as $key => $value) {
+            foreach ($value->article_user_questionaire as $value2) {
+                if ($value2->score == -1) {
+                    $neg_answer_question[$key] = $value2->total;
+                    break;
+                }
+                else {
+                    $neg_answer_question[$key] = 0;
+                }
+            }
+        }
+
+        
+
+        // $data_pos_answer_question = Questionaire::with(['article_user_questionaire' => function($query) use ($request){
+        //     $query->whereHas('articleUser', function($query) use ($request){
+        //         $query->where('article_id', $request->article_id);
+        //     })->where('score', 1);
+        // }])->get();
+        // foreach ($data_pos_answer_question as $key => $value) {
+        //     $pos_answer_question[$key] = $value->article_user_questionaire->count();
+        // }
+    
+        // // netral answer for question chart
+        // $data_net_answer_question = Questionaire::with(['article_user_questionaire' => function($query) use ($request){
+        //     $query->whereHas('articleUser', function($query) use ($request){
+        //         $query->where('article_id', $request->article_id);
+        //     })->where('score', 0);
+        // }])->get();
+        // foreach ($data_net_answer_question as $key => $value) {
+        //     $net_answer_question[$key] = $value->article_user_questionaire->count();
+        // }
+    
+        // // negative answer for question chart
+        // $data_neg_answer_question = Questionaire::with(['article_user_questionaire' => function($query) use ($request){
+        //     $query->whereHas('articleUser', function($query) use ($request){
+        //         $query->where('article_id', $request->article_id);
+        //     })->where('score', -1);
+        // }])->get();
+        // foreach ($data_neg_answer_question as $key => $value) {
+        //     $neg_answer_question[$key] = $value->article_user_questionaire->count();
+        // }
+
+        return json_encode([
+            'question_name' => Questionaire::select('name')->pluck('name')->toArray(),
+            'pos_answer_question' => $pos_answer_question,
+            'net_answer_question' => $net_answer_question,
+            'neg_answer_question' => $neg_answer_question,
+        ]);
+    }
 }
