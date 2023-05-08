@@ -37,26 +37,30 @@
                             {{ $message }}
                         </div>
                     @enderror
-                    <button id="clearFile" type="button" class="btn alert-danger btn-sm mt-1" disabled><ion-icon name="close-circle"></ion-icon> Clear Choosen File</button>
+                    <button id="clearFile" type="button" class="btn alert-danger btn-sm mt-1" disabled>
+                        <ion-icon name="close-circle"></ion-icon> Clear Choosen File
+                    </button>
                 </div>
                 <div class="col-6">
                     <label for="link" class="form-label">or Insert Link</label>
-                    <input class="form-control @error('link') is-invalid @enderror" type="text" name="link" id="link" placeholder="ex: https://www.google.com">
+                    <input class="form-control @error('link') is-invalid @enderror" type="text" name="link"
+                        id="link" placeholder="ex: https://www.google.com">
                     @error('link')
                         <div class="invalid-feedback">
                             {{ $message }}
                         </div>
                     @enderror
                 </div>
-                <button id="previewBtn" type="button" class="btn btn-primary mt-3  justify-content-center" data-bs-toggle="modal"
-                    data-bs-target="#exampleModal" disabled>
+                <button id="previewBtn" type="button" class="btn btn-primary mt-3  justify-content-center"
+                    data-bs-toggle="modal" data-bs-target="#exampleModal" disabled>
                     No Preview Available
                 </button>
                 <a href="#" target="_blank" id="linkBtn"
                     class=" text-white btn btn-primary mt-3 justify-content-center d-none">
                     Go To Link
                 </a>
-                <button id="linkNoValid" type="button" class="btn btn-primary mt-3  justify-content-center d-none" disabled>Link Not Valid</button>
+                <button id="linkNoValid" type="button" class="btn btn-primary mt-3  justify-content-center d-none"
+                    disabled>Link Not Valid</button>
                 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog modal-lg">
@@ -135,10 +139,12 @@
                 </div>
                 <div class="col-6">
                     <label for="nation_first_author" class="form-label">Nation First Author</label>
-                    <select name="nation_first_author" id="nation_author" class="form-select">
-                        <option disabled selected>Select Nation</option>
+                    <select name="nation_first_author" id="nation_author" class="form-control">
+                        <option></option>
                         @foreach ($countries as $country)
-                            <option value="{{ $country['name']['common'] }}" {{ old('nation_first_author') == $country['name']['common'] ? 'selected' : '' }}>{{ $country['name']['common'] }}</option>
+                            <option value="{{ $country['name']['common'] }}"
+                                {{ old('nation_first_author') == $country['name']['common'] ? 'selected' : '' }}>
+                                {{ $country['name']['common'] }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -303,13 +309,12 @@
                 reader.onload = function(e) {
                     $('#pdf_preview').attr('src', e.target.result);
                 }
-                
+
                 if (file == undefined) {
                     $('input[name="link"]').prop('disabled', false);
                     $('#previewBtn').prop('disabled', true);
                     $('#previewBtn').text('No Preview Available');
-                }
-                else {
+                } else {
                     $('input[name="link"]').prop('disabled', true);
                     $('#previewBtn').prop('disabled', false);
                     $('#previewBtn').text('Preview File');
@@ -332,8 +337,7 @@
                         $('#linkBtn').attr('href', link);
                         $('#linkBtn').removeClass('d-none');
                         $('#linkNoValid').addClass('d-none');
-                    }
-                    else {
+                    } else {
                         $('input[name="file"]').prop('disabled', false);
                         $('#linkBtn').addClass('d-none');
                         $('#previewBtn').addClass('d-none');

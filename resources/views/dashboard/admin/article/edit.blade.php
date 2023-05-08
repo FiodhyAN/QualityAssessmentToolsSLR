@@ -158,6 +158,7 @@
                     <label for="nation_first_author" class="form-label">Nation First Author</label>
                     <select name="nation_first_author" id="nation_author" class="form-select">
                         <option disabled selected>Select Nation</option>
+                        <option></option>
                         @foreach ($countries as $country)
                             <option value="{{ $country['name']['common'] }}" {{ old('nation_first_author', $article->nation_first_author) == $country['name']['common'] ? 'selected' : '' }}>{{ $country['name']['common'] }}</option>
                         @endforeach

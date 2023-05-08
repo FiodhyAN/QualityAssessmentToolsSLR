@@ -179,7 +179,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
@@ -488,6 +487,7 @@
                 },
                 dataType: 'JSON',
                 success: function(data) {
+                    console.log(data);
                     bar_question_chart.updateOptions({
                         series: [{
                                 name: 'Positive',
