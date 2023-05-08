@@ -16,35 +16,49 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-PD5eLkBx8QI5lKvS21cmPZdGhZzyI1WYKGp4d/EzXcJx0o0puW/i3qdrQ2syBw0V7RPNtWbeYV7hcSKXHJc7xg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <h1 class="text-center mb-5">{{$type}} Relationships and Popularity</h1>
-    <form class="form-body row g-3" action="/proses-metadata/{{$url}}" method="POST" onsubmit="return validateForm()">
-        @csrf
-        <div class="row">
-            <div class="col-md-4">
-                <select class="form-select" name="project" id="project">
-                    <option value="empty-field" disabled selected>-- Select Project --</option>
-                    @foreach ($projects as $project)
-                        <option value="{{ $project->id }}">{{ $project->project_name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-4">
-                <select class="form-select" aria-label="Default select example" id="top-author" name="top-author">
-                    <option value="empty-field" disabled selected>-- Select Top {{$type}} --</option>
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <select class="form-select" aria-label="Default select example" id="outer-author" name="outer-author">
-                    <option value="empty-field" disabled selected>-- Select {{$type}} Display --</option>
-                    <option value="1">All {{$type}}</option>
-                    <option value="0">Relation only</option>
-                </select>
-            </div>
+    <form class="form-body row g-3" action="/proses-metadata/{{$url}}" method="POST">
+    @csrf
+    <div class="row">
+        <div class="col-md-4">
+            <label for="project" class="form-label">Project:</label>
+            <select class="form-select @error('project') is-invalid @enderror" name="project" id="project">
+                <option value="" disabled selected>-- Select Project --</option>
+                @foreach ($projects as $project)
+                <option value="{{ $project->id }}" @if(old('project') == $project->id) selected @endif>{{ $project->project_name }}</option>
+                @endforeach
+            </select>
+            @error('project')
+                <div class="invalid-feedback">The Project field is required.</div>
+            @enderror
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+        <div class="col-md-4">
+            <label for="top-author" class="form-label">Top {{$type}}:</label>
+            <select class="form-select @error('top-author') is-invalid @enderror" aria-label="Default select example" id="top-author" name="top-author">
+                <option value="" disabled selected>-- Select Top {{$type}} --</option>
+                <option value="5" @if(old('top-author') == '5') selected @endif>5</option>
+                <option value="10" @if(old('top-author') == '10') selected @endif>10</option>
+                <option value="20" @if(old('top-author') == '20') selected @endif>20</option>
+            </select>
+            @error('top-author')
+                <div class="invalid-feedback">The Top {{$type}} field is required.</div>
+            @enderror
+        </div>
+        <div class="col-md-4">
+            <label for="outer-author" class="form-label">{{$type}} Display:</label>
+            <select class="form-select @error('outer-author') is-invalid @enderror" aria-label="Default select example" id="outer-author" name="outer-author">
+                <option value="" disabled selected>-- Select {{$type}} Display --</option>
+                <option value="1" @if(old('outer-author') == '1') selected @endif>All {{$type}}</option>
+                <option value="0" @if(old('outer-author') == '0') selected @endif>Relation only</option>
+            </select>
+            @error('outer-author')
+                <div class="invalid-feedback">The {{$type}} Display field is required.</div>
+            @enderror
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+    
     <div class="row mt-5">
         <div class="col-md-6" style="display:{{$display}}">
             <div class="container mb-5">
@@ -195,16 +209,6 @@
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-    }
-
-    function validateForm() {
-        var project = document.getElementById("project").value;
-        var top_author = document.getElementById("top-author").value;
-        var outer_author = document.getElementById("outer-author").value;
-        if (project == "empty-field" || top_author == "empty-field" || outer_author == "empty-field") {
-            alert("Please select an option in all fields.");
-            return false;
-        }
     }
 
 </script>
