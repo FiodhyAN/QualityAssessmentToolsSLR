@@ -390,18 +390,7 @@
                             }
                         }
                     });
-
-                    // Column Chart User
-                    // column_user_chart.updateSeries([{
-                    //     name: 'Positive',
-                    //     data: pos_answer_user
-                    // }, {
-                    //     name: 'Neutral',
-                    //     data: net_answer_user
-                    // }, {
-                    //     name: 'Negative',
-                    //     data: neg_answer_user
-                    // }]);
+                    
                     column_user_chart.updateOptions({
                         series: [{
                             name: 'Positive',
@@ -527,23 +516,21 @@
                 data: []
             }],
             chart: {
-                type: 'bar',
+                type: 'area',
                 height: 350
             },
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '55%',
-                    endingShape: 'rounded'
-                },
+            stroke: {
+                curve: 'smooth'
             },
+            // plotOptions: {
+            //     bar: {
+            //         horizontal: false,
+            //         columnWidth: '55%',
+            //         endingShape: 'rounded'
+            //     },
+            // },
             dataLabels: {
                 enabled: false
-            },
-            stroke: {
-                show: true,
-                width: 2,
-                colors: ['transparent']
             },
             xaxis: {
                 categories: [],

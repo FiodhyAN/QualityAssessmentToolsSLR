@@ -256,7 +256,7 @@
             var link = $(event.relatedTarget).data('link');
             var file = $(event.relatedTarget).data('file');
 
-            $(this).find('.modal-title').text('Assess Article - ' + title);
+            $(this).find('.modal-title').html('Assess Article<br>' + no + ' - ' + title);
             $(this).find('#article_id').val(id);
 
             if (link == '' && file == '') {

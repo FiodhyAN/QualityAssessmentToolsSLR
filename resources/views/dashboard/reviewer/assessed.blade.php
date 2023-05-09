@@ -277,7 +277,8 @@
         // Score Modal
         table.on('click', '.scoreArticle', function() {
             var title = $(this).data('title');
-            $('.modal-title-score').text('Score For ' + title)
+            var no = $(this).data('no');
+            $('.modal-title-score').html('Score For<br>' + no + ' - ' + title)
             var article_id = $(this).data('id');
             $.ajax({
                 url: '{{ route('reviewer.score') }}',
@@ -366,9 +367,10 @@
             var title = $(event.relatedTarget).data('title');
             var link = $(event.relatedTarget).data('link');
             var file = $(event.relatedTarget).data('file');
+            var no = $(event.relatedTarget).data('no');
 
             // add to modal title
-            $(this).find('.modal-title').text('Assess Article - ' + title);
+            $(this).find('.modal-title').html('Assess Article<br>' + no + ' - ' + title);
             $(this).find('#article_id').val(id);
 
             if (link == '' && file == '') {
