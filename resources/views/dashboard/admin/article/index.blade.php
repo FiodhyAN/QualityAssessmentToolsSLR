@@ -434,7 +434,8 @@
 
         table.on('click', '.scoreArticle', function() {
             var title = $(this).data('title');
-            $('.modal-title-score').text('Score For ' + title)
+            var no = $(this).data('no');
+            $('.modal-title-score').html('Score For<br>' + no + ' - ' + title)
             var article_id = $(this).data('id');
             $.ajax({
                 url: '{{ route('article.score') }}',
@@ -643,15 +644,17 @@
 
         table.on('click', '#filePreview', function() {
             var title = $(this).data('title');
-            $('.modal-title-file').text(title);
+            var no = $(this).data('no');
+            $('.modal-title-file').html('File For<br>' + no + ' - ' + title);
             var file = $(this).data('file');
             $('#pdf_preview').attr('src', file);
         })
 
         table.on('click', '#addFileBtn', function() {
             var title = $(this).data('title');
+            var no = $(this).data('no');
             var id = $(this).data('id');
-            $('.modal-title-addFile').text('Add File For ' + title);
+            $('.modal-title-addFile').html('Add File For<br>' + no + ' - ' + title);
             $('#article_id').val(id);
         })
 

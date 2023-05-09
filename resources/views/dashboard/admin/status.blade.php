@@ -45,8 +45,9 @@
                                         <a href="javascript:;" id="user_status"
                                             class="d-flex justify-content-center badge alert-primary" data-bs-toggle="modal"
                                             data-bs-target="#userModal"
-                                            data-id_no="{{ $article->id }} - {{ $article->no }}"
+                                            data-no="{{ $article->no }}"
                                             data-id="{{ $article->id }}"
+                                            data-title="{{ $article->title }}"
                                             data-pid="{{ decrypt(request()->pid) }}">
                                             <ion-icon name="eye-sharp"></ion-icon>&nbsp;Show
                                         </a>
@@ -139,11 +140,12 @@
         })
 
         table.on('click', 'tbody #user_status', function() {
-            var id_no = $(this).data('id_no');
+            var no = $(this).data('no');
+            var title = $(this).data('title');
             var article_id = $(this).data('id');
             var project_id = $(this).data('pid');
 
-            $('.modal-title').text('User Status Article ' + id_no);
+            $('.modal-title').html('User Status Article<br>' + no + ' - ' + title);
 
             $.ajax({
                 url: '{{ route('find.userArticle') }}',

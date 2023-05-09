@@ -43,20 +43,20 @@ class ArticleController extends Controller
             ->addColumn('article_file', function(Article $article){
                 if($article->file == null && $article->link_articles == null)
                 {
-                    $content = 'No Preview Available<br><br><button type="button" id="addFileBtn" class="btn btn-sm alert-success" data-bs-toggle="modal" data-bs-target="#addFileModal" data-title="' . $article->title . '" data-id="' . $article->id . '"><ion-icon name="document-attach"></ion-icon> Add File</button>';
+                    $content = 'No Preview Available<br><br><button type="button" id="addFileBtn" class="btn btn-sm alert-success" data-bs-toggle="modal" data-bs-target="#addFileModal" data-no="'.$article->no.'" data-title="'. $article->title .'" data-id="' . $article->id . '" data-no="'.$article->no.'"><ion-icon name="document-attach"></ion-icon> Add File</button>';
                 }
                 if ($article->file == null && $article->link_articles != null) {
                     $content = '<a href="'.$article->link_articles.'" target="_blank" class="btn btn-sm alert-primary"><ion-icon name="link"></ion-icon> Go To Link</a>';
                 }
                 if ($article->file != null && $article->link_articles == null) {
-                    $content = '<button type="button" id="filePreview" data-bs-toggle="modal" data-bs-target="#fileModal" data-title="File For ' . $article->title . '" data-file="' . URL::asset('/storage/article/'.$article->file) . '" class="btn btn-sm alert-primary"><ion-icon name="attach"></ion-icon> Preview File</button>';
+                    $content = '<button type="button" id="filePreview" data-bs-toggle="modal" data-bs-target="#fileModal" data-no="'.$article->no.'" data-title="'. $article->title .'" data-file="' . URL::asset('/storage/article/'.$article->file) . '" class="btn btn-sm alert-primary"><ion-icon name="attach"></ion-icon> Preview File</button>';
                 }
                 return $content;
             })
             ->addColumn('action', function (Article $article) use ($id) {
-                $btn = '<button type="button" style="width:100%;" class="btn btn-warning text-white btn-sm aksi scoreArticle" id="scoreArticle" data-bs-toggle="modal" data-bs-target="#modalScore" data-id="' . $article->id . '" data-title="' . $article->title . '"><ion-icon name="stats-chart-outline"></ion-icon> Score</button><br>';
+                $btn = '<button type="button" style="width:100%;" class="btn btn-warning text-white btn-sm aksi scoreArticle" id="scoreArticle" data-bs-toggle="modal" data-bs-target="#modalScore" data-no="'.$article->no.'" data-id="' . $article->id . '" data-title="' . $article->title . '"><ion-icon name="stats-chart-outline"></ion-icon> Score</button><br>';
                 $btn .= '<a href="/dashboard/admin/article/' . encrypt($article->id) . '/edit?pid=' . encrypt($id) . '"><button type="button" style="width:100%;" class="btn btn-primary btn-sm aksi mt-2 mb-2"><ion-icon name="create-outline"></ion-icon> Edit</button></a><br>';
-                $btn .= '<button type="button" style="width:100%;" class="btn btn-danger btn-sm aksi deleteArticle" data-id="' . $article->id . '" data-project_id="'.$article->project_id.'"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
+                $btn .= '<button type="button" style="width:100%;" class="btn btn-danger btn-sm aksi deleteArticle" data-id="' . $article->id . '" data-project_id="'.$article->project_id.'" data-no="'.$article->no.'"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
                 return $btn;
             })
             ->rawColumns(['no','title', 'publication', 'authors', 'action', 'article_file'])
