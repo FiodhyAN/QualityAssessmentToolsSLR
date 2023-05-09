@@ -261,8 +261,15 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     # inisilaize graph
     G = nx.Graph()
     # author merujuk & dirujuk
-    top_authors_and_top_authors_bolean = "OFF"
-    top_authors_and_common_authors_bolean = "OFF"
+    if outer_author == 2:
+        top_authors_and_top_authors_bolean = "ON"
+        top_authors_and_common_authors_bolean = "OFF"
+    elif outer_author == 3:
+        top_authors_and_top_authors_bolean = "OFF"
+        top_authors_and_common_authors_bolean = "ON"
+    else:
+        top_authors_and_top_authors_bolean = "OFF"
+        top_authors_and_common_authors_bolean = "OFF"
     G = add_node_graph(G, author_matrixs,top_authors,top_authors_and_top_authors_bolean,top_authors_and_common_authors_bolean)
     # inisiliasisi ukuran node dan warna
     my_node_sizes = []
@@ -289,6 +296,7 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
         total_author = len(G.nodes) + len(outer_authors)
     else:
         total_author = len(G.nodes)
+    print("total author:"+str(total_author))
 
     if 0<=total_author<=200:
         subplot_size=25
@@ -298,6 +306,24 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
         outer_author_node_size_2=1000
         node_labels_font_size=25
         edge_labels_font_size=20
+
+    if 200<total_author<=400:
+        subplot_size=25
+        k=2
+        authors_node_size_x=5000
+        outer_author_node_size_1=2000
+        outer_author_node_size_2=1000
+        node_labels_font_size=25
+        edge_labels_font_size=20
+    
+    if 400<total_author<=600:
+        subplot_size=30
+        k=2.5
+        authors_node_size_x=1600
+        outer_author_node_size_1=2000
+        outer_author_node_size_2=200
+        node_labels_font_size=25
+        edge_labels_font_size=8
 
     elif 600<total_author:
         subplot_size=32
@@ -331,7 +357,6 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
             my_node_colors.append('red')
         labels[author] = str(search_author_json[author])
 
-    print("outer author name:"+str(outer_author))
     if outer_author == 0:
         for author, size in zip(outer_authors, outer_author_rank):
             G.add_node(author)

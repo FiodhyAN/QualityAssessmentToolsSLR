@@ -202,7 +202,23 @@ class DataProcessingController extends Controller
         }
         $name=$id;
         $name[0]=strtoupper($name[0]);
-        return view('pengolahan_data_slr.metadata', ['src' => "", 'author_ranks' => [], 'type' => $name, 'url'=>$id , 'projects' => $projects,'display' => 'none','id_project'=>'']);
+        return view('pengolahan_data_slr.metadata', ['src' => "", 'author_ranks' => [], 'type' => $name, 'url'=>$id , 'projects' => $projects,'display' => 'none','id_project'=>'','world_map'=>[]]);
+    }
+
+    public function getDarkerHexColor($color, $amount) {
+        // konversi hex color ke RGB
+        $r = hexdec(substr($color, 1, 2));
+        $g = hexdec(substr($color, 3, 2));
+        $b = hexdec(substr($color, 5, 2));
+      
+        // hitung nilai darker color
+        $r = max($r - $amount, 0);
+        $g = max($g - $amount, 0);
+        $b = max($b - $amount, 0);
+      
+        // konversi kembali ke hex color
+        $darkerColor = sprintf("#%02x%02x%02x", $r, $g, $b);
+        return $darkerColor;
     }
 
     public function proses_meta_data(Request $request, $id)
@@ -245,12 +261,30 @@ class DataProcessingController extends Controller
         $authors = $response['authors'];
         $ranks = $response['ranks'];
         $title = $response['title'];
-        
+
+        // make empty array world map
+        $world_map = array();
         
         // Combine the authors and ranks into an array of arrays
         $author_ranks = array();
         for ($i = 0; $i < count($authors); $i++) {
+
+            // cek apakah ada di world map
+            if(!array_key_exists($title[$i],$world_map)){
+                $world_map[$title[$i]]=1;
+            }
+            else{
+                $world_map[$title[$i]]+=1;
+            }
+
             $author_ranks[] = array($i,$authors[$i], $ranks[$i], $title[$i]);
+        }
+
+        // convert world map to array of array
+        $new_world_map = array();
+        foreach ($world_map as $key => $value) {
+            $color=$this->getDarkerHexColor('#FF0000', $value);
+            $new_world_map[] = array($key,$color);
         }
 
         // Sort the author-rank pairs based on the rank (ascending order)
@@ -261,7 +295,7 @@ class DataProcessingController extends Controller
         $author_ranks = array_slice($author_ranks, 0, $sum_top_author);
         $name=$id;
         $name[0]=strtoupper($name[0]);
-        return view('pengolahan_data_slr.metadata', ['src' => "data:image/png;base64, $image", 'author_ranks' => $author_ranks, 'type' => $name, 'url'=>$id ,'projects' => $projects,'display' => 'block','id_project'=>$author['project']]);
+        return view('pengolahan_data_slr.metadata', ['src' => "data:image/png;base64, $image", 'author_ranks' => $author_ranks, 'type' => $name, 'url'=>$id ,'projects' => $projects,'display' => 'block','id_project'=>$author['project'],'world_map'=>$new_world_map]);
     }
 
 }
