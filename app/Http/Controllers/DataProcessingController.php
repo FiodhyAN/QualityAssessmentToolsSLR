@@ -227,11 +227,6 @@ class DataProcessingController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
         
-        if ($author['outer-author'] == '0') {
-            $author['outer-author'] = false;
-        } else {
-            $author['outer-author'] = true;
-        }
         $sum_top_author = (int) $author['top-author'];
         $result = $this->getData($author['project']);
         set_time_limit(6000);

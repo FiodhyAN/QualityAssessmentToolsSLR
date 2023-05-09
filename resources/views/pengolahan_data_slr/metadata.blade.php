@@ -47,8 +47,10 @@
             <label for="outer-author" class="form-label">{{$type}} Display:</label>
             <select class="form-select @error('outer-author') is-invalid @enderror" aria-label="Default select example" id="outer-author" name="outer-author">
                 <option value="" disabled selected>-- Select {{$type}} Display --</option>
-                <option value="1" @if(old('outer-author') == '1') selected @endif>All {{$type}}</option>
-                <option value="0" @if(old('outer-author') == '0') selected @endif>Relation only</option>
+                <option value="0" @if(old('outer-author') == '0') selected @endif>All {{$type}}</option>
+                <option value="1" @if(old('outer-author') == '1') selected @endif>All {{$type}} with Relation Only</option>
+                <option value="2" @if(old('outer-author') == '2') selected @endif>Relation Among Top {{$type}}</option>
+                <option value="3" @if(old('outer-author') == '3') selected @endif>Top {{$type}}-Citing {{$type}} Relation</option>
             </select>
             @error('outer-author')
                 <div class="invalid-feedback">The {{$type}} Display field is required.</div>

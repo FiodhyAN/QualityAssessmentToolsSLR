@@ -255,7 +255,7 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     # ranking author yang ingin ditampilkan ex:5,10,20
     ranking = ranking
     # pilihan menampilkan author tanpa relasi ex:tampilkan,tidak
-    outer_author = outer_author
+    outer_author = int(outer_author)
     # dapatkan list top author ex:['p1','p2','p3']
     top_authors = getTopAuthor(authors, author_rank, ranking)
     # inisilaize graph
@@ -285,7 +285,7 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     print("total relational author Rank:"+str(len(author_rank)))
 
     # default=125
-    if outer_author == True:
+    if outer_author == 0:
         total_author = len(G.nodes) + len(outer_authors)
     else:
         total_author = len(G.nodes)
@@ -331,7 +331,8 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
             my_node_colors.append('red')
         labels[author] = str(search_author_json[author])
 
-    if outer_author == True:
+    print("outer author name:"+str(outer_author))
+    if outer_author == 0:
         for author, size in zip(outer_authors, outer_author_rank):
             G.add_node(author)
             my_node_sizes.append(outer_author_node_size_2)
@@ -524,8 +525,8 @@ def data(type, name):
             outer_author = request.get_json()["outer"]
             top_author_rank = request.get_json()["author-rank"]
         except:
-            outer_author = True
-            top_author_rank = 10
+            outer_author = 0
+            top_author_rank = 20
 
         initial_articles_pair_search={}
         count=0
