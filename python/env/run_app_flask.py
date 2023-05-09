@@ -207,10 +207,14 @@ def getTopAuthor(authors, author_rank, ranking):
     # print("getTopAuthor time: "+str(time_end-time_start))
     return top_authors
 
-def add_node_graph(G, author_matrixs):
+def add_node_graph(G, author_matrixs,top_authors,top_authors_and_top_authors_bolean,top_authors_and_common_authors_bolean):
     time_start = time.time()
     for author_matrix in author_matrixs:
         if author_matrix[2] > 0:
+            if top_authors_and_top_authors_bolean=="ON" and not (author_matrix[1] in top_authors and author_matrix[0] in top_authors):
+                continue
+            if top_authors_and_common_authors_bolean=="ON" and not author_matrix[1] in top_authors:
+                continue
             # (penulis merujuk,dirujuk,nilai)
             G.add_edge(author_matrix[0],
                        author_matrix[1], weight=author_matrix[2])
@@ -257,7 +261,9 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     # inisilaize graph
     G = nx.Graph()
     # author merujuk & dirujuk
-    G = add_node_graph(G, author_matrixs)
+    top_authors_and_top_authors_bolean = "OFF"
+    top_authors_and_common_authors_bolean = "OFF"
+    G = add_node_graph(G, author_matrixs,top_authors,top_authors_and_top_authors_bolean,top_authors_and_common_authors_bolean)
     # inisiliasisi ukuran node dan warna
     my_node_sizes = []
     my_node_colors = []
