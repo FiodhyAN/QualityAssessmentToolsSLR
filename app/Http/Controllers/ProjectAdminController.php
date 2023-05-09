@@ -47,10 +47,12 @@ class ProjectAdminController extends Controller
         }
         elseif ($request->status == 'part_assessed') {
             return Article::with(['project', 'article_user' => function($query){
-                $query->with('user')->where('is_assessed', true);
-            }])->whereHas('article_user', function($query){
-                $query->where('is_assessed', true);
-            })->where('project_id', $request->project_id)->get();
+                    $query->with('user');
+                }])->whereHas('article_user', function($query) {
+                    $query->where('is_assessed', true);
+                })->whereHas('article_user', function($query) {
+                    $query->where('is_assessed', false);
+                })->where('project_id', $request->project_id)->get();
         }
         elseif ($request->status == 'full_assessed') {
             return Article::with(['project', 'article_user' => function($query){

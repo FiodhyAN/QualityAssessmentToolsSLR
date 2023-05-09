@@ -94,7 +94,7 @@
     <script>
         var table = $('#article_status_table').DataTable();
         $('.select_status').select2({
-            width: '15%',
+            width: '25%',
             // turn off the searching
             placeholder: 'Choose Status',
             minimumResultsForSearch: Infinity,
