@@ -278,44 +278,61 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     print("total relational author name:"+str(len(authors)))
     print("total relational author Rank:"+str(len(author_rank)))
 
+    # default=125
+    if outer_author == True:
+        total_author = len(G.nodes) + len(outer_authors)
+    else:
+        total_author = len(G.nodes)
+
+    if 0<=total_author<=200:
+        subplot_size=25
+        k=2
+        authors_node_size_x=5000
+        outer_author_node_size_1=2000
+        outer_author_node_size_2=1000
+        node_labels_font_size=25
+        edge_labels_font_size=20
+
+    elif 600<total_author:
+        subplot_size=32
+        k=3.2
+        authors_node_size_x=800
+        outer_author_node_size_1=1000
+        outer_author_node_size_2=100
+        node_labels_font_size=15
+        edge_labels_font_size=5
+    else:
+        subplot_size=25
+        k=2
+        authors_node_size_x=5000
+        outer_author_node_size_1=2000
+        outer_author_node_size_2=1000
+        node_labels_font_size=25
+        edge_labels_font_size=20
+
     for author in G.nodes:
         size = author_rank[search_authors[author]]
         if size > rank_outer_author:
             # jika iya nilainya *300
-            my_node_sizes.append(size * 800)
+            my_node_sizes.append(size * authors_node_size_x)
             if author in top_authors:
                 my_node_colors.append('purple')
             else:
                 my_node_colors.append('blue')
         else:
             # jika tidak dirujuk nilainya 10
-            my_node_sizes.append(1000)
+            my_node_sizes.append(outer_author_node_size_1)
             my_node_colors.append('red')
         labels[author] = str(search_author_json[author])
 
     if outer_author == True:
         for author, size in zip(outer_authors, outer_author_rank):
             G.add_node(author)
-            my_node_sizes.append(100)
+            my_node_sizes.append(outer_author_node_size_2)
             my_node_colors.append('red')
             labels[author] = str(search_author_json[author])
 
-    # default=125
-    total_author = len(G.nodes)
-
-    if 0<=total_author<=200:
-        subplot_size=25
-        k=0.4
-    elif 200<total_author<=400:
-        subplot_size=27
-        k=0.8
-    elif 400<total_author<=600:
-        subplot_size=29
-        k=1.2
-    elif 600<total_author:
-        subplot_size=32
-        k=3.2
-
+    
     fig, ax = plt.subplots(figsize=(subplot_size, subplot_size))
     # decrease k parameter to increase spacing between nodes
     pos = nx.spring_layout(G, seed=7, k=k)
@@ -325,7 +342,7 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
                            )  # increase node size to 200
     nx.draw_networkx_edges(G, pos, edgelist=G.edges(),
                            width=1, alpha=0.5, edge_color="green")
-    nx.draw_networkx_labels(G, pos, font_size=15,
+    nx.draw_networkx_labels(G, pos, font_size=node_labels_font_size,
                             font_family="sans-serif", font_color="black",
                             labels=labels
                             )
@@ -336,7 +353,7 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
                    weight_matrix in G.edges(data='weight')}
     
     draw_time=time.time()
-    nx.draw_networkx_edge_labels(G, pos, edge_labels, font_size=5)
+    nx.draw_networkx_edge_labels(G, pos, edge_labels, font_size=edge_labels_font_size)
     end_draw_time=time.time()-draw_time
     # print("draw time: "+str(end_draw_time))
 
