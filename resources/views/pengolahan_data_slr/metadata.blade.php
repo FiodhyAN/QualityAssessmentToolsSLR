@@ -62,7 +62,7 @@
 
     
     <div class="row mt-5">
-        <div class="col-md-6">
+        <div class="col-md-6" style="display:{{$display}}">
             <div class="container mb-5">
                 <!-- HTML -->
                 <figure>
@@ -228,34 +228,6 @@
 
 
     <script>
-        function getRandomColor(excludeColor) {
-            var color;
-            do {
-                color = '#' + Math.floor(Math.random() * 16777215).toString(16);
-            } while (color === excludeColor);
-            return color;
-        }
-        $(function(){
-            $.ajax({
-                url: '/get-image-graph/{{$url}}',
-                type: 'POST',
-                data: {
-                    "_token": "{{ csrf_token() }}",
-                    "project": {{$project_ajax}},
-                    "top-author": {{$topauthor}},
-                    "outer-author": {{$outerauthor}},
-                },
-                dataType: 'json',
-                success: function(response) {
-                    console.log(response);
-                    document.getElementById('my-image').src = response.src;
-                }
-            })
-
-        });
-    </script>
-
-    <script>
         $(function() {
             $.ajax({
                 url: '/getMapData',
@@ -311,7 +283,31 @@
                 }
             })
         });
+        function getRandomColor(excludeColor) {
+            var color;
+            do {
+                color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            } while (color === excludeColor);
+            return color;
+        }
+        $(function(){
+            $.ajax({
+                url: '/get-image-graph/{{$url}}',
+                type: 'POST',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "project": {{$project_ajax}},
+                    "top-author": {{$topauthor}},
+                    "outer-author": {{$outerauthor}},
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    document.getElementById('my-image').src = response.src;
+                }
+            })
 
+        });
     </script>
 
     <script>
