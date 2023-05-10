@@ -136,6 +136,13 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-12" style="display: {{ $display }}">
+            <div class="card mt-5">
+                <div class="card-body">
+                    <div id="chart"></div>
+                </div>
+            </div>
+        </div>
         @endif
     </div>
 </div>
@@ -281,5 +288,45 @@
                 }
             })
         });
+    </script>
+
+<script>
+
+                
+
+        var options = {
+            series: [
+                @for($i = 0; $i < 20 && $i < count($author_ranks); $i++) 
+                {
+                    name: "{{ $author_ranks[$i][1] }}",
+                    data: [
+                        [{{ $author_ranks[$i][4] }}, {{ $author_ranks[$i][5] }}]
+                    ]
+                },
+                @endfor
+            ],
+            chart: {
+                height: 350,
+                type: 'scatter',
+                zoom: {
+                    enabled: true,
+                    type: 'xy'
+                }
+            },
+            xaxis: {
+                tickAmount: 10,
+                labels: {
+                    formatter: function(val) {
+                        return parseFloat(val).toFixed(1)
+                    }
+                }
+            },
+            yaxis: {
+                tickAmount: 7
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
     </script>
 @endsection

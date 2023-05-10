@@ -221,6 +221,13 @@ class DataProcessingController extends Controller
         return $darkerColor;
     }
 
+    public function get_total_article($author_name,$projects) {
+        $articles = Article::select('no', 'keywords', 'abstracts', 'year', 'authors', 'citing_new','title','nation_first_author')->where('project_id', '=', $projects)->where('authors', 'like', '%' . $author_name . '%')
+            ->get();
+        $total_article=count($articles);
+        return $total_article;
+    }
+
     public function proses_meta_data(Request $request, $id)
     {
         $this->authorize('projectSummary');
@@ -261,6 +268,7 @@ class DataProcessingController extends Controller
         $authors = $response['authors'];
         $ranks = $response['ranks'];
         $title = $response['title'];
+        $nodes_strength = $response['nodes_strength'];
 
         // make empty array world map
         $world_map = array();
@@ -276,8 +284,9 @@ class DataProcessingController extends Controller
             else{
                 $world_map[$title[$i]]+=1;
             }
-
-            $author_ranks[] = array($i,$authors[$i], $ranks[$i], $title[$i]);
+            $total_article=$this->get_total_article($authors[$i],$author['project']);
+            $nodes_strength_val=$nodes_strength[$i];
+            $author_ranks[] = array($i,$authors[$i], $ranks[$i], $title[$i],$total_article,$nodes_strength_val);
         }
 
         // convert world map to array of array

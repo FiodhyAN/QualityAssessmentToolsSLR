@@ -622,7 +622,7 @@ def data(type, name):
                         # bukan penulis pertama
                         title_nation_of_the_article.append("None")
 
-            tmp = {'authors':input_author_article, 'ranks':author_rank,'title':title_nation_of_the_article}
+            tmp = {'authors':input_author_article, 'ranks':author_rank,'title':title_nation_of_the_article,'nodes_strength':last_author_rank}
             tmp=json.dumps(tmp)
             # Make Term Graph
             output = makeTermGraph(input_author_article, author_matrix_and_relation, last_author_rank, outer_author, top_author_rank)
