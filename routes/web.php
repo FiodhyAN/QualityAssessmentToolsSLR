@@ -112,3 +112,4 @@ Route::get('/data/{id}/rank', [DataProcessingController::class, 'data_rank'])->m
 Route::get('/data/{id}/graph', [DataProcessingController::class, 'data_graph'])->middleware('auth');
 Route::get('/metadata/{id}', [DataProcessingController::class, 'meta_data'])->middleware('auth');
 Route::post('/proses-metadata/{id}', [DataProcessingController::class, 'proses_meta_data'])->middleware('auth');
+Route::post('/get-image-graph/{id}', [DataProcessingController::class, 'get_image_graph'])->middleware('auth');

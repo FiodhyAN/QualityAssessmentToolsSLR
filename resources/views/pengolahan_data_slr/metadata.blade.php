@@ -62,13 +62,20 @@
 
     
     <div class="row mt-5">
-        <div class="col-md-6" style="display:{{$display}}">
+        <div class="col-md-6">
             <div class="container mb-5">
                 <!-- HTML -->
                 <figure>
                     <a data-fancybox="gallery" href="{{$src}}">
                         <img class="img-fluid" src="{{$src}}" alt="Gambar 1" id="my-image" />
                     </a>
+                    <script>
+                        var myImage = document.getElementById('my-image');
+                            myImage.onerror = function() {
+                            myImage.onerror = null;
+                            myImage.src = 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831';
+                        }
+                    </script>
                     <div class="row text-center">
                         <div class="col-md-4">
                             <!-- make small circle with purple color -->
@@ -150,11 +157,6 @@
 
 @section('script')
     <script>
-        var myImage = document.getElementById('my-image');
-        myImage.onerror = function() {
-            myImage.onerror = null;
-            myImage.src = 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831';
-        }
         function download_image() {
             fetch(
                     '{{$src}}')
@@ -233,6 +235,27 @@
             } while (color === excludeColor);
             return color;
         }
+        $(function(){
+            $.ajax({
+                url: '/get-image-graph/{{$url}}',
+                type: 'POST',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "project": {{$project_ajax}},
+                    "top-author": {{$topauthor}},
+                    "outer-author": {{$outerauthor}},
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    document.getElementById('my-image').src = response.src;
+                }
+            })
+
+        });
+    </script>
+
+    <script>
         $(function() {
             $.ajax({
                 url: '/getMapData',
@@ -288,12 +311,11 @@
                 }
             })
         });
+
     </script>
 
-<script>
-
-                
-
+    <script>
+        
         var options = {
             series: [
                 @for($i = 0; $i < 20 && $i < count($author_ranks); $i++) 
@@ -333,5 +355,6 @@
 
         var chart = new ApexCharts(document.querySelector("#chart"), options);
         chart.render();
+
     </script>
 @endsection

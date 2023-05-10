@@ -624,6 +624,29 @@ def data(type, name):
 
             tmp = {'authors':input_author_article, 'ranks':author_rank,'title':title_nation_of_the_article,'nodes_strength':last_author_rank}
             tmp=json.dumps(tmp)
+            tmp_dict = json.loads(tmp)
+            end_time = time.time()
+            total_time = end_time - start_time
+            print("Waktu eksekusi program: {:.2f} detik".format(total_time))
+            return tmp_dict
+        elif name == "rankgraphimage":
+            title_nation_of_the_article = []
+            for i in input_author_article:
+                if type == "article":
+                    if i in initial_articles_pair:
+                        title_nation_of_the_article.append(title_articles_pair[initial_articles_pair_search[i]])
+                    else:
+                        # bukan penulis pertama
+                        title_nation_of_the_article.append("None")
+                elif type == "author":
+                    if i in initial_author_pair:
+                        title_nation_of_the_article.append(nation_author_pair[initial_author_pair_search[i]])
+                    else:
+                        # bukan penulis pertama
+                        title_nation_of_the_article.append("None")
+
+            tmp = {'authors':input_author_article, 'ranks':author_rank,'title':title_nation_of_the_article,'nodes_strength':last_author_rank}
+            tmp=json.dumps(tmp)
             # Make Term Graph
             output = makeTermGraph(input_author_article, author_matrix_and_relation, last_author_rank, outer_author, top_author_rank)
             output.seek(0)
@@ -636,7 +659,6 @@ def data(type, name):
             total_time = end_time - start_time
             print("Waktu eksekusi program: {:.2f} detik".format(total_time))
             return tmp_dict
-        
 
 if __name__ == "__main__":
     app.run(debug=True)
