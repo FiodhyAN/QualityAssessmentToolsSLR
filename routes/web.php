@@ -68,6 +68,7 @@ Route::get('/articleScore', [ArticleController::class, 'articleScore'])->middlew
 Route::get('/articleShow', [ArticleController::class, 'articleShow'])->middleware('auth')->name('article.show');
 Route::put('/addArticleFile', [ArticleController::class, 'addArticleFile'])->middleware('auth')->name('article.addFile');
 Route::get('/findArticleScore', [ArticleController::class, 'findArticleScore'])->middleware('auth')->name('find.articleScore');
+Route::get('/findArticleDB', [ArticleController::class, 'findArticleDB'])->middleware('auth')->name('find.articleDB');
 //Assign Article
 Route::get('/dashboard/admin/assign', [AssignReviewerController::class, 'index'])->middleware('auth');
 Route::get('/assignedTable', [AssignReviewerController::class, 'articleAssignTable'])->middleware('auth')->name('assigned.table');
@@ -82,6 +83,7 @@ Route::get('/findUserArticle', [ProjectAdminController::class, 'findUserArticle'
 Route::get('/dashboard/projectSummary', [SummaryController::class, 'projectSummary'])->middleware('auth')->name('project.summary');
 Route::get('/findProjectSummary', [SummaryController::class, 'findProjectSummary'])->middleware('auth')->name('find.projectSummary');
 Route::get('/findArticleType', [SummaryController::class, 'findArticleType'])->middleware('auth')->name('find.articleType');
+Route::get('/makeChart', [SummaryController::class, 'makeChart'])->middleware('auth')->name('make.chart');
 
 //map
 Route::get('/getMapData', [SummaryController::class, 'getMapData'])->middleware('auth')->name('get.mapData');

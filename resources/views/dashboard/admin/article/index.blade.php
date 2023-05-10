@@ -1,6 +1,7 @@
 @extends('layouts.main')
 
 @section('container')
+    <input type="hidden" id="project_id" value="{{ request()->id }}">
     <h1>Article Management {{ $project->project->project_name }}</h1>
     <hr />
 
@@ -17,18 +18,31 @@
 
 
     <div class="card">
-        <div class="col mb-3 mt-3 ms-3">
-            <a href="/dashboard/admin/article/create?id={{ encrypt($project->project->id) }}"><button type="button"
-                    class="btn btn-sm btn-success px-5 mb-2">
-                    <ion-icon name="add-circle-outline"></ion-icon>Add Article
-                </button></a>
-            <a href="/article/download"><button type="button" class="btn btn-sm btn-secondary px-5 mb-2">
-                    <ion-icon name="document-outline"></ion-icon>Excel Template
-                </button></a>
-            <button type="button" class="btn btn-sm btn-primary px-5 mb-2" id="import_excel" data-bs-toggle="modal"
-                data-bs-target="#exampleModal">
-                <ion-icon name="cloud-upload-outline"></ion-icon>Import Excel
-            </button>
+        <div class="card-header">
+            <div class="col">
+                <a href="/dashboard/admin/article/create?id={{ encrypt($project->project->id) }}"><button type="button"
+                        class="btn btn-sm btn-success px-5 mb-2">
+                        <ion-icon name="add-circle-outline"></ion-icon>Add Article
+                    </button></a>
+                <a href="/article/download"><button type="button" class="btn btn-sm btn-secondary px-5 mb-2">
+                        <ion-icon name="document-outline"></ion-icon>Excel Template
+                    </button></a>
+                <button type="button" class="btn btn-sm btn-primary px-5 mb-2" id="import_excel" data-bs-toggle="modal"
+                    data-bs-target="#exampleModal">
+                    <ion-icon name="cloud-upload-outline"></ion-icon>Import Excel
+                </button>
+            </div>
+            {{-- make select option in the corner right of the card --}}
+            <div class="row">
+                <div class="col-md-6">
+                    <select class="form-select form-select-sm" aria-label="Default select example" name="edatabase" id="edatabase">
+                        <option selected disabled>Select Database</option>
+                        @foreach ($article_db as $item)
+                            <option value="{{ $item }}">{{ $item }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -744,6 +758,22 @@
                         title: 'Error',
                         text: 'Something went wrong',
                     })
+                }
+            })
+        })
+
+        $('#edatabase').on('change', function() {
+            var edatabase = $(this).val();
+
+            $.ajax({
+                url: '{{ route('article.table', $project->project->id) }}',
+                type: 'GET',
+                data: {
+                    edatabase: edatabase,
+                },
+                dataType: 'JSON',
+                success: function(data) {
+                    table.ajax.url('{{ route('article.table', $project->project->id) }}?edatabase=' + edatabase).load();
                 }
             })
         })

@@ -172,4 +172,9 @@ class SummaryController extends Controller
         $data = $response->json();
         return $data;
     }
+
+    public function makeChart()
+    {
+        return view('dashboard.summary.testing');
+    }
 }

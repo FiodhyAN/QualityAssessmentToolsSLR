@@ -118,6 +118,14 @@
                             <div class="menu-title">Quality Summary</div>
                         </a>
                     </li>
+                    <li>
+                        <a href="/makeChart">
+                            <div class="parent-icon">
+                                <ion-icon name="pie-chart"></ion-icon>
+                            </div>
+                            <div class="menu-title">Testing Chart</div>
+                        </a>
+                    </li>
                 </ul>
             </li>
         @endcan

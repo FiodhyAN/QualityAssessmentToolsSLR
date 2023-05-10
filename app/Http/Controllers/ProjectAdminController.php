@@ -20,8 +20,10 @@ class ProjectAdminController extends Controller
     {
         $this->authorize('admin');
         $project = ProjectUser::with('project')->where('user_id', auth()->user()->id)->where('project_id', decrypt($id))->first();
+        $article_db = Article::select('edatabase')->where('project_id', decrypt($id))->distinct()->pluck('edatabase')->toArray();
         return view('dashboard.admin.article.index', [
             'project' => $project,
+            'article_db' => $article_db,
         ]);
     }
 

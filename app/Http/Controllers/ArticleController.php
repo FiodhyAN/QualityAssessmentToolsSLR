@@ -20,10 +20,13 @@ use Illuminate\Validation\Rule;
 
 class ArticleController extends Controller
 {
-    public function articleTable($id)
+    public function articleTable(Request $request,$id)
     {
         $this->authorize('admin');
-        $articles = Article::select('id', 'no', 'title', 'year', 'publication', 'authors', 'file', 'link_articles', 'project_id')->where('project_id', $id)->get();
+        $articles = Article::select('id', 'no', 'title', 'year', 'publication', 'authors', 'file', 'link_articles', 'project_id')->where('project_id', $id);
+        if ($request->has('edatabase')) {
+            $articles = $articles->where('edatabase', $request->edatabase);
+        }
         return DataTables::of($articles)
             ->addColumn('no', function (Article $article) {
                 return $article->id . ' - ' . $article->no;
@@ -465,5 +468,12 @@ class ArticleController extends Controller
             'net_answer_question' => $net_answer_question,
             'neg_answer_question' => $neg_answer_question,
         ]);
+    }
+
+    public function findArticleDB(Request $request)
+    {
+        $this->authorize('admin');
+        $article_db = Article::select('id', 'no', 'title', 'year', 'publication', 'authors', 'file', 'link_articles', 'project_id')->where('project_id', decrypt($request->project_id))->where('edatabase', $request->edatabase)->get();
+        return json_encode($article_db);
     }
 }
