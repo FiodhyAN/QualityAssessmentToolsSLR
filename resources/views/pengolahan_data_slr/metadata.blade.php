@@ -300,8 +300,8 @@
                 {
                     name: "{{ $author_ranks[$i][1] }}",
                     data: [
-                        [{{ $author_ranks[$i][4] }}, {{ $author_ranks[$i][5] }}]
-                    ]
+                        [{{ $author_ranks[$i][4] }}, {{ $author_ranks[$i][5] }},{{ $author_ranks[$i][4] }}]
+                    ],
                 },
                 @endfor
             ],
@@ -312,6 +312,11 @@
                     enabled: true,
                     type: 'xy'
                 }
+            },
+            tooltip:{
+                marker: {
+                    fillColors: getRandomColor()
+                },
             },
             xaxis: {
                 tickAmount: 10,
