@@ -47,8 +47,10 @@
             <label for="outer-author" class="form-label">{{$type}} Display:</label>
             <select class="form-select @error('outer-author') is-invalid @enderror" aria-label="Default select example" id="outer-author" name="outer-author">
                 <option value="" disabled selected>-- Select {{$type}} Display --</option>
-                <option value="1" @if(old('outer-author') == '1') selected @endif>All {{$type}}</option>
-                <option value="0" @if(old('outer-author') == '0') selected @endif>Relation only</option>
+                <option value="0" @if(old('outer-author') == '0') selected @endif>All {{$type}}</option>
+                <option value="1" @if(old('outer-author') == '1') selected @endif>All {{$type}} with Relation Only</option>
+                <option value="2" @if(old('outer-author') == '2') selected @endif>Relation Among Top {{$type}}</option>
+                <option value="3" @if(old('outer-author') == '3') selected @endif>Top {{$type}}-Citing {{$type}} Relation</option>
             </select>
             @error('outer-author')
                 <div class="invalid-feedback">The {{$type}} Display field is required.</div>
@@ -230,7 +232,7 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    var author_ranks = {!! json_encode($author_ranks) !!};
+                    var world_map = {!! json_encode($world_map) !!};
                     let mapData = {};
                     let usedColors = {};
                     // initialize Fuse with country data
@@ -239,11 +241,9 @@
                         threshold: 0.3
                     });
                     // id, name, rank, nation
-                    for (let i = 0; i < author_ranks.length; i++) {
-                        let id = author_ranks[i][0];
-                        let name = author_ranks[i][1];
-                        let rank = author_ranks[i][2];
-                        let nation = author_ranks[i][3];
+                    for (let i = 0; i < world_map.length; i++) {
+                        let nation = world_map[i][0];
+                        let color_nation = world_map[i][1];
                         // find the corresponding country code from the API data
                         let results = "None"
                         if (nation === "None") {
@@ -256,9 +256,7 @@
                         if (countryCode) {
                             // add an entry to mapData with a random color, but not #87CEEB
                             let color;
-                            do {
-                                color = getRandomColor();
-                            } while (color === '#87CEEB' || usedColors[color]);
+                            color = color_nation;
                             usedColors[color] = true;
                             mapData[countryCode] = color;
                             $("#my-table tbody tr").each(function() {
