@@ -202,7 +202,7 @@ class DataProcessingController extends Controller
         }
         $name=$id;
         $name[0]=strtoupper($name[0]);
-        return view('pengolahan_data_slr.metadata', ['src' => "", 'author_ranks' => [], 'type' => $name, 'url'=>$id , 'projects' => $projects,'display' => 'none','id_project'=>'','world_map'=>[]]);
+        return view('pengolahan_data_slr.metadata', ['src' => "", 'author_ranks' => [], 'type' => $name, 'url'=>$id , 'projects' => $projects,'display' => 'none','id_project'=>'','world_map'=>[],"project_ajax"=>'',"topauthor"=> '',"outerauthor"=> '']);
     }
 
     public function getDarkerHexColor($color, $amount) {
@@ -263,8 +263,6 @@ class DataProcessingController extends Controller
                 'author-rank' => $sum_top_author
             ]
         );
-        $image = $response['graph'];
-        $image =utf8_decode($image);
         $authors = $response['authors'];
         $ranks = $response['ranks'];
         $title = $response['title'];
@@ -304,7 +302,39 @@ class DataProcessingController extends Controller
         $author_ranks = array_slice($author_ranks, 0, $sum_top_author);
         $name=$id;
         $name[0]=strtoupper($name[0]);
-        return view('pengolahan_data_slr.metadata', ['src' => "data:image/png;base64, $image", 'author_ranks' => $author_ranks, 'type' => $name, 'url'=>$id ,'projects' => $projects,'display' => 'block','id_project'=>$author['project'],'world_map'=>$new_world_map]);
+        // data:image/png;base64, $image
+        return view('pengolahan_data_slr.metadata', ['src' => "", 'author_ranks' => $author_ranks, 'type' => $name, 'url'=>$id ,'projects' => $projects,'display' => 'block','id_project'=>$author['project'],'world_map'=>$new_world_map,"project_ajax"=> $author['project'],"topauthor"=> $author['top-author'],"outerauthor"=> $author['outer-author'],]);
+    }
+
+
+    public function get_image_graph(Request $request, $id)
+    {
+        $this->authorize('projectSummary');
+        if (auth()->user()->is_superAdmin) {
+            $projects = Project::select('id','project_name')->get();
+        }
+        else {
+            $projects = Project::select('id','project_name')->whereHas('project_user', function($query) {
+                $query->where('user_id', auth()->user()->id);
+            })->get();
+        }
+        $author = $request->toArray();
+        $sum_top_author = (int) $author['top-author'];
+        $result = $this->getData($author['project']);
+        set_time_limit(6000);
+        $response = Http::timeout(6000)->post(
+            'http://127.0.0.1:5000/data/' . $id . '/rankgraphimage',
+            [
+                'data' => $result
+                ,
+                'outer' => $author['outer-author']
+                ,
+                'author-rank' => $sum_top_author
+            ]
+        );
+        $image = $response['graph'];
+        $image =utf8_decode($image);
+        return ['src' => "data:image/png;base64, $image"];
     }
 
 }

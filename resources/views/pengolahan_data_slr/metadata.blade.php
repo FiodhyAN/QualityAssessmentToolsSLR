@@ -69,6 +69,13 @@
                     <a data-fancybox="gallery" href="{{$src}}">
                         <img class="img-fluid" src="{{$src}}" alt="Gambar 1" id="my-image" />
                     </a>
+                    <script>
+                        var myImage = document.getElementById('my-image');
+                            myImage.onerror = function() {
+                            myImage.onerror = null;
+                            myImage.src = 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831';
+                        }
+                    </script>
                     <div class="row text-center">
                         <div class="col-md-4">
                             <!-- make small circle with purple color -->
@@ -150,11 +157,6 @@
 
 @section('script')
     <script>
-        var myImage = document.getElementById('my-image');
-        myImage.onerror = function() {
-            myImage.onerror = null;
-            myImage.src = 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831';
-        }
         function download_image() {
             fetch(
                     '{{$src}}')
@@ -226,13 +228,6 @@
 
 
     <script>
-        function getRandomColor(excludeColor) {
-            var color;
-            do {
-                color = '#' + Math.floor(Math.random() * 16777215).toString(16);
-            } while (color === excludeColor);
-            return color;
-        }
         $(function() {
             $.ajax({
                 url: '/getMapData',
@@ -288,20 +283,43 @@
                 }
             })
         });
+        function getRandomColor(excludeColor) {
+            var color;
+            do {
+                color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            } while (color === excludeColor);
+            return color;
+        }
+        $(function(){
+            $.ajax({
+                url: '/get-image-graph/{{$url}}',
+                type: 'POST',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "project": {{$project_ajax}},
+                    "top-author": {{$topauthor}},
+                    "outer-author": {{$outerauthor}},
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    document.getElementById('my-image').src = response.src;
+                }
+            })
+
+        });
     </script>
 
-<script>
-
-                
-
+    <script>
+        
         var options = {
             series: [
                 @for($i = 0; $i < 20 && $i < count($author_ranks); $i++) 
                 {
                     name: "{{ $author_ranks[$i][1] }}",
                     data: [
-                        [{{ $author_ranks[$i][4] }}, {{ $author_ranks[$i][5] }}]
-                    ]
+                        [{{ $author_ranks[$i][4] }}, {{ $author_ranks[$i][5] }},{{ $author_ranks[$i][4] }}]
+                    ],
                 },
                 @endfor
             ],
@@ -312,6 +330,11 @@
                     enabled: true,
                     type: 'xy'
                 }
+            },
+            tooltip:{
+                marker: {
+                    fillColors: getRandomColor()
+                },
             },
             xaxis: {
                 tickAmount: 10,
@@ -328,5 +351,6 @@
 
         var chart = new ApexCharts(document.querySelector("#chart"), options);
         chart.render();
+
     </script>
 @endsection
