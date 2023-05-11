@@ -83,7 +83,6 @@ Route::get('/findUserArticle', [ProjectAdminController::class, 'findUserArticle'
 Route::get('/dashboard/projectSummary', [SummaryController::class, 'projectSummary'])->middleware('auth')->name('project.summary');
 Route::get('/findProjectSummary', [SummaryController::class, 'findProjectSummary'])->middleware('auth')->name('find.projectSummary');
 Route::get('/findArticleType', [SummaryController::class, 'findArticleType'])->middleware('auth')->name('find.articleType');
-Route::get('/makeChart', [SummaryController::class, 'makeChart'])->middleware('auth')->name('make.chart');
 
 //map
 Route::get('/getMapData', [SummaryController::class, 'getMapData'])->middleware('auth')->name('get.mapData');
