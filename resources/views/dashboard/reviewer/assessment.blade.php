@@ -255,6 +255,7 @@
             var title = $(event.relatedTarget).data('title');
             var link = $(event.relatedTarget).data('link');
             var file = $(event.relatedTarget).data('file');
+            var no = $(event.relatedTarget).data('no');
 
             $(this).find('.modal-title').html('Assess Article<br>' + no + ' - ' + title);
             $(this).find('#article_id').val(id);
