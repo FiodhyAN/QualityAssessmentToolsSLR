@@ -65,17 +65,12 @@
         <div class="col-md-6" style="display:{{$display}}">
             <div class="container mb-5">
                 <!-- HTML -->
-                <figure>
-                    <a data-fancybox="gallery" href="{{$src}}">
-                        <img class="img-fluid" src="{{$src}}" alt="Gambar 1" id="my-image" />
-                    </a>
-                    <script>
-                        var myImage = document.getElementById('my-image');
-                            myImage.onerror = function() {
-                            myImage.onerror = null;
-                            myImage.src = 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831';
-                        }
-                    </script>
+                <figure class="text-center">
+                    <div class="my-5">
+                        <a data-fancybox="gallery" href="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831" id="my-image-href">
+                            <img class="img-fluid" src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831" alt="Gambar 1" id="my-image-src" />
+                        </a>
+                    </div>
                     <div class="row text-center">
                         <div class="col-md-4">
                             <!-- make small circle with purple color -->
@@ -303,7 +298,8 @@
                 dataType: 'json',
                 success: function(response) {
                     console.log(response);
-                    document.getElementById('my-image').src = response.src;
+                    document.getElementById('my-image-src').src = response.src;
+                    document.getElementById('my-image-href').href = response.src;
                 }
             })
 
