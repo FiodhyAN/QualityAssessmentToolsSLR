@@ -57,10 +57,14 @@
             @enderror
         </div>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-primary" id="submit-button">Submit</button>
 </form>
 
-    <div class="row mt-5">
+    <div class="row mt-5 text-center" style="display:none" id="loading">
+        <a data-fancybox="gallery" href="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831">
+            <img class="img-fluid" src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831" alt="Gambar 1" />
+    </div>
+    <div class="row mt-5" id="data-show">
         <div class="col-md-6" style="display:{{$display}}">
             <div class="container mb-5">
                 <!-- HTML -->
@@ -152,6 +156,11 @@
 
 @section('script')
     <script>
+        $("#submit-button").click(function() {
+            $("#loading").show();
+            $("#data-show").hide();
+
+        });
         function download_image() {
             fetch(
                     '{{$src}}')
