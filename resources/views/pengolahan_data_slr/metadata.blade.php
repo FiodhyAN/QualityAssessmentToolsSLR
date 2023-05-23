@@ -60,7 +60,6 @@
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
-    
     <div class="row mt-5">
         <div class="col-md-6" style="display:{{$display}}">
             <div class="container mb-5">
@@ -147,6 +146,7 @@
         </div>
         @endif
     </div>
+
 </div>
 @endsection
 
@@ -307,14 +307,15 @@
     </script>
 
     <script>
-        
+        var author_ranks = {!! json_encode($author_ranks) !!};
         var options = {
+            colors : ['#2834b8'],
             series: [
                 @for($i = 0; $i < 20 && $i < count($author_ranks); $i++) 
                 {
                     name: "{{ $author_ranks[$i][1] }}",
                     data: [
-                        [{{ $author_ranks[$i][4] }}, {{ $author_ranks[$i][5] }},{{ $author_ranks[$i][4] }}]
+                        [{{ $author_ranks[$i][4] }}, {{ $author_ranks[$i][5] }},12]
                     ],
                 },
                 @endfor
@@ -327,9 +328,22 @@
                     type: 'xy'
                 }
             },
-            tooltip:{
-                marker: {
-                    fillColors: getRandomColor()
+            tooltip: {
+    
+            },
+            legend: {
+                show: true, 
+                showForSingleSeries: true,
+                formatter: function(seriesName, opts) {
+                    if(opts.seriesIndex==0){
+                        return "author";
+                    }
+                    else{
+                        return "author";
+                    }
+                },
+                onItemClick: {
+                    toggleDataSeries: false
                 },
             },
             xaxis: {
@@ -342,11 +356,57 @@
             },
             yaxis: {
                 tickAmount: 7
+            },
+            dataLabels: {
+                enabled: true,
+                enabledOnSeries: undefined,
+                formatter: function (val, opts) {
+                    return author_ranks[opts.seriesIndex][1];
+                },
+                textAnchor: 'middle',
+                distributed: false,
+                offsetX: 0,
+                offsetY: 0,
+                style: {
+                    fontSize: '9px',
+                    fontFamily: 'Helvetica, Arial, sans-serif',
+                    fontWeight: 'bold',
+                    colors: undefined
+                },
+                background: {
+                    enabled: true,
+                    foreColor: '#fff',
+                    padding: 4,
+                    borderRadius: 2,
+                    borderWidth: 1,
+                    borderColor: '#fff',
+                    opacity: 0.9,
+                    dropShadow: {
+                    enabled: false,
+                    top: 1,
+                    left: 1,
+                    blur: 1,
+                    color: '#000',
+                    opacity: 0.45
+                    }
+                },
+                dropShadow: {
+                    enabled: false,
+                    top: 1,
+                    left: 1,
+                    blur: 1,
+                    color: '#000',
+                    opacity: 0.45
+                }
             }
         };
 
         var chart = new ApexCharts(document.querySelector("#chart"), options);
         chart.render();
-
+        $(".apexcharts-legend-series").each(function(index) {
+            if (index !== 0) {
+                $(this).remove();
+            }
+        });
     </script>
 @endsection
