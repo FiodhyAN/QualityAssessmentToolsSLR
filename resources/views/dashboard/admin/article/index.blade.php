@@ -266,7 +266,6 @@
                 processData: false,
                 success: function(result) {
                     console.log(result);
-                    // close loading sweeralert
                     Swal.close();
                     Swal.fire({
                         title: 'Success!',
@@ -291,7 +290,6 @@
             });
         });
 
-        // Datatable
         var table = $('#article_table').DataTable({
             serverSide: true,
             processing: true,
@@ -587,19 +585,6 @@
                         return '<div class="text-center">' + data + '</div>';
                     }
                 },
-                // {
-                //     data: 'id_no',
-                //     name: 'id_no',
-                // },
-                // {
-                //     data: 'title',
-                //     name: 'title',
-                // },
-                // {
-                //     data: 'assessed',
-                //     name: 'assessed',
-                //     class: 'text-center',
-                // },
                 {
                     data: 'action',
                     name: 'action',
@@ -607,15 +592,6 @@
                     searchable: false,
                 }
             ],
-            // rowCallback: function(row, data, index) {
-            //     if (data.id_no == false) {
-            //         $(row).find('td:eq(2)').attr('colspan', '3');
-            //         $(row).find('td:eq(2)').text('No Article Assigned');
-            //         $(row).find('td:eq(3)').addClass('d-none');
-            //         $(row).find('td:eq(4)').addClass('d-none');
-            //         $(row).find('td:eq(2)').addClass('text-center');
-            //     }
-            // }
         }).on('init.dt', function() {
             $('#assessment_table').wrap('<div class="dataTables_scroll" />')
         });
