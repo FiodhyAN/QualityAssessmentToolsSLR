@@ -511,7 +511,7 @@ def data(type, name):
         title = ['Article-ID', 'Terms in Title and Keywords',
                  'Terms Found in Abstracts', 'Publication Year', 'Authors', 'References']
         print(title)
-        print(tabulate(table))
+        # print(tabulate(table))
 
     # pair ArticleId,Author,& References & author
         pairs, authors, articles,initial_articles_pair ,title_articles_pair,initial_author_pair,nation_author_pair = getArticleIdAuthorReferencesAndAuthor(table)
