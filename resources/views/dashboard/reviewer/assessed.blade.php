@@ -76,11 +76,12 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="editCloseButton"></button>
                 </div>
                 <div class="modal-body">
                     <a id="previewFile" class="btn btn-sm btn-secondary mb-2" target="_blank"><ion-icon name="document-attach"></ion-icon> Preview Article</a>
                     <a id="previewLink" class="btn btn-sm btn-secondary mb-2" target="_blank"><ion-icon name="link"></ion-icon> Article Link</a>
+                    <button class="btn btn-sm btn-primary mb-2" data-bs-target="#detailArticleModal" data-bs-toggle="modal" data-bs-dismiss="modal" id="detailArticleBtn"><ion-icon name="search-circle"></ion-icon> View Article Detail</button>
                     <span id="noPreview" class="badge alert-secondary mb-2">No Preview Available</span>
                     <div class="progress">
                         <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="50"
@@ -91,6 +92,7 @@
                         <form action="/dashboard/reviewer/assessment/update" class="needs-validation assessment_form"
                             id="form-wrapper" method="post" name="form-wrapper" novalidate>
                             @csrf
+                            <input type="hidden" name="project_id" id="project_id">
                             <input type="hidden" name="article_id" id="article_id">
                             <div id="steps-container">
                                 @foreach ($questionaires as $question)
@@ -159,6 +161,25 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="detailArticleModal" data-bs-backdrop="static" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="detailArticleTitle"></h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Article Cited In Project: <span id="rujuk"></span></h6>
+                <h6>Abstract :</h6>
+                <p id="abstract"></p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" data-bs-target="#exampleModal" data-bs-toggle="modal" data-bs-dismiss="modal">Back to Assessment</button>
+            </div>
+          </div>
         </div>
     </div>
 @endsection
@@ -328,6 +349,7 @@
             })
         });
 
+        // Ambil edit score
         table.on('click', '#btn_edit_assessment', function(){
             let article_id = $(this).data('article_id');
 
@@ -338,7 +360,6 @@
                     article_id: article_id
                 },
                 success: function(data){
-                    console.log(data);
                     for (let index = 0; index < data.length; index++) {
                         no = index + 1;
                         if (data[index].article_user_questionaire[0].score == 1) {
@@ -362,16 +383,19 @@
         });
 
         // Modal Edit
-        $('#exampleModal').on('show.bs.modal', function(event) {
-            var id = $(event.relatedTarget).data('article_id');
-            var title = $(event.relatedTarget).data('title');
-            var link = $(event.relatedTarget).data('link');
-            var file = $(event.relatedTarget).data('file');
-            var no = $(event.relatedTarget).data('no');
+        table.on('click', '#btn_edit_assessment', function(event) {
+            $('#exampleModal').modal('show');
+            var id = $(this).data('article_id');
+            var title = $(this).data('title');
+            var link = $(this).data('link');
+            var file = $(this).data('file');
+            var no = $(this).data('no');
+            var project_id = $(this).data('project_id');
 
             // add to modal title
-            $(this).find('.modal-title').html('Assess Article<br>' + no + ' - ' + title);
-            $(this).find('#article_id').val(id);
+            $('#exampleModal').find('.modal-title').html('Assess Article<br>' + no + ' - ' + title);
+            $('#exampleModal').find('#article_id').val(id);
+            $('#exampleModal').find('#project_id').val(project_id);
 
             if (link == '' && file == '') {
                 $('#previewLink').addClass('d-none');
@@ -479,7 +503,8 @@
         });
 
         //on close modal progress bar reset
-        $('#exampleModal').on('hidden.bs.modal', function() {
+        $('#editCloseButton').on('click', function() {
+            $('#exampleModal').modal('hide');
             progress(0);
             current_step = 0;
             step[current_step].classList.add('d-block');
@@ -545,6 +570,30 @@
                     console.log(error);
                 }
             });
+        })
+
+        $('#detailArticleBtn').on('click', function(){
+            console.log($(this).data('article_id'));
+            var article_id = $('#article_id').val();
+            var project_id = $('#project_id').val();
+            $.ajax({
+                url: '{{ route('find.detailArticle') }}',
+                type: 'GET',
+                data: {
+                    article_id: article_id,
+                    project_id: project_id
+                },
+                dataType: 'JSON',
+                success: function(data) {
+                    console.log(data);
+                    var title = data.article.title;
+                    var id_no = data.article.id + ' - ' + data.article.no;
+                    var cited = data.articleCited;
+                    $('#detailArticleTitle').html(id_no + '<br>' + title);
+                    $('#rujuk').text(cited);
+                    $('#abstract').text(data.article.abstracts);
+                }
+            })
         })
     </script>
 @endsection

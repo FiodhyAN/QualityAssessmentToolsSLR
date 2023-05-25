@@ -152,7 +152,7 @@ class AssessmentController extends Controller
             })
             ->addColumn('action', function(ArticleUser $article){
                 $btn = '<button type="button" class="btn btn-warning text-white btn-sm me-2 aksi scoreArticle" id="scoreArticle" data-bs-toggle="modal" data-bs-target="#modalScore" data-id="' . $article->article->id . '" data-title="' . $article->article->title . '" data-no="'.$article->article->no.'"><ion-icon name="stats-chart-outline"></ion-icon> Result</button>';
-                $btn .= '<button class="btn btn-primary btn-sm" id="btn_edit_assessment" data-bs-toggle="modal" data-bs-target="#exampleModal" data-article_id="'.$article->article->id.'" data-title="'.$article->article->title.'" data-link="'.$article->article->link.'" data-file="'.$article->article->file.'" data-no="'.$article->article->no.'"><ion-icon name="create-outline"></ion-icon> Edit</button>';
+                $btn .= '<button class="btn btn-primary btn-sm" id="btn_edit_assessment" data-bs-toggle="modal" data-bs-target="#exampleModal" data-article_id="'.$article->article->id.'" data-title="'.$article->article->title.'" data-link="'.$article->article->link.'" data-file="'.$article->article->file.'" data-no="'.$article->article->no.'" data-project_id="'.$article->article->project_id.'"><ion-icon name="create-outline"></ion-icon> Edit</button>';
                 return $btn;
             })->rawColumns(['action'])
             ->toJson();
@@ -198,4 +198,38 @@ class AssessmentController extends Controller
             'message' => 'Assessment has been updated',
         ], 200);
     }
+
+    public function findDetailArticle(Request $request)
+    {
+        $this->authorize('reviewer');
+
+        $article = Article::findOrFail($request->article_id)->only(['id', 'no', 'title', 'abstracts']);
+
+        $data = Article::select('id', 'no', 'citing_new', 'citing')->where('project_id', $request->project_id)->get();
+
+        $dataCited = [];
+        $delimiter = '/([^A-Za-z0-9])/'; // Set the desired delimiter pattern
+
+        foreach ($data as $value) {
+            $citing = null;
+
+            if ($value->citing_new != null) {
+                $citing = preg_split($delimiter, $value->citing_new, -1, PREG_SPLIT_NO_EMPTY);
+            } elseif ($value->citing != null) {
+                $citing = preg_split($delimiter, $value->citing, -1, PREG_SPLIT_NO_EMPTY);
+            }
+
+            if ($citing !== null && in_array($article['no'], $citing)) {
+                $dataCited[] = $value;
+            }
+        }
+
+        $articleCited = count($dataCited);
+
+        return response()->json([
+            'article' => $article,
+            'articleCited' => $articleCited,
+        ], 200);
+    }
+
 }
