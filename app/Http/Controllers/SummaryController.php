@@ -11,6 +11,7 @@ use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 
 class SummaryController extends Controller
@@ -168,8 +169,18 @@ class SummaryController extends Controller
 
     public function getMapData()
     {
-        $response = Http::get('https://restcountries.com/v2/all');
-        $data = $response->json();
+        try {
+            $response = Http::get('https://restcountries.com/v2/all');
+            $data = $response->json();
+        } catch (\Exception $e) {
+            // Handle the error when the API request fails
+            // You can log the error, display a message, or perform any other desired action
+        
+            // Read the data from the local file instead
+            $filePath = storage_path('app/public/world.json');
+            $data = File::exists($filePath) ? json_decode(File::get($filePath), true) : [];
+        }
+        
         return $data;
     }
 }
