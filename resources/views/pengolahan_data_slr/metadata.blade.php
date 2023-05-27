@@ -159,7 +159,6 @@
         $("#submit-button").click(function() {
             $("#loading").show();
             $("#data-show").hide();
-
         });
         function download_image() {
             fetch(
@@ -267,7 +266,7 @@
                             mapData[countryCode] = color;
                             $("#my-table tbody tr").each(function() {
                             if ($(this).find("td:eq(2)").text() === nation) {
-                                $(this).find("td:eq(2)").css({"color": color, "font-weight": "bold"});
+                               /* $(this).find("td:eq(2)").css({"color": color, "font-weight": "bold"});*/
                             }
                             });
                         }
@@ -370,7 +369,7 @@
                 enabled: true,
                 enabledOnSeries: undefined,
                 formatter: function (val, opts) {
-                    return author_ranks[opts.seriesIndex][1];
+                    return author_ranks[opts.seriesIndex][0];
                 },
                 textAnchor: 'middle',
                 distributed: false,
