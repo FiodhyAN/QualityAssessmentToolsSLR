@@ -122,7 +122,7 @@
                     <li>
                         <a href="/worldmap">
                             <div class="parent-icon">
-                                <ion-icon name="pie-chart"></ion-icon>
+                                <ion-icon name="globe-outline"></ion-icon>
                             </div>
                             <div class="menu-title">World Map</div>
                         </a>
