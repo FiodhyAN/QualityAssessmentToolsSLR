@@ -105,7 +105,7 @@
                         <span class="badge badge-pill badge-danger"><i class="fas fa-circle"></i></span>
                     </div>
                 </figure>
-                <div class="btn btn-primary mt-5" onclick="download_image()" style="display:{{$display}}" id="download-1">Download</div>
+                <div class="btn btn-primary mt-5" onclick="download_image()" id="download-1">Download</div>
             </div>
         </div>
         <div class="col-md-6">
@@ -132,7 +132,7 @@
                         @endfor
                 </tbody>
             </table>
-            <div class="btn btn-primary mt-5" onclick="exportToExcel()" style="display:{{$display}}"  id="download-2">Download</div>
+            <div class="btn btn-primary mt-5" onclick="exportToExcel()" id="download-2">Download</div>
         </div>
         @if($type == "Author")
         <div class="col-md-12" style="display:none">
@@ -163,8 +163,8 @@
             $("#data-show").hide();
         });
         function download_image() {
-            fetch(
-                    '{{$src}}')
+            var src=document.getElementById('my-image-src').src
+            fetch(src)
                 .then(response => response.blob())
                 .then(blob => {
                     var url = window.URL.createObjectURL(blob);
