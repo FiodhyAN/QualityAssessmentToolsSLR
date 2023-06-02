@@ -348,7 +348,7 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
             # jika iya nilainya *300
             my_node_sizes.append(size * authors_node_size_x)
             if author in top_authors:
-                my_node_colors.append('purple')
+                my_node_colors.append('black')
             else:
                 my_node_colors.append('blue')
         else:
@@ -364,7 +364,11 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
             my_node_colors.append('red')
             labels[author] = str(search_author_json[author])
 
-    
+    # Set the maximum number of open figures before showing a warning
+    plt.rcParams['figure.max_open_warning'] = 20
+
+    # Close all open figures before creating a new one
+    plt.close('all')
     fig, ax = plt.subplots(figsize=(subplot_size, subplot_size))
     # decrease k parameter to increase spacing between nodes
     pos = nx.spring_layout(G, seed=7, k=k)
@@ -375,7 +379,7 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     nx.draw_networkx_edges(G, pos, edgelist=G.edges(),
                            width=1, alpha=0.5, edge_color="green")
     nx.draw_networkx_labels(G, pos, font_size=node_labels_font_size,
-                            font_family="sans-serif", font_color="black",
+                            font_family="sans-serif", font_color="white",
                             labels=labels
                             )
 

@@ -118,6 +118,16 @@
                             <div class="menu-title">Quality Summary</div>
                         </a>
                     </li>
+
+                    <li>
+                        <a href="/worldmap">
+                            <div class="parent-icon">
+                                <ion-icon name="pie-chart"></ion-icon>
+                            </div>
+                            <div class="menu-title">World Map</div>
+                        </a>
+                    </li>
+
                 </ul>
             </li>
         @endcan

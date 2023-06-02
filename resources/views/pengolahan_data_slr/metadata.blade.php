@@ -65,7 +65,8 @@
             <img class="img-fluid" src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831" alt="Gambar 1" />
     </div>
     <div class="row mt-5" id="data-show">
-        <div class="col-md-6" style="display:{{$display}}">
+    @if(session('author_ranks'))
+        <div class="col-md-6">
             <div class="container mb-5">
                 <!-- HTML -->
                 <figure class="text-center">
@@ -76,12 +77,12 @@
                     </div>
                     <div class="row text-center">
                         <div class="col-md-4">
-                            <!-- make small circle with purple color -->
+                            <!-- make small circle with black color -->
                             <div class="d-flex align-items-center mx-3">
                                 <svg height="1em" width="1em" viewBox="0 0 512 512">
-                                    <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z" fill="purple" />
+                                    <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z" fill="black" />
                                 </svg>
-                                <figcaption class="ml-2" style="color: purple;">Top Cited Authors</figcaption>
+                                <figcaption class="ml-2" style="color: black;">Top Cited Authors</figcaption>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -104,10 +105,10 @@
                         <span class="badge badge-pill badge-danger"><i class="fas fa-circle"></i></span>
                     </div>
                 </figure>
-                <div class="btn btn-primary mt-5" onclick="download_image()" style="display:{{$display}}" id="download-1">Download</div>
+                <div class="btn btn-primary mt-5" onclick="download_image()" id="download-1">Download</div>
             </div>
         </div>
-        <div class="col-md-6" style="display:{{$display}}">
+        <div class="col-md-6">
             <table class="table" id="my-table">
                 <thead>
                     <tr class="">
@@ -122,26 +123,26 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for($i = 0; $i < 20 && $i < count($author_ranks); $i++) <tr>
-                        <th scope="row">{{ $author_ranks[$i][0] }}</th>
-                        <td>{{ $author_ranks[$i][1] }}</td>
-                        <td>{{ $author_ranks[$i][2] }}</td>
-                        <td>{{ $author_ranks[$i][3] }}</td>
+                    @for($i = 0; $i < 20 && $i < count(session('author_ranks')); $i++) <tr>
+                        <th scope="row">{{ session('author_ranks')[$i][0] }}</th>
+                        <td>{{ session('author_ranks')[$i][1] }}</td>
+                        <td>{{ session('author_ranks')[$i][2] }}</td>
+                        <td>{{ session('author_ranks')[$i][3] }}</td>
                         </tr>
                         @endfor
                 </tbody>
             </table>
-            <div class="btn btn-primary mt-5" onclick="exportToExcel()" style="display:{{$display}}"  id="download-2">Download</div>
+            <div class="btn btn-primary mt-5" onclick="exportToExcel()" id="download-2">Download</div>
         </div>
         @if($type == "Author")
-        <div class="col-md-12" style="display: {{ $display }}">
+        <div class="col-md-12" style="display:none">
             <div class="card mt-5">
                 <div class="card-body">
                     <div id="world-map" style="height: 400px;"></div>
                 </div>
             </div>
         </div>
-        <div class="col-md-12" style="display: {{ $display }}">
+        <div class="col-md-12">
             <div class="card mt-5">
                 <div class="card-body">
                     <div id="chart"></div>
@@ -149,6 +150,7 @@
             </div>
         </div>
         @endif
+    @endif
     </div>
 
 </div>
@@ -159,11 +161,10 @@
         $("#submit-button").click(function() {
             $("#loading").show();
             $("#data-show").hide();
-
         });
         function download_image() {
-            fetch(
-                    '{{$src}}')
+            var src=document.getElementById('my-image-src').src
+            fetch(src)
                 .then(response => response.blob())
                 .then(blob => {
                     var url = window.URL.createObjectURL(blob);
@@ -238,7 +239,7 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    var world_map = {!! json_encode($world_map) !!};
+                    var world_map = {!! json_encode(session('world_map')) !!};
                     let mapData = {};
                     let usedColors = {};
                     // initialize Fuse with country data
@@ -267,7 +268,7 @@
                             mapData[countryCode] = color;
                             $("#my-table tbody tr").each(function() {
                             if ($(this).find("td:eq(2)").text() === nation) {
-                                $(this).find("td:eq(2)").css({"color": color, "font-weight": "bold"});
+                               /*$(this).find("td:eq(2)").css({"color": color, "font-weight": "bold"});*/
                             }
                             });
                         }
@@ -300,9 +301,9 @@
                 type: 'POST',
                 data: {
                     "_token": "{{ csrf_token() }}",
-                    "project": {{$project_ajax}},
-                    "top-author": {{$topauthor}},
-                    "outer-author": {{$outerauthor}},
+                    "project": {{session('project_ajax')}},
+                    "top-author": {{session('topauthor')}},
+                    "outer-author": {{session('outerauthor')}},
                 },
                 dataType: 'json',
                 success: function(response) {
@@ -313,21 +314,24 @@
             })
 
         });
+        
     </script>
 
     <script>
-        var author_ranks = {!! json_encode($author_ranks) !!};
+        var author_ranks = {!! json_encode(session('author_ranks')) !!};
         var options = {
             colors : ['#2834b8'],
             series: [
-                @for($i = 0; $i < 20 && $i < count($author_ranks); $i++) 
+                @if(session('author_ranks'))
+                @for($i = 0; $i < 20 && $i < count(session('author_ranks')); $i++) 
                 {
-                    name: "{{ $author_ranks[$i][1] }}",
+                    name: "{{ session('author_ranks')[$i][1] }}",
                     data: [
-                        [{{ $author_ranks[$i][4] }}, {{ $author_ranks[$i][5] }},12]
+                        [{{ session('author_ranks')[$i][4] }}, {{ session('author_ranks')[$i][5] }},12]
                     ],
                 },
                 @endfor
+                @endif
             ],
             chart: {
                 height: 350,
@@ -364,13 +368,18 @@
                 }
             },
             yaxis: {
-                tickAmount: 7
+                tickAmount: 7,
+                labels: {
+                    formatter: function(val) {
+                        return parseFloat(val).toFixed(1)
+                    }
+                }
             },
             dataLabels: {
                 enabled: true,
                 enabledOnSeries: undefined,
                 formatter: function (val, opts) {
-                    return author_ranks[opts.seriesIndex][1];
+                    return author_ranks[opts.seriesIndex][0];
                 },
                 textAnchor: 'middle',
                 distributed: false,

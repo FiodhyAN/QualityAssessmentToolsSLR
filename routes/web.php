@@ -113,5 +113,7 @@ Route::get('/my-image', [DataProcessingController::class, 'my_image'])->middlewa
 Route::get('/data/{id}/rank', [DataProcessingController::class, 'data_rank'])->middleware('auth');
 Route::get('/data/{id}/graph', [DataProcessingController::class, 'data_graph'])->middleware('auth');
 Route::get('/metadata/{id}', [DataProcessingController::class, 'meta_data'])->middleware('auth');
+Route::get('/worldmap', [DataProcessingController::class, 'worldmap'])->middleware('auth');
 Route::post('/proses-metadata/{id}', [DataProcessingController::class, 'proses_meta_data'])->middleware('auth');
+Route::post('/proses-worldmap', [DataProcessingController::class, 'proses_worldmap'])->middleware('auth');
 Route::post('/get-image-graph/{id}', [DataProcessingController::class, 'get_image_graph'])->middleware('auth');
