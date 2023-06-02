@@ -268,7 +268,7 @@
                             mapData[countryCode] = color;
                             $("#my-table tbody tr").each(function() {
                             if ($(this).find("td:eq(2)").text() === nation) {
-                               $(this).find("td:eq(2)").css({"color": color, "font-weight": "bold"});
+                               /*$(this).find("td:eq(2)").css({"color": color, "font-weight": "bold"});*/
                             }
                             });
                         }
@@ -368,7 +368,12 @@
                 }
             },
             yaxis: {
-                tickAmount: 7
+                tickAmount: 7,
+                labels: {
+                    formatter: function(val) {
+                        return parseFloat(val).toFixed(1)
+                    }
+                }
             },
             dataLabels: {
                 enabled: true,
