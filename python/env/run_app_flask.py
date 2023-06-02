@@ -364,7 +364,11 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
             my_node_colors.append('red')
             labels[author] = str(search_author_json[author])
 
-    
+    # Set the maximum number of open figures before showing a warning
+    plt.rcParams['figure.max_open_warning'] = 20
+
+    # Close all open figures before creating a new one
+    plt.close('all')
     fig, ax = plt.subplots(figsize=(subplot_size, subplot_size))
     # decrease k parameter to increase spacing between nodes
     pos = nx.spring_layout(G, seed=7, k=k)
