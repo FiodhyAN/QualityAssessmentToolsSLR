@@ -347,7 +347,7 @@ class DataProcessingController extends Controller
         }
         else {
             $projects = Project::select('id','project_name')->whereHas('project_user', function($query) {
-                $query->where('user_id', auth()->user()->id);
+                $query->where('user_id', auth()->user()->id)->where('user_role','admin');
             })->get();
         }
         $id='worldmap';
