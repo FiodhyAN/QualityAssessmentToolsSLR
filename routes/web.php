@@ -9,6 +9,7 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AssignReviewerController;
 use App\Http\Controllers\AssessmentController;
 use App\Http\Controllers\DataProcessingController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\SummaryController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -69,6 +70,7 @@ Route::get('/articleShow', [ArticleController::class, 'articleShow'])->middlewar
 Route::put('/addArticleFile', [ArticleController::class, 'addArticleFile'])->middleware('auth')->name('article.addFile');
 Route::get('/findArticleScore', [ArticleController::class, 'findArticleScore'])->middleware('auth')->name('find.articleScore');
 Route::get('/findArticleDB', [ArticleController::class, 'findArticleDB'])->middleware('auth')->name('find.articleDB');
+Route::get('/exportResult/{id}', [ExportController::class, 'export'])->middleware('auth')->name('export.result');
 //Assign Article
 Route::get('/dashboard/admin/assign', [AssignReviewerController::class, 'index'])->middleware('auth');
 Route::get('/assignedTable', [AssignReviewerController::class, 'articleAssignTable'])->middleware('auth')->name('assigned.table');

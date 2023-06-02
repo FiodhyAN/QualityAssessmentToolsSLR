@@ -202,34 +202,26 @@ class AssessmentController extends Controller
     public function findDetailArticle(Request $request)
     {
         $this->authorize('reviewer');
+        $article = Article::findOrFail($request->article_id);
+        $authors = preg_split('/[,;|]/', $article->authors, -1, PREG_SPLIT_NO_EMPTY);
 
-        $article = Article::findOrFail($request->article_id)->only(['id', 'no', 'title', 'abstracts']);
-
-        $data = Article::select('id', 'no', 'citing_new', 'citing')->where('project_id', $request->project_id)->get();
-
-        $dataCited = [];
-        $delimiter = '/([^A-Za-z0-9])/'; // Set the desired delimiter pattern
-
-        foreach ($data as $value) {
-            $citing = null;
-
-            if ($value->citing_new != null) {
-                $citing = preg_split($delimiter, $value->citing_new, -1, PREG_SPLIT_NO_EMPTY);
-            } elseif ($value->citing != null) {
-                $citing = preg_split($delimiter, $value->citing, -1, PREG_SPLIT_NO_EMPTY);
-            }
-
-            if ($citing !== null && in_array($article['no'], $citing)) {
-                $dataCited[] = $value;
-            }
+        $citing = [];
+        if ($article->citing != null) {
+            $citing = Article::whereIn('no', preg_split('/\W+/', $article->citing))->where('project_id', $article->project_id)->pluck('title');
         }
 
-        $articleCited = count($dataCited);
+        $citing_new = [];
+        if ($article->citing_new != null) {
+            $citing_new = Article::whereIn('no', preg_split('/\W+/', $article->citing_new))->where('project_id', $article->project_id)->pluck('title');
+        }
 
         return response()->json([
             'article' => $article,
-            'articleCited' => $articleCited,
+            'authors' => $authors,
+            'citing' => $citing,
+            'citing_new' => $citing_new,
         ], 200);
     }
+
 
 }

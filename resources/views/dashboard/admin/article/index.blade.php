@@ -31,11 +31,16 @@
                     data-bs-target="#exampleModal">
                     <ion-icon name="cloud-upload-outline"></ion-icon>Import Excel
                 </button>
+                <a href="/exportResult/{{ request()->id }}"><button type="button" class="btn btn-sm btn-dark px-5 mb-2" data-project_id="{{ request()->id }}"
+                    id="export_excel">
+                    <ion-icon name="download-outline"></ion-icon>Export Result
+                </button></a>
             </div>
             {{-- make select option in the corner right of the card --}}
             <div class="row">
                 <div class="col-md-6">
-                    <select class="form-select form-select-sm" aria-label="Default select example" name="edatabase" id="edatabase">
+                    <select class="form-select form-select-sm" aria-label="Default select example" name="edatabase"
+                        id="edatabase">
                         <option selected disabled>Select Database</option>
                         @foreach ($article_db as $item)
                             <option value="{{ $item }}">{{ $item }}</option>
@@ -240,6 +245,7 @@
 @endsection
 @section('script')
     <script>
+        $('#edatabase').select2();
         $('#form_import_excel').on('submit', function(e) {
             e.preventDefault();
             console.log('test');
@@ -459,6 +465,7 @@
                 success: function(result) {
                     var html = '';
                     var no = 1;
+                    var total = 0;
 
                     $.each(result, function(key, value) {
                         var sum = 0;
@@ -484,7 +491,12 @@
                         html += '<td class="text-center">' + score + '</td>';
                         html += '<td class="text-center">' + sum + '</td>';
                         html += '</tr>';
+                        total += sum;
                     });
+                    html += '<tr>';
+                    html += '<td colspan="3" class="text-center">Total</td>';
+                    html += '<td colspan="2" class="text-center">' + total + '</td>';
+                    html += '</tr>';
                     $('#scoreData').html(html);
                 },
                 error: function(error) {
@@ -749,7 +761,8 @@
                 },
                 dataType: 'JSON',
                 success: function(data) {
-                    table.ajax.url('{{ route('article.table', $project->project->id) }}?edatabase=' + edatabase).load();
+                    table.ajax.url('{{ route('article.table', $project->project->id) }}?edatabase=' +
+                        edatabase).load();
                 }
             })
         })

@@ -72,7 +72,7 @@
     {{-- Modal for edit button --}}
     <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel"></h5>
@@ -165,16 +165,135 @@
     </div>
 
     <div class="modal fade" id="detailArticleModal" data-bs-backdrop="static" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-scrollable">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="detailArticleTitle"></h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button type="button" class="btn-close" data-bs-target="#exampleModal" data-bs-toggle="modal" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <h6>Article Cited In Project: <span id="rujuk"></span></h6>
-                <h6>Abstract :</h6>
-                <p id="abstract"></p>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <div class="form-label">
+                            <label>Publisher</label>
+                            <input type="text" class="form-control" id="publisher" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <div class="form-label">
+                            <label>Publication</label>
+                            <input type="text" class="form-control" id="publication" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <div class="form-label">
+                            <label>Year</label>
+                            <input type="text" class="form-control" id="year" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <div class="form-label">
+                            <label>Type</label>
+                            <input type="text" class="form-control" id="type" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <div class="form-label">
+                            <label>E-Database</label>
+                            <input type="text" class="form-control" id="edatabase" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <div class="form-label">
+                            <label>E-Database 2</label>
+                            <input type="text" class="form-control" id="edatabase_2" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="form-label">
+                            <label>Keyword</label>
+                            <input type="text" class="form-control" id="keyword" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-8 mb-2">
+                        <div class="form-label">
+                            <label>Keywords</label>
+                            <input type="text" class="form-control" id="keywords" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <div class="form-label">
+                            <label>Index</label>
+                            <input type="text" class="form-control" id="index" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <div class="form-label">
+                            <label>Quartile</label>
+                            <input type="text" class="form-control" id="edatabase_2" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <div class="form-label">
+                            <label>Authors</label>
+                            <textarea name="" id="authors" readonly class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <div class="form-label">
+                            <label>Nation First Author</label>
+                            <input type="text" class="form-control" id="nation_first_author" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="form-label">
+                            <label>Cited</label>
+                            <input type="text" class="form-control" id="cited" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="form-label">
+                            <label>Cited Google Scholar</label>
+                            <input type="text" class="form-control" id="cited_gs" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="form-label">
+                            <label>Language</label>
+                            <input type="text" class="form-control" id="language" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <div class="form-label">
+                            <label>Citing</label>
+                            <textarea class="form-control" id="citing" readonly></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <div class="form-label">
+                            <label>Citing New</label>
+                            <textarea class="form-control" id="citing_new" readonly></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <div class="form-label">
+                            <label>Original References</label>
+                            <textarea class="form-control" id="references_ori" readonly rows="10"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <div class="form-label">
+                            <label>References Filter</label>
+                            <textarea class="form-control" id="references_filter" readonly rows="10"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <div class="form-label">
+                            <label>Abstract</label>
+                            <textarea class="form-control" id="abstract" readonly rows="10"></textarea>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
               <button class="btn btn-primary" data-bs-target="#exampleModal" data-bs-toggle="modal" data-bs-dismiss="modal">Back to Assessment</button>
@@ -309,7 +428,6 @@
                 },
                 dataType: 'JSON',
                 success: function(result){
-                    console.log(result);
                     var html = '';
                     var no = 1;
 
@@ -573,7 +691,6 @@
         })
 
         $('#detailArticleBtn').on('click', function(){
-            console.log($(this).data('article_id'));
             var article_id = $('#article_id').val();
             var project_id = $('#project_id').val();
             $.ajax({
@@ -588,10 +705,45 @@
                     console.log(data);
                     var title = data.article.title;
                     var id_no = data.article.id + ' - ' + data.article.no;
-                    var cited = data.articleCited;
+                    var citing = data.citing;
+                    var citing_new = data.citing_new;
+
                     $('#detailArticleTitle').html(id_no + '<br>' + title);
-                    $('#rujuk').text(cited);
-                    $('#abstract').text(data.article.abstracts);
+                    $('#publisher').val(data.article.publisher);
+                    $('#publication').val(data.article.publication);
+                    // foreach authors
+                    var authors = '';
+                    $.each(data.authors, function(key, value){
+                        authors += '- ' + value + '\n';
+                    });
+                    $('#authors').val(authors);
+                    $('#authors').attr('rows', data.authors.length);
+                    $('#year').val(data.article.year);
+                    $('#type').val(data.article.type);
+                    $('#edatabase').val(data.article.edatabase);
+                    $('#edatabase_2').val(data.article.edatabase_2);
+                    $('#keyword').val(data.article.keyword);
+                    $('#keywords').val(data.article.keywords);
+                    $('#index').val(data.article.index);
+                    $('#nation_first_author').val(data.article.nation_first_author);
+                    $('#cited').val(data.article.cited);
+                    $('#cited_gs').val(data.article.cited_gs);
+                    $('#language').val(data.article.language);
+                    var citing = '';
+                    $.each(data.citing, function(key, value){
+                        citing += '- ' + value + '\n';
+                    });
+                    $('#citing').val(citing);
+                    $('#citing').attr('rows', data.citing.length);
+                    var citing_new = '';
+                    $.each(data.citing_new, function(key, value){
+                        citing_new += '- ' + value + '\n';
+                    });
+                    $('#citing_new').val(citing_new);
+                    $('#citing_new').attr('rows', data.citing_new.length);
+                    $('#references_ori').val(data.article.references_ori);
+                    $('#references_filter').val(data.article.references_filter);
+                    $('#abstract').val(data.article.abstracts);
                 }
             })
         })
