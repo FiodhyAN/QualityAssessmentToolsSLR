@@ -8,10 +8,10 @@ use Illuminate\Http\Request;
 
 class ExportController extends Controller
 {
-    public function export($id)
+    public function export(Request $request)
     {
         $this->authorize('admin');
-        $project_id = decrypt($id);
+        $project_id = decrypt($request->project_id);
         $project = Project::findOrFail($project_id);
         $filename = 'Score For Project ' . $project->project_name . '.xlsx';
         return (new ResultExport($project->id))->download($filename);

@@ -20,7 +20,7 @@ class ResultExport implements FromView, ShouldAutoSize, WithStyles
 
     public function __construct(int $id)
     {
-        $this->article = Article::select('id', 'title')->with(['article_user' => function ($query) {
+        $this->article = Article::select('no', 'id', 'title')->with(['article_user' => function ($query) {
             $query->with(['questionaires' => function ($query) {
                 $query->with('questionaire');
             }, 'user']);

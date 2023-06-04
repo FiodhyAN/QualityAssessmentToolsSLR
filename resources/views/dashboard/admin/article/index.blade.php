@@ -31,10 +31,14 @@
                     data-bs-target="#exampleModal">
                     <ion-icon name="cloud-upload-outline"></ion-icon>Import Excel
                 </button>
-                <a href="/exportResult/{{ request()->id }}"><button type="button" class="btn btn-sm btn-dark px-5 mb-2" data-project_id="{{ request()->id }}"
+                {{-- <a href="/exportResult/{{ request()->id }}"><button type="button" class="btn btn-sm btn-dark px-5 mb-2" data-project_id="{{ request()->id }}"
                     id="export_excel">
-                    <ion-icon name="download-outline"></ion-icon>Export Result
-                </button></a>
+                    <ion-icon name="download-outline"></ion-icon>Export Score
+                </button></a> --}}
+                <button type="button" class="btn btn-sm btn-dark px-5 mb-2" data-project_id="{{ request()->id }}"
+                    id="export_excel">
+                    <ion-icon name="download-outline"></ion-icon>Export Score
+                </button>
             </div>
             {{-- make select option in the corner right of the card --}}
             <div class="row">
@@ -245,6 +249,52 @@
 @endsection
 @section('script')
     <script>
+        var project_name = '{{ $project->project->project_name }}';
+        $('#export_excel').on('click', function(){
+            Swal.fire({
+                title: 'Export Score?',
+                text: 'Are you sure you want to export score for ' + project_name + '?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Export'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Exporting...',
+                        html: 'Please wait while exporting score.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading()
+                        },
+                    });
+                    var project_id = $(this).data('project_id');
+                    $.ajax({
+                        url: '/exportResult',
+                        type: 'GET',
+                        data: {
+                            project_id: project_id,
+                        },
+                        xhrFields: {
+                            responseType: 'blob'
+                        },
+                        success: function(response) {
+                            Swal.close();
+                            var blob = new Blob([response], {
+                                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                            });
+                            var link = document.createElement('a');
+                            link.href = window.URL.createObjectURL(blob);
+                            link.download = 'Score For ' + project_name + '.xlsx';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        },
+                    })
+                }
+            })
+        })
         $('#edatabase').select2();
         $('#form_import_excel').on('submit', function(e) {
             e.preventDefault();

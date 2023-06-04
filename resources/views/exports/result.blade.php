@@ -1,7 +1,7 @@
 <table>
     @foreach ($articles as $article)
         <tr>
-            <td colspan="5" style="background-color: yellow">{{ $article->title }}</td>
+            <td colspan="5" style="background-color: yellow">{{ $article->no }} - {{ $article->title }}</td>
         </tr>
         <tr>
             <th>No</th>
