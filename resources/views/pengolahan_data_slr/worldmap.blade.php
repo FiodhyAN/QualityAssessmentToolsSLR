@@ -1,6 +1,9 @@
 @extends('layouts.main')
 @section('container')
 <div class="container">
+    <!-- Untuk Download Peta -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
     <!-- CSS -->
     <link rel="stylesheet" type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" />
@@ -37,6 +40,7 @@
     <div class="row mt-5 text-center" style="display:none" id="loading">
         <a data-fancybox="gallery" href="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831">
             <img class="img-fluid" src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831" alt="Gambar 1" />
+        </a>
     </div>
     @if(session('worldmap'))
         <div class="row mt-5" id="data-show">
@@ -47,6 +51,7 @@
                     </div>
                 </div>
             </div>
+            <button class="btn btn-primary" onclick="downloadScreenshot()">Download Map</button>
         </div>
     @endif
 
@@ -55,6 +60,21 @@
 
 @section('script')
     <script>
+        function downloadScreenshot() {
+            // Mengambil elemen div yang akan diambil tangkapan layarnya
+            const divElement = document.getElementById('world-map');
+
+            // Menggunakan HTML2Canvas untuk membuat tangkapan layar dari elemen div
+            html2canvas(divElement).then(function(canvas) {
+                // Membuat elemen <a> untuk mengunduh gambar
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = 'screenshot.png';
+                link.click();
+            });
+        }
+
+
         $("#submit-button").click(function() {
             $("#loading").show();
             $("#data-show").hide();
@@ -71,7 +91,6 @@
                     for (var i = 0; i < session_worldmap.length; i++) {
                         world_map.push(session_worldmap[i]);
                     }
-                    console.log(world_map);
                     let mapData = {};
                     let usedColors = {};
                     // initialize Fuse with country data
@@ -98,11 +117,6 @@
                             color = color_nation;
                             usedColors[color] = true;
                             mapData[countryCode] = color;
-                            $("#my-table tbody tr").each(function() {
-                            if ($(this).find("td:eq(2)").text() === nation) {
-                               /* $(this).find("td:eq(2)").css({"color": color, "font-weight": "bold"});*/
-                            }
-                            });
                         }
                     }
                     console.log(mapData);
@@ -115,8 +129,21 @@
                                 values: mapData,
                                 attribute: 'fill'
                             }]
+                        },
+                        labels: {
+                            regions: {
+                                render: function(code){
+                                    for (let i = 0; i < world_map.length; i++) {
+                                        if(world_map[i][1]==mapData[code]){
+                                            return world_map[i][2];
+                                        }
+                                    }
+                                }
+                            }
                         }
                     });
+                    console.log(map);
+                    
                 }
             })
         });

@@ -284,7 +284,7 @@ class DataProcessingController extends Controller
         // convert world map to array of array
         $new_world_map = array();
         foreach ($world_map as $key => $value) {
-            $color=$this->getDarkerHexColor('#FF0000', $value);
+            $color=$this->getDarkerHexColor('#C0C0C0', $value);
             $new_world_map[] = array($key,$color);
         }
 
@@ -392,8 +392,8 @@ class DataProcessingController extends Controller
            // convert world map to array of array
            $new_world_map = array();
            foreach ($world_map as $key => $value) {
-               $color=$this->getDarkerHexColor('#FF0000', $value);
-               $new_world_map[] = array($key,$color);
+               $color=$this->getDarkerHexColor('#C0C0C0', $value);
+               $new_world_map[] = array($key,$color,$value);
            }
    
            // Sort the author-rank pairs based on the rank (ascending order)
