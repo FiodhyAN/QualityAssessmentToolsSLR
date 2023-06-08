@@ -100,6 +100,7 @@ Route::get('/editScore', [AssessmentController::class, 'editScore'])->middleware
 Route::post('/dashboard/reviewer/assessment/update', [AssessmentController::class, 'updateScore'])->middleware('auth')->name('reviewer.updateScore');
 Route::get('/previewArticle', [AssessmentController::class, 'previewArticle'])->middleware('auth')->name('reviewer.previewArticle');
 Route::get('/findDetailArticle', [AssessmentController::class, 'findDetailArticle'])->middleware('auth')->name('find.detailArticle');
+Route::get('/dashboard/reviewer/article/detail/{id}', [AssessmentController::class, 'show'])->middleware('auth');
 //////////////////////////////////////
 // PENGOLAHAN DATA
 /////////////////////////////////////

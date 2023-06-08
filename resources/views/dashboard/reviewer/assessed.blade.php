@@ -81,8 +81,8 @@
                 <div class="modal-body">
                     <a id="previewFile" class="btn btn-sm btn-secondary mb-2" target="_blank"><ion-icon name="document-attach"></ion-icon> Preview Article</a>
                     <a id="previewLink" class="btn btn-sm btn-secondary mb-2" target="_blank"><ion-icon name="link"></ion-icon> Article Link</a>
-                    <button class="btn btn-sm btn-primary mb-2" data-bs-target="#detailArticleModal" data-bs-toggle="modal" data-bs-dismiss="modal" id="detailArticleBtn"><ion-icon name="search-circle"></ion-icon> View Article Detail</button>
                     <span id="noPreview" class="badge alert-secondary mb-2">No Preview Available</span>
+                    <button class="btn btn-sm btn-primary mb-2" data-bs-target="#detailArticleModal" data-bs-toggle="modal" data-bs-dismiss="modal" id="detailArticleBtn"><ion-icon name="search-circle"></ion-icon> View Article Detail</button>
                     <div class="progress">
                         <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="50"
                             class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar"
@@ -230,7 +230,7 @@
                     <div class="col-md-6 mb-2">
                         <div class="form-label">
                             <label>Quartile</label>
-                            <input type="text" class="form-control" id="edatabase_2" readonly>
+                            <input type="text" class="form-control" id="quartile" readonly>
                         </div>
                     </div>
                     <div class="col-md-6 mb-2">
@@ -266,13 +266,7 @@
                     <div class="col-md-12 mb-2">
                         <div class="form-label">
                             <label>Citing</label>
-                            <textarea class="form-control" id="citing" readonly></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-12 mb-2">
-                        <div class="form-label">
-                            <label>Citing New</label>
-                            <textarea class="form-control" id="citing_new" readonly></textarea>
+                            <ul id="citing"></ul>
                         </div>
                     </div>
                     <div class="col-md-12 mb-2">
@@ -725,22 +719,17 @@
                     $('#keyword').val(data.article.keyword);
                     $('#keywords').val(data.article.keywords);
                     $('#index').val(data.article.index);
+                    $('#quartile').val(data.article.quartile);
                     $('#nation_first_author').val(data.article.nation_first_author);
                     $('#cited').val(data.article.cited);
                     $('#cited_gs').val(data.article.cited_gs);
                     $('#language').val(data.article.language);
                     var citing = '';
                     $.each(data.citing, function(key, value){
-                        citing += '- ' + value + '\n';
+                        citing += '<li><a href="/dashboard/reviewer/article/detail/' + value.encrypted_id + '" target="_blank">' + value.title + '</a></li>';
                     });
-                    $('#citing').val(citing);
-                    $('#citing').attr('rows', data.citing.length);
-                    var citing_new = '';
-                    $.each(data.citing_new, function(key, value){
-                        citing_new += '- ' + value + '\n';
-                    });
-                    $('#citing_new').val(citing_new);
-                    $('#citing_new').attr('rows', data.citing_new.length);
+                    $('#citing').html(citing);
+                    // $('#citing').attr('rows', data.citing.length);
                     $('#references_ori').val(data.article.references_ori);
                     $('#references_filter').val(data.article.references_filter);
                     $('#abstract').val(data.article.abstracts);

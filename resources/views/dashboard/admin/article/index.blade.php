@@ -385,6 +385,8 @@
                     title: 'File',
                     data: 'article_file',
                     name: 'article_file',
+                    orderable: false,
+                    searchable: false,
                 },
                 {
                     title: 'Action',

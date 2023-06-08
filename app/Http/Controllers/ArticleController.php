@@ -62,6 +62,22 @@ class ArticleController extends Controller
                 $btn .= '<button type="button" style="width:100%;" class="btn btn-danger btn-sm aksi deleteArticle" data-id="' . $article->id . '" data-project_id="'.$article->project_id.'" data-no="'.$article->no.'"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
                 return $btn;
             })
+            ->filterColumn('no', function ($query, $keyword) {
+                $sql = "CONCAT(articles.id,' - ',articles.no)  like ?";
+                $query->whereRaw($sql, ["%{$keyword}%"]);
+            })
+            ->filterColumn('title', function ($query, $keyword) {
+                $sql = "articles.title  like ?";
+                $query->whereRaw($sql, ["%{$keyword}%"]);
+            })
+            ->filterColumn('publication', function ($query, $keyword) {
+                $sql = "articles.publication  like ?";
+                $query->whereRaw($sql, ["%{$keyword}%"]);
+            })
+            ->filterColumn('authors', function ($query, $keyword) {
+                $sql = "articles.authors  like ?";
+                $query->whereRaw($sql, ["%{$keyword}%"]);
+            })
             ->rawColumns(['no','title', 'publication', 'authors', 'action', 'article_file'])
             ->toJson();
     }

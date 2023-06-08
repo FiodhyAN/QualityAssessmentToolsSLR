@@ -205,23 +205,49 @@ class AssessmentController extends Controller
         $article = Article::findOrFail($request->article_id);
         $authors = preg_split('/[,;|]/', $article->authors, -1, PREG_SPLIT_NO_EMPTY);
 
-        $citing = [];
-        if ($article->citing != null) {
-            $citing = Article::whereIn('no', preg_split('/\W+/', $article->citing))->where('project_id', $article->project_id)->pluck('title');
-        }
+        $citingIds = array_values(preg_split('/\W+/', $article->citing));
+        $citingNewIds = array_values(preg_split('/\W+/', $article->citing_new));
 
-        $citing_new = [];
-        if ($article->citing_new != null) {
-            $citing_new = Article::whereIn('no', preg_split('/\W+/', $article->citing_new))->where('project_id', $article->project_id)->pluck('title');
-        }
+        $mergedCitingIds = array_merge($citingIds, $citingNewIds);
+
+        $citing = Article::select('id', 'title')
+            ->whereIn('no', $mergedCitingIds)
+            ->where('project_id', $article->project_id)
+            ->get();
+
+        $citing->map(function ($item) {
+            $item->encrypted_id = encrypt($item->id);
+            return $item;
+        });
 
         return response()->json([
             'article' => $article,
             'authors' => $authors,
             'citing' => $citing,
-            'citing_new' => $citing_new,
         ], 200);
     }
 
+    public function show($id)
+    {
+        $this->authorize('reviewer');
+        $decryptedId = decrypt($id);
+        $article = Article::findOrFail($decryptedId);
 
+        $citingIds = array_values(preg_split('/\W+/', $article->citing));
+        $citingNewIds = array_values(preg_split('/\W+/', $article->citing_new));
+        
+        $mergedCitingIds = array_merge($citingIds, $citingNewIds);
+
+        $citing = Article::select('no', 'id', 'title')
+            ->whereIn('no', $mergedCitingIds)
+            ->where('project_id', $article->project_id)
+            ->get();
+
+        $citing->map(function ($item) {
+            $item->encrypted_id = encrypt($item->id);
+            return $item;
+        });
+
+        return view('dashboard.reviewer.show', compact('article', 'citing'));
+    }
 }
