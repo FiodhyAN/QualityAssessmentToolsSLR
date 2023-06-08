@@ -118,6 +118,8 @@ class DataProcessingController extends Controller
     }
 
 
+
+    
     public function data_rank($id)
     {
         $this->authorize('projectSummary');
@@ -231,15 +233,6 @@ class DataProcessingController extends Controller
 
     public function proses_meta_data(Request $request, $id)
     {
-        $this->authorize('projectSummary');
-        if (auth()->user()->is_superAdmin) {
-            $projects = Project::select('id','project_name')->get();
-        }
-        else {
-            $projects = Project::select('id','project_name')->whereHas('project_user', function($query) {
-                $query->where('user_id', auth()->user()->id);
-            })->get();
-        }
         $author = $request->toArray();
         $validator = Validator::make($author, [
             'project' => 'required',
@@ -291,7 +284,7 @@ class DataProcessingController extends Controller
         // convert world map to array of array
         $new_world_map = array();
         foreach ($world_map as $key => $value) {
-            $color=$this->getDarkerHexColor('#FF0000', $value);
+            $color=$this->getDarkerHexColor('#C0C0C0', $value);
             $new_world_map[] = array($key,$color);
         }
 
@@ -311,15 +304,6 @@ class DataProcessingController extends Controller
 
     public function get_image_graph(Request $request, $id)
     {
-        $this->authorize('projectSummary');
-        if (auth()->user()->is_superAdmin) {
-            $projects = Project::select('id','project_name')->get();
-        }
-        else {
-            $projects = Project::select('id','project_name')->whereHas('project_user', function($query) {
-                $query->where('user_id', auth()->user()->id);
-            })->get();
-        }
         $author = $request->toArray();
         $sum_top_author = (int) $author['top-author'];
         $result = $this->getData($author['project']);
@@ -359,15 +343,6 @@ class DataProcessingController extends Controller
     public function proses_worldmap(Request $request)
     {
         $id='author';
-        $this->authorize('projectSummary');
-        if (auth()->user()->is_superAdmin) {
-            $projects = Project::select('id','project_name')->get();
-        }
-        else {
-            $projects = Project::select('id','project_name')->whereHas('project_user', function($query) {
-                $query->where('user_id', auth()->user()->id);
-            })->get();
-        }
         $author = $request->toArray();
         $validator = Validator::make($author, [
             'project' => 'required',
@@ -417,8 +392,8 @@ class DataProcessingController extends Controller
            // convert world map to array of array
            $new_world_map = array();
            foreach ($world_map as $key => $value) {
-               $color=$this->getDarkerHexColor('#FF0000', $value);
-               $new_world_map[] = array($key,$color);
+               $color=$this->getDarkerHexColor('#C0C0C0', $value);
+               $new_world_map[] = array($key,$color,$value);
            }
    
            // Sort the author-rank pairs based on the rank (ascending order)

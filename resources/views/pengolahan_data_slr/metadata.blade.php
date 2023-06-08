@@ -132,7 +132,7 @@
                         @endfor
                 </tbody>
             </table>
-            <div class="btn btn-primary mt-5" onclick="exportToExcel()" id="download-2">Download</div>
+            <div class="btn btn-primary mt-5" onclick="exportToExcel()" id="download-2">Export to Excel</div>
         </div>
         @if($type == "Author")
         <div class="col-md-12" style="display:none">
