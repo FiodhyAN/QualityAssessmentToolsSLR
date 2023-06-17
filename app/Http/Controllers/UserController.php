@@ -11,7 +11,7 @@ class UserController extends Controller
     public function index()
     {
         $this->authorize('superadmin');
-        return view('dashboard.superadmin.user', [
+        return view('dashboard.superAdmin.user', [
             'users' => User::where('id', '!=', auth()->user()->id)->get()
         ]);
     }
