@@ -117,9 +117,6 @@ class DataProcessingController extends Controller
         return $result;
     }
 
-
-
-    
     public function data_rank($id)
     {
         $this->authorize('projectSummary');

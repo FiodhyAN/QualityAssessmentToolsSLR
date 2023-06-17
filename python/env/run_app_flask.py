@@ -16,41 +16,6 @@ matplotlib.use('Agg')
 
 app = Flask(__name__)
 CORS(app)
-app.config['MYSQL_HOST'] = 'localhost'  # ganti dengan host dari MySQL Anda
-app.config['MYSQL_USER'] = 'root'  # ganti dengan username MySQL Anda
-app.config['MYSQL_PASSWORD'] = ''  # ganti dengan password MySQL Anda
-# ganti dengan nama database yang ingin Anda gunakan
-app.config['MYSQL_DB'] = 'project_TA'
-app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-mysql = MySQL(app)
-
-
-@app.route('/create_data_processing_table')
-def create_graphimage_table():
-    cur = mysql.connection.cursor()
-    cur.execute("CREATE TABLE data_graph (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, nama_project VARCHAR(255) NOT NULL, base64code LONGTEXT NOT NULL)")
-    cur.execute("CREATE TABLE data_rank (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, nama_project VARCHAR(255) NOT NULL, json LONGTEXT NOT NULL)")
-    mysql.connection.commit()
-    cur.close()
-    return "Tabel berhasil dibuat!"
-
-
-def query_graph(nama_project, base64code):
-    cur = mysql.connection.cursor()
-    cur.execute("INSERT INTO data_graph (nama_project, base64code) VALUES (%s, %s)",
-                (nama_project, base64code))
-    mysql.connection.commit()
-    cur.close()
-    return "Data berhasil disimpan!"
-
-
-def query_rank(nama_project, json):
-    cur = mysql.connection.cursor()
-    cur.execute(
-        "INSERT INTO data_rank (nama_project, json) VALUES (%s, %s)", (nama_project, json))
-    mysql.connection.commit()
-    cur.close()
-    return "Data berhasil disimpan!"
 
 def getData(data=None):
     if data == None:
