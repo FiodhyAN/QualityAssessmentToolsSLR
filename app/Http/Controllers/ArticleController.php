@@ -205,8 +205,8 @@ class ArticleController extends Controller
             'references_filter' => $request->references_filter ?? null,
             'cited' => $request->cited,
             'cited_gs' => $request->cited_gs,
-            'cited_other' => $request->cited_other,
             'citing' => $request->cited_other,
+            'citing_new' => $request->cited_other,
             'keyword' => $request->keyword,
             'edatabase' => $request->edatabase,
             'edatabase_2' => $request->edatabase2 ?? null,
@@ -234,7 +234,7 @@ class ArticleController extends Controller
     {
         $this->authorize('admin');
         $request->validate([
-            'no' => ['required', Rule::unique('articles', 'no')->where(function($query) use ($request){
+            'kode_artikel' => ['required', Rule::unique('articles', 'no')->where(function($query) use ($request){
                 return $query->where('project_id', $request->project_id);
             })],
             'file' => 'mimes:pdf|nullable',
@@ -250,7 +250,7 @@ class ArticleController extends Controller
             'cited_gs' => 'required',
             'cited_other' => 'required',
             'keyword' => 'required',
-            'edatabase' => 'required',
+            'edatabase' => 'required'
         ]);
 
         $article = Article::find($request->article_id);
@@ -297,7 +297,7 @@ class ArticleController extends Controller
             'references_filter' => $request->references_filter ?? $article->references_filter,
             'cited' => $request->cited ?? $article->cited,
             'cited_gs' => $request->cited_gs ?? $article->cited_gs,
-            'cited_other' => $request->cited_other ?? $article->cited_other,
+            'citing' => $request->cited_other ?? $article->citing,
             'citing_new' => $request->cited_other ?? $article->citing_new,
             'keyword' => $request->keyword ?? $article->keyword,
             'edatabase' => $request->edatabase ?? $article->edatabase,
