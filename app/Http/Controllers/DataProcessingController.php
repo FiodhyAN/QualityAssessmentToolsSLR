@@ -298,7 +298,6 @@ class DataProcessingController extends Controller
         // return view('pengolahan_data_slr.metadata', ['src' => "", 'author_ranks' => $author_ranks, 'type' => $name, 'url'=>$id ,'projects' => $projects,'display' => 'block','id_project'=>$author['project'],'world_map'=>$new_world_map,"project_ajax"=> $author['project'],"topauthor"=> $author['top-author'],"outerauthor"=> $author['outer-author'],]);
     }
 
-
     public function get_image_graph(Request $request, $id)
     {
         $author = $request->toArray();
