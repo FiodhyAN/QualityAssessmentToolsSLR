@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ArticleSummaryController;
+use App\Http\Controllers\AuthorSummaryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProjectController;
@@ -8,7 +10,7 @@ use App\Http\Controllers\ProjectAdminController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AssignReviewerController;
 use App\Http\Controllers\AssessmentController;
-use App\Http\Controllers\DataProcessingController;
+use App\Http\Controllers\WorldMapController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\SummaryController;
 use Illuminate\Support\Facades\DB;
@@ -104,17 +106,11 @@ Route::get('/dashboard/reviewer/article/detail/{id}', [AssessmentController::cla
 //////////////////////////////////////
 // PENGOLAHAN DATA
 /////////////////////////////////////
-// sebelumnya bisa ikuti command dibawah
-// cd ./python
-// python run_app_flask.py
-Route::get('/pengolahan-data', [DataProcessingController::class, 'pengolahan_data'])->middleware('auth');
-Route::get('/gambar-graph', [DataProcessingController::class, 'gambar_graph'])->middleware('auth');
-Route::get('/gambar-graph', [DataProcessingController::class, 'gambar_graph'])->middleware('auth');
-Route::get('/my-image', [DataProcessingController::class, 'my_image'])->middleware('auth');
-Route::get('/data/{id}/rank', [DataProcessingController::class, 'data_rank'])->middleware('auth');
-Route::get('/data/{id}/graph', [DataProcessingController::class, 'data_graph'])->middleware('auth');
-Route::get('/metadata/{id}', [DataProcessingController::class, 'meta_data'])->middleware('auth');
-Route::get('/worldmap', [DataProcessingController::class, 'worldmap'])->middleware('auth');
-Route::post('/proses-metadata/{id}', [DataProcessingController::class, 'proses_meta_data'])->middleware('auth');
-Route::post('/proses-worldmap', [DataProcessingController::class, 'proses_worldmap'])->middleware('auth');
-Route::post('/get-image-graph/{id}', [DataProcessingController::class, 'get_image_graph'])->middleware('auth');
+Route::get('/metadata/author', [AuthorSummaryController::class, 'index'])->middleware('auth');
+Route::get('/metadata/article', [ArticleSummaryController::class, 'index'])->middleware('auth');
+Route::get('/worldmap', [WorldMapController::class, 'index'])->middleware('auth');
+Route::post('/proses-metadata/author', [AuthorSummaryController::class, 'process'])->middleware('auth');
+Route::post('/proses-metadata/article', [ArticleSummaryController::class, 'process'])->middleware('auth');
+Route::post('/proses-worldmap', [WorldMapController::class, 'process'])->middleware('auth');
+Route::post('/get-image-graph/author', [AuthorSummaryController::class, 'get_image_graph'])->middleware('auth');
+Route::post('/get-image-graph/article', [ArticleSummaryController::class, 'get_image_graph'])->middleware('auth');
