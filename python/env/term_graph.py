@@ -150,6 +150,95 @@ def makeTable2(author_matrix, authors):
     # print("makeTable2 time: "+str(time_end-time_start))
     return table2, pretable2
 
+# improve
+def addTable2TotalRowAndColoumn(pretable2, authors):
+    # perluotomasi
+    time_start = time.time()
+    lenauthor = len(authors)
+
+    sumrow = []
+    sumcol = [0] * len(authors)
+
+    for i, row in enumerate(pretable2):
+        row_sum = 0
+        for j, val in enumerate(row):
+            row_sum += val
+            sumcol[j] += val
+        sumrow.append(row_sum)
+    
+    # print("p1p9(sumrow)")
+    # print(sumrow)
+    # print("p9p1(sumcol)")
+    # print(sumcol)
+    for x in range(lenauthor):
+        pretable2[x].append(sumrow[x])
+    pretable2.append(sumcol)
+    # print(pretable2)
+    print("Tabel 2: Add Total Row & Col (TABLE II. AUTHOR ADJACENT MATRIX OF 1994 PUBLICATION)")
+    table2 = pd.DataFrame(pretable2)
+    print(table2)
+    time_end = time.time()
+    # print("time addTable2TotalRowAndColoumn: "+str(time_end-time_start))
+    return pretable2
+
+def makeNewAdjMatrix(pretable3, lenauthor):
+    # perluotomasi
+    time_start = time.time()
+    for x in range(lenauthor):
+        for y in range(lenauthor):
+            if pretable3[lenauthor][y] == 0:
+                # print("nilaiku="+str(pretable3[x][y]))
+                pretable3[x][y] = 1/lenauthor
+            else:
+                # print("nilaiku="+str(pretable3[x][y]))
+                pretable3[x][y] = pretable3[x][y]/pretable3[lenauthor][y]
+    table3 = pd.DataFrame(pretable3)
+    print("Tabel pre III: Wij")
+    print(table3)
+    time_end = time.time()
+    # print("time makeNewAdjMatrix: "+str(time_end-time_start))
+    return pretable3
+
+def rank(pretable3, author, name):
+    # perluotomasi
+    date_start = time.time()
+    lenauthor = len(author)
+    d = 0.850466963
+    table4 = []
+    row = []
+    for x in range(lenauthor):
+        row.append(1/lenauthor)
+    table4.append(row)
+    time_1 = time.time()
+    for y in range(100):
+        rowbaru = []
+        for x in range(lenauthor):
+            nilai = (1-d)+d * \
+                np.matmul(pretable3[x][0:lenauthor], row[0:lenauthor])
+            rowbaru.append(nilai)
+        table4.append(rowbaru)
+        selisih = abs(np.array(row)-np.array(rowbaru))
+        ns = max(selisih)
+        if ns < 0.001:
+            # print("y="+str(y))
+            break
+        # print(ns)
+        row = rowbaru
+    time_2 = time.time()-time_1
+    print("time of rank loop: "+str(time_2))
+    rank = [sorted(row, reverse=True).index(x) for x in row]
+    rank = [x + 1 for x in rank]
+    table4.append(rank)
+    table5 = pd.DataFrame(table4)
+    print("Tabel 3: Ranking (TABLE III. S(VI)7$1'Ǽ_T OF AUTHOR-TERM GRAPH.)")
+    print(table5.T)
+
+    json_data = json.dumps({"author": author, "ranks": rank})
+    # query_rank("project 1",json_data)
+    date_end = time.time()
+    print("time of rank function: "+str(date_end-date_start))
+    return table4, rank,rowbaru
+
 def getTopAuthor(authors, author_rank, ranking):
     time_start = time.time()
     author_ranking = []
@@ -369,92 +458,5 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     # print("Time taken to run maketermgraph: ", time_end - time_start)
     return buf
 
-# improve
-def addTable2TotalRowAndColoumn(pretable2, authors):
-    # perluotomasi
-    time_start = time.time()
-    lenauthor = len(authors)
 
-    sumrow = []
-    sumcol = [0] * len(authors)
-
-    for i, row in enumerate(pretable2):
-        row_sum = 0
-        for j, val in enumerate(row):
-            row_sum += val
-            sumcol[j] += val
-        sumrow.append(row_sum)
-    
-    # print("p1p9(sumrow)")
-    # print(sumrow)
-    # print("p9p1(sumcol)")
-    # print(sumcol)
-    for x in range(lenauthor):
-        pretable2[x].append(sumrow[x])
-    pretable2.append(sumcol)
-    # print(pretable2)
-    print("Tabel 2: Add Total Row & Col (TABLE II. AUTHOR ADJACENT MATRIX OF 1994 PUBLICATION)")
-    table2 = pd.DataFrame(pretable2)
-    print(table2)
-    time_end = time.time()
-    # print("time addTable2TotalRowAndColoumn: "+str(time_end-time_start))
-    return pretable2
-
-def makeNewAdjMatrix(pretable3, lenauthor):
-    # perluotomasi
-    time_start = time.time()
-    for x in range(lenauthor):
-        for y in range(lenauthor):
-            if pretable3[lenauthor][y] == 0:
-                # print("nilaiku="+str(pretable3[x][y]))
-                pretable3[x][y] = 1/lenauthor
-            else:
-                # print("nilaiku="+str(pretable3[x][y]))
-                pretable3[x][y] = pretable3[x][y]/pretable3[lenauthor][y]
-    table3 = pd.DataFrame(pretable3)
-    print("Tabel pre III: Wij")
-    print(table3)
-    time_end = time.time()
-    # print("time makeNewAdjMatrix: "+str(time_end-time_start))
-    return pretable3
-
-def rank(pretable3, author, name):
-    # perluotomasi
-    date_start = time.time()
-    lenauthor = len(author)
-    d = 0.850466963
-    table4 = []
-    row = []
-    for x in range(lenauthor):
-        row.append(1/lenauthor)
-    table4.append(row)
-    time_1 = time.time()
-    for y in range(100):
-        rowbaru = []
-        for x in range(lenauthor):
-            nilai = (1-d)+d * \
-                np.matmul(pretable3[x][0:lenauthor], row[0:lenauthor])
-            rowbaru.append(nilai)
-        table4.append(rowbaru)
-        selisih = abs(np.array(row)-np.array(rowbaru))
-        ns = max(selisih)
-        if ns < 0.001:
-            # print("y="+str(y))
-            break
-        # print(ns)
-        row = rowbaru
-    time_2 = time.time()-time_1
-    print("time of rank loop: "+str(time_2))
-    rank = [sorted(row, reverse=True).index(x) for x in row]
-    rank = [x + 1 for x in rank]
-    table4.append(rank)
-    table5 = pd.DataFrame(table4)
-    print("Tabel 3: Ranking (TABLE III. S(VI)7$1'Ǽ_T OF AUTHOR-TERM GRAPH.)")
-    print(table5.T)
-
-    json_data = json.dumps({"author": author, "ranks": rank})
-    # query_rank("project 1",json_data)
-    date_end = time.time()
-    print("time of rank function: "+str(date_end-date_start))
-    return table4, rank,rowbaru
 
