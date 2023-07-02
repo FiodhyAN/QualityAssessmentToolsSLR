@@ -7,6 +7,7 @@ use App\Models\ArticleUser;
 use App\Models\ArticleUserQuestionaire;
 use App\Models\Project;
 use App\Models\ProjectUser;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
@@ -16,9 +17,11 @@ class AssignReviewerController extends Controller
     public function index()
     {
         $this->authorize('admin');
+        $user = User::select('id', 'name')->where('id', decrypt(request()->uid))->first();
         return view('dashboard.admin.article.assign', [
             'project_id' => decrypt(request()->pid),
             'user_id' => decrypt(request()->uid),
+            'user_name' => $user->name
         ]);
     }
 

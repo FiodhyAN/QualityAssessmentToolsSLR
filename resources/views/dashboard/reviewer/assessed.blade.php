@@ -72,227 +72,224 @@
     {{-- Modal for edit button --}}
     <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-dialog modal-lg" id="modalSection">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="editCloseButton"></button>
                 </div>
                 <div class="modal-body">
-                    <a id="previewFile" class="btn btn-sm btn-secondary mb-2" target="_blank"><ion-icon name="document-attach"></ion-icon> Preview Article</a>
+                    <button id="previewFile" class="btn btn-sm btn-secondary mb-2 previewPdfBtn"><ion-icon name="document-attach"></ion-icon> Preview Article</button>
                     <a id="previewLink" class="btn btn-sm btn-secondary mb-2" target="_blank"><ion-icon name="link"></ion-icon> Article Link</a>
                     <span id="noPreview" class="badge alert-secondary mb-2">No Preview Available</span>
-                    <button class="btn btn-sm btn-primary mb-2" data-bs-target="#detailArticleModal" data-bs-toggle="modal" data-bs-dismiss="modal" id="detailArticleBtn"><ion-icon name="search-circle"></ion-icon> View Article Detail</button>
+                    <button class="btn btn-sm btn-primary mb-2 previewDetailBtn" id="detailArticleBtn"><ion-icon name="search-circle"></ion-icon> View Article Detail</button>
                     <div class="progress">
                         <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="50"
                             class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar"
                             style="width: 0%"></div>
                     </div>
-                    <div id="qbox-container">
-                        <form action="/dashboard/reviewer/assessment/update" class="needs-validation assessment_form"
-                            id="form-wrapper" method="post" name="form-wrapper" novalidate>
-                            @csrf
-                            <input type="hidden" name="project_id" id="project_id">
-                            <input type="hidden" name="article_id" id="article_id">
-                            <div id="steps-container">
-                                @foreach ($questionaires as $question)
-                                    <div class="step">
-                                        <h3>{{ $question->name }}</h3>
-                                        <h4>{{ $question->question }}</h4>
-                                        <input type="hidden" name="questionaire_id[]" value="{{ $question->id }}">
-                                        <div class="form-check ps-0 q-box">
-                                            <div class="q-box__question">
-                                                <input class="form-check-input question__input"
-                                                    id="q_{{ $loop->iteration }}_pos" name="{{ $question->name }}"
-                                                    type="radio" value="1">
-                                                <label class="form-check-label question__label"
-                                                    for="q_{{ $loop->iteration }}_pos">{{ $question->pos_answer }}</label>
-                                            </div>
-                                            <div class="q-box__question">
-                                                <input class="form-check-input question__input"
-                                                    id="q_{{ $loop->iteration }}_net" name="{{ $question->name }}"
-                                                    type="radio" value="0">
-                                                <label class="form-check-label question__label"
-                                                    for="q_{{ $loop->iteration }}_net">{{ $question->net_answer }}</label>
-                                            </div>
-                                            <div class="q-box__question">
-                                                <input class="form-check-input question__input"
-                                                    id="q_{{ $loop->iteration }}_neg" name="{{ $question->name }}"
-                                                    type="radio" value="-1">
-                                                <label class="form-check-label question__label"
-                                                    for="q_{{ $loop->iteration }}_neg">{{ $question->neg_answer }}</label>
+                    <div class="row">
+                        <div class="col-md-12" id="questionSection">
+                            <div id="questionContainer" class="scrollable-container">
+                                <div id="qbox-container">
+                                    <form action="/dashboard/reviewer/assessment/update" class="needs-validation assessment_form"
+                                        id="form-wrapper" method="post" name="form-wrapper" novalidate>
+                                        @csrf
+                                        <input type="hidden" name="project_id" id="project_id">
+                                        <input type="hidden" name="article_id" id="article_id">
+                                        <div id="steps-container">
+                                            @foreach ($questionaires as $question)
+                                                <div class="step">
+                                                    <h3>{{ $question->name }}</h3>
+                                                    <h4>{{ $question->question }}</h4>
+                                                    <input type="hidden" name="questionaire_id[]" value="{{ $question->id }}">
+                                                    <div class="form-check ps-0 q-box">
+                                                        <div class="q-box__question">
+                                                            <input class="form-check-input question__input"
+                                                                id="q_{{ $loop->iteration }}_pos" name="{{ $question->name }}"
+                                                                type="radio" value="1">
+                                                            <label class="form-check-label question__label"
+                                                                for="q_{{ $loop->iteration }}_pos">{{ $question->pos_answer }}</label>
+                                                        </div>
+                                                        <div class="q-box__question">
+                                                            <input class="form-check-input question__input"
+                                                                id="q_{{ $loop->iteration }}_net" name="{{ $question->name }}"
+                                                                type="radio" value="0">
+                                                            <label class="form-check-label question__label"
+                                                                for="q_{{ $loop->iteration }}_net">{{ $question->net_answer }}</label>
+                                                        </div>
+                                                        <div class="q-box__question">
+                                                            <input class="form-check-input question__input"
+                                                                id="q_{{ $loop->iteration }}_neg" name="{{ $question->name }}"
+                                                                type="radio" value="-1">
+                                                            <label class="form-check-label question__label"
+                                                                for="q_{{ $loop->iteration }}_neg">{{ $question->neg_answer }}</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                            <div class="step">
+                                                <div class="mt-1">
+                                                    <div class="closing-text">
+                                                        <h4>Assessment Selesai! Apakah Anda Yakin Ingin Mengubah Penilaian Anda?</h4>
+                                                        <table class="table table-striped table-bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>No</th>
+                                                                    <th>Question</th>
+                                                                    <th>Answer</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach ($questionaires as $item)
+                                                                    <tr>
+                                                                        <td>{{ $loop->iteration }}</td>
+                                                                        <td>{{ $item->question }}</td>
+                                                                        <td id="summary{{ $loop->iteration }}"></td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                        <p>Click tombol submit untuk melanjutkan.</p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+                                        <div id="q-box__buttons">
+                                            <button id="prev-btn" type="button">Previous</button>
+                                            <button id="next-btn" type="button">Next</button>
+                                            <button id="submit-btn" type="submit">Save Changes</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-none" id="detailSection">
+                            <div id="detailContainer" class="scrollable-container">
+                                <div class="row mt-2">
+                                    <div class="col-md-6 mb-2">
+                                        <div class="form-label">
+                                            <label>Publisher</label>
+                                            <input type="text" class="form-control" id="publisher" readonly>
+                                        </div>
                                     </div>
-                                @endforeach
-                                <div class="step">
-                                    <div class="mt-1">
-                                        <div class="closing-text">
-                                            <h4>Assessment Selesai! Apakah Anda Yakin Ingin Mengubah Penilaian Anda?</h4>
-                                            <table class="table table-striped table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>No</th>
-                                                        <th>Question</th>
-                                                        <th>Answer</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($questionaires as $item)
-                                                        <tr>
-                                                            <td>{{ $loop->iteration }}</td>
-                                                            <td>{{ $item->question }}</td>
-                                                            <td id="summary{{ $loop->iteration }}"></td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                            <p>Click tombol submit untuk melanjutkan.</p>
+                                    <div class="col-md-6 mb-2">
+                                        <div class="form-label">
+                                            <label>Publication</label>
+                                            <input type="text" class="form-control" id="publication" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <div class="form-label">
+                                            <label>Year</label>
+                                            <input type="text" class="form-control" id="year" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <div class="form-label">
+                                            <label>Type</label>
+                                            <input type="text" class="form-control" id="type" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <div class="form-label">
+                                            <label>E-Database</label>
+                                            <input type="text" class="form-control" id="edatabase" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <div class="form-label">
+                                            <label>E-Database 2</label>
+                                            <input type="text" class="form-control" id="edatabase_2" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-label">
+                                            <label>Keyword</label>
+                                            <input type="text" class="form-control" id="keyword" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8 mb-2">
+                                        <div class="form-label">
+                                            <label>Keywords</label>
+                                            <input type="text" class="form-control" id="keywords" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <div class="form-label">
+                                            <label>Index</label>
+                                            <input type="text" class="form-control" id="index" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <div class="form-label">
+                                            <label>Quartile</label>
+                                            <input type="text" class="form-control" id="quartile" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <div class="form-label">
+                                            <label>Authors</label>
+                                            <textarea name="" id="authors" readonly class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <div class="form-label">
+                                            <label>Nation First Author</label>
+                                            <input type="text" class="form-control" id="nation_first_author" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-label">
+                                            <label>Cited</label>
+                                            <input type="text" class="form-control" id="cited" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-label">
+                                            <label>Cited Google Scholar</label>
+                                            <input type="text" class="form-control" id="cited_gs" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-label">
+                                            <label>Language</label>
+                                            <input type="text" class="form-control" id="language" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mb-2">
+                                        <div class="form-label">
+                                            <label>Citing</label>
+                                            <ul id="citing"></ul>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mb-2">
+                                        <div class="form-label">
+                                            <label>Original References</label>
+                                            <textarea class="form-control" id="references_ori" readonly rows="10"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mb-2">
+                                        <div class="form-label">
+                                            <label>References Filter</label>
+                                            <textarea class="form-control" id="references_filter" readonly rows="10"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mb-2">
+                                        <div class="form-label">
+                                            <label>Abstract</label>
+                                            <textarea class="form-control" id="abstract" readonly rows="10"></textarea>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div id="q-box__buttons">
-                                <button id="prev-btn" type="button">Previous</button>
-                                <button id="next-btn" type="button">Next</button>
-                                <button id="submit-btn" type="submit">Save Changes</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="detailArticleModal" data-bs-backdrop="static" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="detailArticleTitle"></h5>
-              <button type="button" class="btn-close" data-bs-target="#exampleModal" data-bs-toggle="modal" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6 mb-2">
-                        <div class="form-label">
-                            <label>Publisher</label>
-                            <input type="text" class="form-control" id="publisher" readonly>
                         </div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="form-label">
-                            <label>Publication</label>
-                            <input type="text" class="form-control" id="publication" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-2">
-                        <div class="form-label">
-                            <label>Year</label>
-                            <input type="text" class="form-control" id="year" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-2">
-                        <div class="form-label">
-                            <label>Type</label>
-                            <input type="text" class="form-control" id="type" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-2">
-                        <div class="form-label">
-                            <label>E-Database</label>
-                            <input type="text" class="form-control" id="edatabase" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-2">
-                        <div class="form-label">
-                            <label>E-Database 2</label>
-                            <input type="text" class="form-control" id="edatabase_2" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="form-label">
-                            <label>Keyword</label>
-                            <input type="text" class="form-control" id="keyword" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-8 mb-2">
-                        <div class="form-label">
-                            <label>Keywords</label>
-                            <input type="text" class="form-control" id="keywords" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="form-label">
-                            <label>Index</label>
-                            <input type="text" class="form-control" id="index" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="form-label">
-                            <label>Quartile</label>
-                            <input type="text" class="form-control" id="quartile" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="form-label">
-                            <label>Authors</label>
-                            <textarea name="" id="authors" readonly class="form-control"></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <div class="form-label">
-                            <label>Nation First Author</label>
-                            <input type="text" class="form-control" id="nation_first_author" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="form-label">
-                            <label>Cited</label>
-                            <input type="text" class="form-control" id="cited" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="form-label">
-                            <label>Cited Google Scholar</label>
-                            <input type="text" class="form-control" id="cited_gs" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="form-label">
-                            <label>Language</label>
-                            <input type="text" class="form-control" id="language" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-12 mb-2">
-                        <div class="form-label">
-                            <label>Citing</label>
-                            <ul id="citing"></ul>
-                        </div>
-                    </div>
-                    <div class="col-md-12 mb-2">
-                        <div class="form-label">
-                            <label>Original References</label>
-                            <textarea class="form-control" id="references_ori" readonly rows="10"></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-12 mb-2">
-                        <div class="form-label">
-                            <label>References Filter</label>
-                            <textarea class="form-control" id="references_filter" readonly rows="10"></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-12 mb-2">
-                        <div class="form-label">
-                            <label>Abstract</label>
-                            <textarea class="form-control" id="abstract" readonly rows="10"></textarea>
+                        <div class="col-md-6 d-none" id="pdfSection">
+                            <iframe id="previewPdf" src="" frameborder="0" width="100%" height="500px"></iframe>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-              <button class="btn btn-primary" data-bs-target="#exampleModal" data-bs-toggle="modal" data-bs-dismiss="modal">Back to Assessment</button>
-            </div>
-          </div>
         </div>
     </div>
 @endsection
@@ -519,7 +516,8 @@
                 $('#previewFile').removeClass('d-none');
                 $('#noPreview').addClass('d-none');
                 var urlFile = '{{ URL::asset('storage/article/') }}' + '/' + file;
-                $('#previewFile').attr('href', urlFile);
+                // $('#previewFile').attr('href', urlFile);
+                $('#previewFile').data('url', urlFile);
             }
             else if (link != '' && file == '') {
                 $('#previewLink').removeClass('d-none');
@@ -736,5 +734,183 @@
                 }
             })
         })
+
+        var originalModalWidth = null;
+        var originalColumnClass = null;
+        var isExpanded = false;
+
+        $('.previewDetailBtn').on('click', function() {
+            if (!isExpanded) {
+                // Remove 'modal-dialog-centered' class to prevent vertical centering
+                $('#modalSection').removeClass('modal-dialog-centered');
+
+                // Add animation classes to the modal
+                $('#exampleModal').addClass('fade');
+                $('#exampleModal').addClass('show');
+
+                // Animate modal size transition
+                $('#modalSection').animate({ 'width': '100%', 'max-width': '1200px' }, 300, function() {
+                    // Animation complete
+
+                    // Remove animation classes
+                    $('#exampleModal').removeClass('fade');
+                    $('#exampleModal').removeClass('show');
+
+                    // Update modal size classes
+                    $('#modalSection').removeClass('modal-lg').addClass('modal-xl');
+
+                    // Reset modal size manually
+                    $('#modalSection').css({ 'width': '', 'max-width': '' });
+
+                    // Update column classes
+                    originalColumnClass = $('#questionSection').attr('class');
+                    $('#questionSection').removeClass(originalColumnClass).addClass('col-md-6');
+
+                    $('#detailSection').removeClass('d-none').hide().fadeIn(500);
+                });
+                isExpanded = true;
+            } else if (isExpanded && $('#detailSection').hasClass('d-none')) {
+                $('#detailSection').removeClass('d-none').hide().fadeIn(500);
+                $('#pdfSection').addClass('d-none').hide().fadeIn(500);
+
+                isExpanded = true;
+            } else {
+                // Restore original modal and column sizes
+
+                // Remove animation classes from modal
+                $('#exampleModal').removeClass('fade');
+                $('#exampleModal').removeClass('show');
+
+                $('#modalSection').animate({ 'width': '100%', 'max-width': '800px' }, 300, function() {
+                    // Animation complete
+
+                    // Add 'modal-dialog-centered' class to re-enable vertical centering
+                    $('#modalSection').addClass('modal-dialog-centered');
+
+                    // Remove animation classes
+                    $('#exampleModal').removeClass('fade');
+                    $('#exampleModal').removeClass('show');
+
+                    // Revert modal size classes
+                    $('#modalSection').removeClass('modal-xl').addClass('modal-lg');
+    
+                    // Reset modal size manually
+                    $('#modalSection').css({ 'width': '', 'max-width': '' });
+    
+                    // Revert column classes
+                    $('#questionSection').removeClass('col-md-6').addClass(originalColumnClass);
+    
+                    $('#detailSection').addClass('d-none');
+                });
+
+                isExpanded = false;
+            }
+        });
+
+        $('.previewPdfBtn').on('click', function(){
+            var url = $(this).data('url');
+            $('#previewPdf').attr('src', url);
+
+            if (!isExpanded) {
+                // Remove 'modal-dialog-centered' class to prevent vertical centering
+                $('#modalSection').removeClass('modal-dialog-centered');
+
+                // Add animation classes to the modal
+                $('#exampleModal').addClass('fade');
+                $('#exampleModal').addClass('show');
+
+                // Animate modal size transition
+                $('#modalSection').animate({ 'width': '100%', 'max-width': '1200px' }, 300, function() {
+                    // Animation complete
+
+                    // Remove animation classes
+                    $('#exampleModal').removeClass('fade');
+                    $('#exampleModal').removeClass('show');
+
+                    // Update modal size classes
+                    $('#modalSection').removeClass('modal-lg').addClass('modal-xl');
+
+                    // Reset modal size manually
+                    $('#modalSection').css({ 'width': '', 'max-width': '' });
+
+                    // Update column classes
+                    originalColumnClass = $('#questionSection').attr('class');
+                    $('#questionSection').removeClass(originalColumnClass).addClass('col-md-6');
+
+                    $('#pdfSection').removeClass('d-none').hide().fadeIn(500);
+                });
+
+
+                isExpanded = true;
+            } else if (isExpanded && $('#pdfSection').hasClass('d-none')) {
+                $('#pdfSection').removeClass('d-none').hide().fadeIn(500);
+                $('#detailSection').addClass('d-none').hide().fadeIn(500);
+
+                isExpanded = true;
+            } else {
+                // Restore original modal and column sizes
+
+                // Remove animation classes from modal
+                $('#exampleModal').removeClass('fade');
+                $('#exampleModal').removeClass('show');
+
+                $('#modalSection').animate({ 'width': '100%', 'max-width': '800px' }, 300, function() {
+                    // Animation complete
+
+                    // Add 'modal-dialog-centered' class to re-enable vertical centering
+                    $('#modalSection').addClass('modal-dialog-centered');
+
+                    // Remove animation classes
+                    $('#exampleModal').removeClass('fade');
+                    $('#exampleModal').removeClass('show');
+
+                    // Revert modal size classes
+                    $('#modalSection').removeClass('modal-xl').addClass('modal-lg');
+    
+                    // Reset modal size manually
+                    $('#modalSection').css({ 'width': '', 'max-width': '' });
+    
+                    // Revert column classes
+                    $('#questionSection').removeClass('col-md-6').addClass(originalColumnClass);
+    
+                    $('#pdfSection').addClass('d-none');
+                });
+
+                isExpanded = false;
+            }
+        });
+
+        // example modal on close reset the modal
+        $('#exampleModal').on('hidden.bs.modal', function() {
+            if (isExpanded) {
+                // Remove animation classes from modal
+                $('#exampleModal').removeClass('fade');
+                $('#exampleModal').removeClass('show');
+
+                $('#modalSection').animate({ 'width': '100%', 'max-width': '800px' }, 300, function() {
+                    // Animation complete
+
+                    // Add 'modal-dialog-centered' class to re-enable vertical centering
+                    $('#modalSection').addClass('modal-dialog-centered');
+
+                    // Remove animation classes
+                    $('#exampleModal').removeClass('fade');
+                    $('#exampleModal').removeClass('show');
+
+                    // Revert modal size classes
+                    $('#modalSection').removeClass('modal-xl').addClass('modal-lg');
+    
+                    // Reset modal size manually
+                    $('#modalSection').css({ 'width': '', 'max-width': '' });
+    
+                    // Revert column classes
+                    $('#questionSection').removeClass('col-md-6').addClass(originalColumnClass);
+    
+                    $('#detailSection').addClass('d-none');
+                });
+
+                isExpanded = false;
+            }
+        });
     </script>
 @endsection
