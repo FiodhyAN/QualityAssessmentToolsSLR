@@ -7,6 +7,7 @@ import time
 import io
 import matplotlib
 matplotlib.use('Agg')
+from PIL import Image
 
 
 def getData(data=None):
@@ -444,7 +445,12 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
 
 
     plt_time=time.time()
-    plt.savefig(buf, format='png')
+
+    fig = plt.gcf()
+    fig.canvas.draw()
+    image = Image.frombytes('RGB', fig.canvas.get_width_height(), fig.canvas.tostring_rgb())
+    image.save(buf, format='png')
+
     end_plt_time=time.time()-plt_time
     # print("plt time: "+str(end_plt_time))
 
@@ -455,7 +461,7 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     # my_base64_jpgData = base64.b64encode(output.read())
     # query_graph("project 1",my_base64_jpgData)
     time_end = time.time()
-    # print("Time taken to run maketermgraph: ", time_end - time_start)
+    print("Time taken to run maketermgraph: ", time_end - time_start)
     return buf
 
 

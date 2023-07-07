@@ -365,6 +365,25 @@
                     formatter: function(val) {
                         return parseFloat(val).toFixed(1)
                     }
+                },
+                axisBorder: {
+                    show: true,
+                    color: '#999', // X-axis line color
+                    height: 1,
+                    width: '100%',
+                    offsetX: 0,
+                    offsetY: 0
+                },
+                title: {
+                    text: 'Number of articles',
+                    offsetX: 0,
+                    offsetY: 10,
+                    style: {
+                        fontSize: '14px',
+                        fontFamily: 'Helvetica, Arial, sans-serif',
+                        fontWeight: 'bold',
+                        color: '#000' // Title color for x-axis
+                    }
                 }
             },
             yaxis: {
@@ -372,6 +391,17 @@
                 labels: {
                     formatter: function(val) {
                         return parseFloat(val).toFixed(1)
+                    }
+                },
+                title: {
+                    text: 'Node Strenght',
+                    offsetX: 0,
+                    offsetY: 10,
+                    style: {
+                        fontSize: '14px',
+                        fontFamily: 'Helvetica, Arial, sans-serif',
+                        fontWeight: 'bold',
+                        color: '#000' // Title color for y-axis
                     }
                 }
             },
