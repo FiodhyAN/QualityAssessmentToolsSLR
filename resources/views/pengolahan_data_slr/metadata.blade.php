@@ -452,9 +452,7 @@
         var chart = new ApexCharts(document.querySelector("#chart"), options);
         chart.render();
         $(".apexcharts-legend-series").each(function(index) {
-            if (index !== 0) {
                 $(this).remove();
-            }
         });
     </script>
 @endsection
