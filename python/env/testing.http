@@ -1,5 +1,7 @@
 # POST http://127.0.0.1:5000/data/author/rankgraph
-POST http://127.0.0.1:5000/data/author/rankgraphimage
+# POST http://127.0.0.1:5000/data/author/rankgraphimage
+# POST http://127.0.0.1:5000/data/article/rankgraph
+POST http://127.0.0.1:5000/data/article/rankgraphimage
 Content-Type: application/json
 
 {

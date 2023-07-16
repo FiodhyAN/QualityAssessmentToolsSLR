@@ -93,6 +93,8 @@
                     }
                     let mapData = {};
                     let usedColors = {};
+                    let mapAuthors = {};
+                    let nationRealname = {};
                     // initialize Fuse with country data
                     let fuse = new Fuse(data, {
                         keys: ['name'],
@@ -117,6 +119,8 @@
                             color = color_nation;
                             usedColors[color] = true;
                             mapData[countryCode] = color;
+                            mapAuthors[countryCode] = world_map[i][2];
+                            nationRealname[countryCode] = world_map[i][0];
                         }
                     }
                     console.log(mapData);
@@ -133,16 +137,31 @@
                         labels: {
                             regions: {
                                 render: function(code){
-                                    for (let i = 0; i < world_map.length; i++) {
-                                        if(world_map[i][1]==mapData[code]){
-                                            return world_map[i][2];
-                                        }
-                                    }
+                                    return mapAuthors[code];
                                 }
                             }
                         }
                     });
                     console.log(map);
+
+                    // Menambahkan event listener untuk klik pada negara
+                    map.container.on('click', '.jvectormap-region', function(e) {
+                        var countryCode = $(this).attr('data-code');
+                        var nation=nationRealname[countryCode];
+                        var total=mapAuthors[countryCode];
+                        @if(session('worldmap'))
+                           var author_ranks = {!! json_encode(session('author_ranks')) !!};
+                            var listauthor = [];
+                            for(var i = 0; i < author_ranks.length; i++)
+                            {
+                                if(author_ranks[i][3] == nation)
+                                {
+                                    listauthor.push(author_ranks[i][1]);
+                                }
+                            }                        
+                            alert("Nation: " + nation + "\n" +"Total Authors: " + total + "\n" + "Authors: " + listauthor.join(", "));
+                        @endif
+                    });
                     
                 }
             })
