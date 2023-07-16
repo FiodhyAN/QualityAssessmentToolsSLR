@@ -327,7 +327,7 @@
                 {
                     name: "{{ session('author_ranks')[$i][1] }}",
                     data: [
-                        [{{ session('author_ranks')[$i][4] }}, {{ session('author_ranks')[$i][5] }},12]
+                        [{{ session('author_ranks')[$i][4] }}, {{ session('author_ranks')[$i][5] }}]
                     ],
                 },
                 @endfor
@@ -342,11 +342,23 @@
                 }
             },
             tooltip: {
-    
+                x: {
+                    formatter: function(val) {
+                        return "Total Article: " + parseFloat(val).toFixed(1);
+                    }
+                },
+                y: {
+                    formatter: function(val) {
+                        return parseFloat(val).toFixed(1) + "  (Node Strenght)";
+                    }
+                }
+            },
+            markers: {
+                size: 12
             },
             legend: {
-                show: true, 
-                showForSingleSeries: true,
+                show: false, 
+                showForSingleSeries: false,
                 formatter: function(seriesName, opts) {
                     if(opts.seriesIndex==0){
                         return "author";
@@ -451,8 +463,6 @@
 
         var chart = new ApexCharts(document.querySelector("#chart"), options);
         chart.render();
-        $(".apexcharts-legend-series").each(function(index) {
-                $(this).remove();
-        });
+        
     </script>
 @endsection
