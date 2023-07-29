@@ -44,13 +44,13 @@
             @enderror
         </div>
         <div class="col-md-4">
-            <label for="outer-author" class="form-label">{{$type}} Display:</label>
+            <label for="outer-author" class="form-label">{{$type}} Relations:</label>
             <select class="form-select @error('outer-author') is-invalid @enderror" aria-label="Default select example" id="outer-author" name="outer-author">
-                <option value="" disabled selected>-- Select {{$type}} Display --</option>
-                <option value="0" @if(old('outer-author') == '0') selected @endif>All {{$type}}</option>
-                <option value="1" @if(old('outer-author') == '1') selected @endif>All {{$type}} with Relation Only</option>
-                <option value="2" @if(old('outer-author') == '2') selected @endif>Relation Among Top {{$type}}</option>
-                <option value="3" @if(old('outer-author') == '3') selected @endif>Top {{$type}}-Citing {{$type}} Relation</option>
+                <option value="" disabled selected>-- Select {{$type}} Relations --</option>
+                <option value="0" @if(old('outer-author') == '0') selected @endif>All {{$type}}s</option>
+                <option value="1" @if(old('outer-author') == '1') selected @endif>All {{$type}}s with Relations Only</option>
+                <option value="2" @if(old('outer-author') == '2') selected @endif>Relations Between Top {{$type}}s</option>
+                <option value="3" @if(old('outer-author') == '3') selected @endif>Top {{$type}}-Citing {{$type}} Relations</option>
             </select>
             @error('outer-author')
                 <div class="invalid-feedback">The {{$type}} Display field is required.</div>
@@ -116,7 +116,7 @@
                         <th>{{$type}}</th>
                         <th>Rank</th>
                         @if($type == "Author")
-                        <th>Nation</th>
+                        <th>First Nation</th>
                         @else
                         <th>Title</th>
                         @endif
@@ -164,6 +164,10 @@
         });
         function download_image() {
             var src=document.getElementById('my-image-src').src
+            if(src=="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831"){
+                alert("Please wait until the image is loaded")
+                return
+            }
             fetch(src)
                 .then(response => response.blob())
                 .then(blob => {

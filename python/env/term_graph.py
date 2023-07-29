@@ -48,11 +48,6 @@ def getArticleIdAuthorReferencesAndAuthor(table):
                 nation_author_pair.append(i[len(i)-1])
             authors.append(penulis)
         row.append(i[5])
-        for article in i[5]:
-            # memastikan article != ''
-            if len(article) > 1:
-                # print("this is my article "+article)
-                articles.append(article)
         pairs.append(row)
 
         # memasukkan array kode artikel dan judulnya
@@ -423,7 +418,7 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     #                        node_size=my_node_sizes,
     #                        node_color=my_node_colors
     #                        )  # increase node size to 200
-    nx.draw(G, pos, alpha=0.7, node_size=my_node_sizes, node_color=my_node_colors, arrows=True, arrowstyle="->", connectionstyle="arc3,rad=0.2", edge_color="green", with_labels=True, font_size=12, font_weight="bold")
+    nx.draw(G, pos, alpha=0.7, node_size=my_node_sizes, node_color=my_node_colors, arrows=True, arrowstyle="fancy", connectionstyle="arc3,rad=0.2", edge_color="green",arrowsize=20)
     # nx.draw_networkx_edges(G, pos, edgelist=G.edges(),
     #                        width=1, alpha=0.5, edge_color="green")
     nx.draw_networkx_labels(G, pos, font_size=node_labels_font_size,
