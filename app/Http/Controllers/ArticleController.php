@@ -160,7 +160,7 @@ class ArticleController extends Controller
             'kode_artikel' => ['required', Rule::unique('articles', 'no')->where(function($query) use ($request){
                 return $query->where('project_id', $request->project_id);
             })],
-            'file' => 'mimes:pdf|nullable',
+            'file' => 'mimes:pdf|nullable|max:10000',
             'link' => 'url|nullable',
             'title' => 'required',
             'publication' => 'required',

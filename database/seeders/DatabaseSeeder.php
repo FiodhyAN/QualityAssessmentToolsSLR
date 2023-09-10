@@ -15,12 +15,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
         DB::table('users')->insert([
             'name' => 'Super Admin',
             'username' => 'superadmin',
@@ -28,16 +22,16 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('superadmin'),
         ]);
         DB::table('users')->insert([
-            'name' => 'Admin',
-            'username' => 'admin',
+            'name' => 'Fiodhy',
+            'username' => 'fiodhy',
             'is_admin' => true,
-            'password' => bcrypt('admin'),
+            'password' => bcrypt('fiodhy'),
         ]);
         DB::table('users')->insert([
-            'name' => 'Reviewer',
-            'username' => 'reviewer',
+            'name' => 'Arif',
+            'username' => 'arif',
             'is_reviewer' => true,
-            'password' => bcrypt('reviewer'),
+            'password' => bcrypt('arif'),
         ]);
 
         DB::table('questionaires')->insert([
