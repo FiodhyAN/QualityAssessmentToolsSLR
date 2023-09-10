@@ -91,11 +91,11 @@ class WorldMapController extends Controller
                return $a[2] - $b[2];
            });
            //dapatkan data top 10 
-           $author_ranks = array_slice($author_ranks, 0, $sum_top_author);
+        //    $author_ranks = array_slice($author_ranks, 0, $sum_top_author);
            $name=$id;
            $name[0]=strtoupper($name[0]);
            // data:image/png;base64, $image
-           return redirect('worldmap')->with('worldmap', $new_world_map);
+           return redirect('worldmap')->with(['author_ranks' => $author_ranks,'worldmap'=> $new_world_map]);
        }
 
     public function separate($keywords) {

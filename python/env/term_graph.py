@@ -7,6 +7,7 @@ import time
 import io
 import matplotlib
 matplotlib.use('Agg')
+from PIL import Image
 
 
 def getData(data=None):
@@ -47,11 +48,6 @@ def getArticleIdAuthorReferencesAndAuthor(table):
                 nation_author_pair.append(i[len(i)-1])
             authors.append(penulis)
         row.append(i[5])
-        for article in i[5]:
-            # memastikan article != ''
-            if len(article) > 1:
-                # print("this is my article "+article)
-                articles.append(article)
         pairs.append(row)
 
         # memasukkan array kode artikel dan judulnya
@@ -253,7 +249,7 @@ def getTopAuthor(authors, author_rank, ranking):
     # print("getTopAuthor time: "+str(time_end-time_start))
     return top_authors
 
-def add_node_graph(G, author_matrixs,top_authors,top_authors_and_top_authors_bolean,top_authors_and_common_authors_bolean):
+def add_edge_graph(G, author_matrixs,top_authors,top_authors_and_top_authors_bolean,top_authors_and_common_authors_bolean):
     time_start = time.time()
     for author_matrix in author_matrixs:
         if author_matrix[2] > 0:
@@ -267,7 +263,7 @@ def add_node_graph(G, author_matrixs,top_authors,top_authors_and_top_authors_bol
             G.add_node(author_matrix[0])
             G.add_node(author_matrix[1])
     time_end = time.time()
-    # print("add_node_graph time: "+str(time_end-time_start))
+    # print("add_edge_graph time: "+str(time_end-time_start))
     return G
 
 def get_no_outer_author(authors, author_rank, exist_authors):
@@ -305,7 +301,7 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     # dapatkan list top author ex:['p1','p2','p3']
     top_authors = getTopAuthor(authors, author_rank, ranking)
     # inisilaize graph
-    G = nx.Graph()
+    G = nx.DiGraph()
     # author merujuk & dirujuk
     if outer_author == 2:
         top_authors_and_top_authors_bolean = "ON"
@@ -316,7 +312,7 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     else:
         top_authors_and_top_authors_bolean = "OFF"
         top_authors_and_common_authors_bolean = "OFF"
-    G = add_node_graph(G, author_matrixs,top_authors,top_authors_and_top_authors_bolean,top_authors_and_common_authors_bolean)
+    G = add_edge_graph(G, author_matrixs,top_authors,top_authors_and_top_authors_bolean,top_authors_and_common_authors_bolean)
     # inisiliasisi ukuran node dan warna
     my_node_sizes = []
     my_node_colors = []
@@ -417,13 +413,14 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     plt.close('all')
     fig, ax = plt.subplots(figsize=(subplot_size, subplot_size))
     # decrease k parameter to increase spacing between nodes
-    pos = nx.spring_layout(G, seed=7, k=k)
-    nx.draw_networkx_nodes(G, pos, alpha=0.7,
-                           node_size=my_node_sizes,
-                           node_color=my_node_colors
-                           )  # increase node size to 200
-    nx.draw_networkx_edges(G, pos, edgelist=G.edges(),
-                           width=1, alpha=0.5, edge_color="green")
+    pos = nx.spring_layout(G, seed=7, k=k, scale=0.5)  # Sesuaikan nilai scale sesuai kebutuhan
+    # nx.draw_networkx_nodes(G, pos, alpha=0.7,
+    #                        node_size=my_node_sizes,
+    #                        node_color=my_node_colors
+    #                        )  # increase node size to 200
+    nx.draw(G, pos, alpha=0.7, node_size=my_node_sizes, node_color=my_node_colors, arrows=True, arrowstyle="fancy", connectionstyle="arc3,rad=0.2", edge_color="green",arrowsize=20)
+    # nx.draw_networkx_edges(G, pos, edgelist=G.edges(),
+    #                        width=1, alpha=0.5, edge_color="green")
     nx.draw_networkx_labels(G, pos, font_size=node_labels_font_size,
                             font_family="sans-serif", font_color="white",
                             labels=labels
@@ -444,7 +441,12 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
 
 
     plt_time=time.time()
-    plt.savefig(buf, format='png')
+
+    fig = plt.gcf()
+    fig.canvas.draw()
+    image = Image.frombytes('RGB', fig.canvas.get_width_height(), fig.canvas.tostring_rgb())
+    image.save(buf, format='png')
+
     end_plt_time=time.time()-plt_time
     # print("plt time: "+str(end_plt_time))
 
@@ -455,7 +457,7 @@ def makeTermGraph(authors, author_matrixs, author_rank, outer_author, ranking):
     # my_base64_jpgData = base64.b64encode(output.read())
     # query_graph("project 1",my_base64_jpgData)
     time_end = time.time()
-    # print("Time taken to run maketermgraph: ", time_end - time_start)
+    print("Time taken to run maketermgraph: ", time_end - time_start)
     return buf
 
 
