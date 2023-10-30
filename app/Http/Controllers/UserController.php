@@ -20,15 +20,15 @@ class UserController extends Controller
     {
         return DataTables::of(User::where('id', '!=', auth()->user()->id)->orderBy('id')->get())
             ->addIndexColumn()
-            ->addColumn('name', function(User $user){
+            ->addColumn('name', function (User $user) {
                 return $user->name;
             })
-            ->addColumn('username', function(User $user){
+            ->addColumn('username', function (User $user) {
                 return $user->username;
             })
-            ->addColumn('action', function(User $row){
-                $btn = '<button type="button" class="btn btn-primary btn-sm aksi" data-toggle="modal" data-bs-target="#modalEdit" data-id="'.$row->id.'" data-name="'.$row->name.'" data-username="'.$row->username.'"><ion-icon name="create-outline"></ion-icon> Edit</button>';
-                $btn .= '<button type="button" class="btn btn-danger btn-sm ms-2 aksi deleteUser" data-id="'.$row->id.'"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
+            ->addColumn('action', function (User $row) {
+                $btn = '<button type="button" class="btn btn-primary btn-sm aksi" data-toggle="modal" data-bs-target="#modalEdit" data-id="' . $row->id . '" data-name="' . $row->name . '" data-username="' . $row->username . '"><ion-icon name="create-outline"></ion-icon> Edit</button>';
+                $btn .= '<button type="button" class="btn btn-danger btn-sm ms-2 aksi deleteUser" data-id="' . $row->id . '"><ion-icon name="trash-outline"></ion-icon> Delete</button>';
                 return $btn;
             })
             ->rawColumns(['action'])
@@ -46,8 +46,7 @@ class UserController extends Controller
         $password = '';
         if ($request->password == null) {
             $password = $request->username;
-        }
-        else {
+        } else {
             $password = $request->password;
         }
 
@@ -76,8 +75,7 @@ class UserController extends Controller
         $validatedData = $request->validate($rules);
         if ($request->password == null) {
             $validatedData['password'] = $user->password;
-        }
-        else {
+        } else {
             $validatedData['password'] = bcrypt($request->password);
         }
 
@@ -89,17 +87,26 @@ class UserController extends Controller
     public function delete(Request $request)
     {
         $this->authorize('superadmin');
-        $user = User::with(['project_user' => function($query){
+        $user = User::with(['project_user' => function ($query) {
             $query->where('user_role', 'admin');
         }])->where('id', $request->id)->first();
 
         if ($user->project_user->count() > 0) {
             $string = 'User cannot be deleted because user is an admin in a project';
             return json_encode(['error' => $string]);
-        }
-        else {
+        } else {
             return $user->delete();
             // return json_encode(['success' => 'User Successfully Deleted']);
         }
+    }
+
+    public function changePassword(Request $request)
+    {
+        $user = User::find(auth()->user()->id);
+        $password = bcrypt($request->password);
+
+        $user->where('id', auth()->user()->id)->update(['password' => $password]);
+
+        return json_encode(['success' => 'Password Successfully Changed']);
     }
 }

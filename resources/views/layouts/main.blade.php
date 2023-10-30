@@ -44,7 +44,7 @@
         rel="stylesheet" />
 
     {{-- jvectormap --}}
-    <link rel="stylesheet" href="/assets/css/jquery-jvectormap-2.0.5.css"/>
+    <link rel="stylesheet" href="/assets/css/jquery-jvectormap-2.0.5.css" />
 
     {{-- fuse --}}
     <script src="https://cdn.jsdelivr.net/npm/fuse.js"></script>
@@ -288,6 +288,30 @@
     {{-- JvectorMap --}}
     <script src="/assets/js/jquery-jvectormap-2.0.5.min.js"></script>
     <script src="https://jvectormap.com/js/jquery-jvectormap-world-mill.js"></script>
+
+    <script>
+        $('#change-password').on('submit', function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+            var data = form.serialize();
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: data,
+                success: function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.success,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    $('#exampleModal').modal('hide');
+                }
+            })
+        })
+    </script>
     @yield('script')
 
 
