@@ -37,7 +37,7 @@
                         </li>
                         <hr class="dropdown-divider">
                         <li>
-                            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#passwordModal">
                                 <div class="d-flex align-items-center">
                                     <div class="">
                                         <ion-icon name="lock-closed"></ion-icon>
@@ -65,11 +65,11 @@
     </nav>
 </header>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Change Password</h5>
+                <h5 class="modal-title" id="passwordModalLabel">Change Password</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="change-password" method="POST" action="/change-password">
